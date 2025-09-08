@@ -12,7 +12,7 @@ Students will build an **IT infrastructure** that collects production data and s
 ## Learning Objectives
 Integrates knowledge from:
 - **ST3-ICPS**: PLC programming, OPC-UA, SCADA, Industry 4.0, IoT.
-- **ST3-CLA**: Data analysis, plotting, optimization, linear algebra.
+- **ST3-CLA**: Data analysis, plotting, optimization.
 - **SI3-OD**: Distributed systems, Docker/Kubernetes, networking, publish-subscribe.
 - **SI3-WT**: Web technologies, REST APIs, frontend & backend development, web security.
 
@@ -20,7 +20,6 @@ Integrates knowledge from:
 
 ## Project Case
 - Implement software to control and monitor a **PLC-based beer production system**.
-- Begin with a **simulator** (Windows-only) before connecting to the real machine.
 - Develop a **distributed architecture** with integration of automation, data, and control.
 - Build **web-based interfaces** for monitoring and interaction.
 - Apply **mathematical tools** to improve precision.
