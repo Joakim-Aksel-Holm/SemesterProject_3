@@ -1,0 +1,35 @@
+# Ignore VSCode settings
+.vscode/
+*.code-workspace
+
+# Ignore JetBrains IDE settings
+.idea/
+
+# Ignore build output directories
+bin/
+obj/
+out/
+build/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore node modules
+node_modules/
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore package lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
