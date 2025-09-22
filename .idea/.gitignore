@@ -1,35 +1,55 @@
-# Ignore VSCode settings
+# ------------------------
+# IDE settings
+# ------------------------
+# VSCode
 .vscode/
 *.code-workspace
 
-# Ignore JetBrains IDE settings
+# JetBrains IDE (Rider, IntelliJ)
 .idea/
+*.iml
+*.ipr
+*.iws
+*.xml
 
-# Ignore build output directories
+# ------------------------
+# Build outputs
+# ------------------------
 bin/
 obj/
 out/
 build/
 
-# Ignore OS generated files
+# Tailwind/compiled CSS
+css/output.css
+
+# ------------------------
+# OS generated files
+# ------------------------
 .DS_Store
 Thumbs.db
 
-# Ignore logs
+# ------------------------
+# Logs
+# ------------------------
 *.log
 
-# Ignore Python cache
+# ------------------------
+# Python cache (if any)
+# ------------------------
 __pycache__/
 *.pyc
 
-# Ignore node modules
+# ------------------------
+# Node.js / npm
+# ------------------------
 node_modules/
-
-# Ignore environment files
-.env
-.env.*
-
-# Ignore package lock files
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# ------------------------
+# Environment / secrets
+# ------------------------
+.env
+.env.*
