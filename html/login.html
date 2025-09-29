@@ -1,11 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1></h1>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="loginStyle.css">
+        <title>Login</title>
+    </head>
+    <body>
+        <div class="header-container">
+            <a>Logo</a>
+        </div>
+        <div class="background">
+            
+        </div>
+        <div class="main">
+            <form action="loginAction.php" method="post">
+                <div class="container">
+                    <div class="column">
+                        <label for="uname"><b>Username</b>
+                            <input type="text" placeholder="Enter Username" name="uname" required>
+                        </label>
+                        
+                        <label for="psw"><b>Password</b>
+                            <input type="password" placeholder="Enter Password" name="psw" required>
+                        </label>
+                    </div>
+                    <div class="column">
+                        <label style="color: red;">If you experience any problems, contact your nearest leader.</label>
+
+                        <button type="submit" style="margin-top: 21px;">Login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
 </html>
