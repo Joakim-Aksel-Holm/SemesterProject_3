@@ -1,4 +1,4 @@
-# ST3-PRO – Cyber-Physical Systems Project
+git pull# ST3-PRO – Cyber-Physical Systems Project
 
 ## Overview
 This project is part of the 3rd semester Software Technology Engineering program at the **University of Southern Denmark**.  
