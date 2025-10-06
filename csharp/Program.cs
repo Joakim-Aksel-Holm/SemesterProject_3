@@ -3,21 +3,40 @@ using Opc.UaFx;
 using Opc.UaFx.Client;
 using System;
 
-var client = new OpcClient("opc.tcp://127.0.0.1:4840");
 
-client.Connect();
+class Program
+{
+    var client = new OpcClient("opc.tcp://127.0.0.1:4840");
 
-Console.WriteLine("Værdi for control " + client.ReadNode("ns=6;s=::Program:Cube.Command.CntrlCmd"));
+    client.Connect();
+
+    Console.WriteLine("Værdi for control " + client.ReadNode("ns=6;s=::Program:Cube.Command.CntrlCmd"));
 
 // Produce 500 IPAs at 200 units of speed
-OpcWriteNode[] commands = new OpcWriteNode[]
-{
-    new OpcWriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", 300.0f),
-    new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", 2.0f),
-    new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", 20.0f)
-};
-client.WriteNodes(commands);
+    OpcWriteNode[] commands = new OpcWriteNode[]
+    {
+        new OpcWriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", 300.0f),
+        new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", 2.0f),
+        new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", 20.0f)
+    };
+    client.WriteNodes(commands);
 
-client.Disconnect();
+    client.Disconnect();
+
+
+    try
+    {
+        using var db = new DatabaseConnection();
+        using var conn = db.GetConnection();
+
+        using var cmd = new NpgsqlCommand("SELECT version();", conn);
+        var version = cmd.ExecuteScalar();
+
+        Console.WriteLine($"✅ Connected successfully! PostgreSQL version: {version}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Connection failed: {ex.Message}");
+    }
 
 
