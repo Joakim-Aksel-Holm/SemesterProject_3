@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Opc.UaFx.Client" Version="2.50.2" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.5.377.21" />
+  </ItemGroup>
+
+</Project>
