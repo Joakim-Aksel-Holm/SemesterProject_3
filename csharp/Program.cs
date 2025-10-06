@@ -1,33 +1,23 @@
 ﻿using Opc.Ua;
 using Opc.UaFx;
 using Opc.UaFx.Client;
+using System;
 
+var client = new OpcClient("opc.tcp://127.0.0.1:4840");
 
+client.Connect();
 
-class Program
+Console.WriteLine("Værdi for control " + client.ReadNode("ns=6;s=::Program:Cube.Command.CntrlCmd"));
+
+// Produce 500 IPAs at 200 units of speed
+OpcWriteNode[] commands = new OpcWriteNode[]
 {
-    static void Main()
-    {
-        // Client connection
-        
-        
-        
-        // database connection test
-        
-        try
-        {
-            using var db = new DatabaseConnection();
-            using var conn = db.GetConnection();
+    new OpcWriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", 300.0f),
+    new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", 2.0f),
+    new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", 20.0f)
+};
+client.WriteNodes(commands);
 
-            using var cmd = new NpgsqlCommand("SELECT version();", conn);
-            var version = cmd.ExecuteScalar();
+client.Disconnect();
 
-            Console.WriteLine($"✅ Connected successfully! PostgreSQL version: {version}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"❌ Connection failed: {ex.Message}");
-        }
-    }
-    
-    }
+
