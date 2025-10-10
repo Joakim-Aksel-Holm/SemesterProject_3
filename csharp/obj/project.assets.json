@@ -1244,19 +1244,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\nikla\\.nuget\\packages\\": {}
+    "C:\\Users\\lille\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\csharp.csproj",
+      "projectUniqueName": "c:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\csharp\\csharp.csproj",
       "projectName": "csharp",
-      "projectPath": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\csharp.csproj",
-      "packagesPath": "C:\\Users\\nikla\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\obj\\",
+      "projectPath": "c:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\csharp\\csharp.csproj",
+      "packagesPath": "C:\\Users\\lille\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\csharp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\nikla\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\lille\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -1278,7 +1278,7 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "direct"
+        "auditMode": "all"
       },
       "SdkAnalysisLevel": "9.0.100"
     },
@@ -1311,7 +1311,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

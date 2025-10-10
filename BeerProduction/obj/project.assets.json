@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\lille\\WebstormProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
+      "projectUniqueName": "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
       "projectName": "BeerProduction",
-      "projectPath": "C:\\Users\\lille\\WebstormProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
+      "projectPath": "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
       "packagesPath": "C:\\Users\\lille\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\lille\\WebstormProjects\\SemesterProject_3\\BeerProduction\\obj\\",
+      "outputPath": "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\lille\\AppData\\Roaming\\NuGet\\NuGet.Config"
