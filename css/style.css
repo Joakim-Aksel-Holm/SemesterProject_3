@@ -1,6 +1,6 @@
 :root {
     --primary-color: #588ebb;
-    --secondary-color: #1a4ea2;
+    --secondary-color: #42698a;
 }
 
 * {
@@ -22,6 +22,8 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 5%;
+    position: relative;
+    z-index: 10;
 }
 
 .header-bar ul {
@@ -33,6 +35,7 @@ body {
     padding: 10px 30px;
     position: relative;
     font-size: 20px;
+    height
 }
 
 .header-bar ul li a {
@@ -40,12 +43,11 @@ body {
     color: white;
     height: 100%;
     
-    transition: all 0.1s;
+    transition: all 0.1s ease-in-out;
 }
 
 .header-bar ul li a:hover {
     color: gainsboro;
-    background-color: var(--secondary-color);
 }
 
 .header-bar ul li a:active {
@@ -53,11 +55,13 @@ body {
 }
 
 .dropdown-menu {
-    display: block;
+    display: none;
     position: absolute;
+    overflow: hidden;
     left: -5px;
     top: 100%;
     background-color: var(--secondary-color);
+    z-index: 1000;
 }
 
 .dropdown-menu ul {
@@ -65,26 +69,25 @@ body {
     margin: 10px;
 }
 
-.header-button {
-    background: var(--primary-color);
-
-    border: none;
-    border-right: cornflowerblue;
-    font-size: 20px;
+.dropdown-menu ul li {
+    padding: 10px 30px;
 }
 
-.header-button a {
+.dropdown-menu ul li a {
     text-decoration: none;
-    color: black;
+    color: white;
+    display: block;
+    transition: all 0.1s ease-in-out;
 }
 
-.header-button:hover {
-    background-color: #3f75a2;
-    background-image: none;
+.dropdown-menu ul li a:hover {
+    color: gainsboro;
 }
 
-.header-button:active {
-    background-color: #336187;
+.dropdown:hover .dropdown-menu,
+.dropdown.open .dropdown-menu {
+    display: block;
+    transition: 0.1s;
 }
 
 .logo {
@@ -103,86 +106,6 @@ body {
     padding-left: 25px;
     padding-right: 25px;
     z-index: -1;
-}
-
-
-
-/*Updates by Abdullah for the dropdown menu*/
-
-/* Header bar */
-.TopBar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;           /* space between items */
-    padding: 10px 20px;
-    background-color: #f4f4f4;
-    border-bottom: 1px solid #ccc;
-}
-
-/* Buttons */
-button,
-a.menuitem {
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    background: white;
-    text-decoration: none;
-    color: #333;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover,
-a.menuitem:hover {
-    background: #eee;
-}
-
-/* Dropdown */
-.dropdown {
-    position: relative;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;      /* appears under the button */
-    left: 0;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 5px;
-    padding: 5px 0;
-    min-width: 120px;
-}
-
-.dropdown-menu a {
-    display: block;
-    padding: 8px 12px;
-}
-
-.dropdown-menu a:hover {
-    background: #f0f0f0;
-}
-
-.dropdown.open .dropdown-menu {
-    display: block;
-}
-
-/* Content area */
-.Content {
-    padding: 20px;
-}
-
-
-.dropdown .dropdown-menu { display: none; }
-.dropdown.open .dropdown-menu { display: block; }
-
-
-/*Card style*/
-/* Main content */
-.Content {
-    padding: 20px;
-    background: #fafafa;
 }
 
 /* Machine card */
