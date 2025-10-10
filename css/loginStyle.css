@@ -45,7 +45,7 @@ input {
     top: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(#588ebb, #4682b4);
+    background: linear-gradient(#F1ECE1, #F1ECE1);
     color: white;
     padding-left: 16px;
     font-size: 30px;
@@ -54,9 +54,13 @@ input {
     height: 100px;
 
 }
+.logo {
+    height: 80px;
+    width: 80px;
+}
 
 .header-button {
-    background: linear-gradient(#588ebb, #4682b4);
+    background: linear-gradient(#F1ECE1,#F1ECE1);
     height: 100px;
     width: 151px;
     border: none;
@@ -70,12 +74,12 @@ input {
 }
 
 .header-button:hover {
-    background-color: #3f75a2;
+    background-color: #F1ECE1;
     background-image: none;
 }
 
 .header-button:active {
-    background-color: #336187;
+    background-color: #F1ECE1;
 }
 
 .header-menu-container {
