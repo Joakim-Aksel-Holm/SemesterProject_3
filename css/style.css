@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #588ebb;
+    --primary-color: #F1ECE1;
     --secondary-color: #42698a;
 }
 
@@ -26,6 +26,11 @@ body {
     z-index: 10;
 }
 
+.logo{
+    height: 80px;
+    width: 80px;
+
+}
 .header-bar ul {
     list-style: none;
     display: flex;
@@ -35,12 +40,11 @@ body {
     padding: 10px 30px;
     position: relative;
     font-size: 20px;
-    height
 }
 
 .header-bar ul li a {
     text-decoration: none;
-    color: white;
+    color: black;
     height: 100%;
     
     transition: all 0.1s ease-in-out;
@@ -75,7 +79,7 @@ body {
 
 .dropdown-menu ul li a {
     text-decoration: none;
-    color: white;
+    color: black;
     display: block;
     transition: all 0.1s ease-in-out;
 }
@@ -90,9 +94,6 @@ body {
     transition: 0.1s;
 }
 
-.logo {
-    width: 150px;
-}
 
 .body-content {
     display: flex;
