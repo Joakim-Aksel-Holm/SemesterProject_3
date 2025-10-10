@@ -11,26 +11,27 @@
 <body class="Layout">
 
 
-<header class="TopBar">
-    <div >
-        <a href="" class="Logo"></a>
+<header class="header-bar">
+    <div class="header-logo"> <!-- Adjusted depending on the logo -->
+        <img src="" class="logo" alt="logo"> <!-- Insert customer logo -->
     </div>
-
-    <div id="dropdown" class="dropdown">
-        <button class="dropBtn" aria-haspopup="true" aria-expanded="false">
-            Workers
-        </button>
-        <div class="dropdown-menu" role="menu">
-            <a class="menuitem" href="#">Operator</a>
-            <a class="menuitem" href="#">Analyzer</a>
-        </div>
+    <div class="header-menu-bar">
+        <ul>
+            <li>
+                <a href="#">Workers<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" role="img"><path fill="currentColor" d="M12 15.5 6.5 10l1.41-1.41L12 12.67l4.09-4.08L17.5 10z"/></svg></a>
+                <div class="dropdown-menu" role="menu">
+                    <ul>
+                        <li><a class="menuitem" href="#">Operator</a></li>
+                        <li><a class="menuitem" href="#">Analyzer</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li><a href="#">Logout</a></li>
+        </ul>
     </div>
-
-    <button id="logoutButton" class="logout">Logout</button>
-
 </header>
 
-<main class="Content">
+<main class="body-content">
     <h2>Production Line</h2>
 
     <!--machine Card-->
