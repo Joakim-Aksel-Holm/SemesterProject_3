@@ -105,3 +105,133 @@ body {
     z-index: -1;
 }
 
+
+
+/*Updates by Abdullah for the dropdown menu*/
+
+/* Header bar */
+.TopBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;           /* space between items */
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Buttons */
+button,
+a.menuitem {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: white;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover,
+a.menuitem:hover {
+    background: #eee;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;      /* appears under the button */
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+    padding: 5px 0;
+    min-width: 120px;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px 12px;
+}
+
+.dropdown-menu a:hover {
+    background: #f0f0f0;
+}
+
+.dropdown.open .dropdown-menu {
+    display: block;
+}
+
+/* Content area */
+.Content {
+    padding: 20px;
+}
+
+
+.dropdown .dropdown-menu { display: none; }
+.dropdown.open .dropdown-menu { display: block; }
+
+
+/*Card style*/
+/* Main content */
+.Content {
+    padding: 20px;
+    background: #fafafa;
+}
+
+/* Machine card */
+.machine-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.machine-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.machine-info {
+    flex: 1;
+}
+
+.machine-name {
+    margin: 0 0 5px;
+}
+
+.status.online {
+    color: green;
+    font-weight: bold;
+}
+
+.status.offline {
+    color: red;
+    font-weight: bold;
+}
+
+/* Variables */
+.machine-variables {
+    min-width: 180px;
+    padding: 10px;
+    border-left: 1px solid #ddd;
+}
+
+.machine-variables h4 {
+    margin-top: 0;
+    font-size: 14px;
+}
