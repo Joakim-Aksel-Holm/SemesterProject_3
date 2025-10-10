@@ -1,9 +1,10 @@
-/*---Dropdown menu Toggle ----*/
+/* --- Dropdown menu: hover to open, click to pin, close on outside/ESC --- */
 function setupDropdown() {
-    const dropdown = document.getElementById("dropdown"); // no dot, and it's an id now
+    const dropdown = document.getElementById("dropdown"); // wrapper <li>
     if (!dropdown) return;
 
-    const btn = dropdown.querySelector(".dropBtn");
+    const btn = dropdown.querySelector(".dropBtn");       // trigger <a>
+    const menu = dropdown.querySelector(".dropdown-menu");
 
     function openDropdown() {
         dropdown.classList.add("open");
@@ -13,13 +14,29 @@ function setupDropdown() {
         dropdown.classList.remove("open");
         btn.setAttribute("aria-expanded", "false");
     }
-
     function toggleDropdown(e) {
+        e.preventDefault();
         e.stopPropagation();
-        if (dropdown.classList.contains("open")) closeDropdown();
-        else openDropdown();
+        dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
     }
+
+    // Click to pin/unpin
     btn.addEventListener("click", toggleDropdown);
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) closeDropdown();
+    });
+
+    // Close on ESC
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeDropdown();
+    });
+
+    // Optional: prevent menu click from closing immediately (useful for links)
+    if (menu) {
+        menu.addEventListener("click", (e) => e.stopPropagation());
+    }
 }
 
 /* --- Logout Button --- */
@@ -27,27 +44,14 @@ function setupLogout() {
     const logoutBtn = document.getElementById("logoutButton");
     if (!logoutBtn) return;
 
-    logoutBtn.addEventListener("click", () => {
+    logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
         console.log("logging out");
+        // TODO: add actual logout action here
     });
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
     setupDropdown();
     setupLogout();
-
 });
-
-// machine image
-// machine name
-// machine status
-// machine serial number
-// machine variables:
-// temperature
-// Batch ID
-// products per minute
-// Defect products
-// acceptable products
-
-
