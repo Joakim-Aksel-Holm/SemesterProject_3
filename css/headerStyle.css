@@ -1,0 +1,90 @@
+.header-bar {
+    background: linear-gradient(to top, var(--primary-color), var(--primary-color-light));
+    height: 80px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2%;
+    position: relative;
+    z-index: 1000;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .1);
+}
+
+.header-bar ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-bar ul li {
+    position: relative;
+    display: flex;
+    font-size: 20px;
+}
+
+.header-bar ul li a {
+    text-decoration: none;
+    display: block;
+    color: white;
+    height: 100%;
+    padding: 28px 25px;
+}
+
+.header-bar ul li a:hover {
+    text-decoration: underline !important;
+    border-radius: 4px;
+    transition: right 0.5s ease;
+}
+
+.header-bar ul li.dropdown > a {
+    border-radius: 4px 4px 0 0;
+
+}
+
+.dropdown:hover > a,
+.dropdown:active > a {
+    border-radius: 4px 4px 0 0;
+}
+
+
+
+.header-bar ul li a:active {
+    color: gray;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    align-items: center;
+    top: 100%;
+    left: -12px;
+    background-color: var(--secondary-color);
+    z-index: 100;
+}
+
+.dropdown:hover > .dropdown-menu,
+.dropdown:active > .dropdown-menu {
+    transition: 0.1s ease-in-out;
+    display: block;
+    visibility: visible;
+}
+
+.dropdown-menu ul {
+    display: block;
+
+}
+
+.dropdown-menu ul li {
+    padding: 5px 10px;
+}
+
+.dropdown-menu ul li a {
+    padding: 10px 25px;
+}
+
+.logo {
+    width: 80px;
+}
