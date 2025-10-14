@@ -205,8 +205,22 @@
           }
         }
       },
-      "System.Diagnostics.DiagnosticSource/9.0.9": {},
-      "System.Formats.Asn1/9.0.9": {},
+      "System.Diagnostics.DiagnosticSource/9.0.9": {
+        "runtime": {
+          "lib/net9.0/System.Diagnostics.DiagnosticSource.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.925.41916"
+          }
+        }
+      },
+      "System.Formats.Asn1/9.0.9": {
+        "runtime": {
+          "lib/net9.0/System.Formats.Asn1.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.925.41916"
+          }
+        }
+      },
       "System.Management/4.7.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "3.1.0",

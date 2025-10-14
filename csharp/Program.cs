@@ -1,7 +1,8 @@
-﻿using csharp.SemesterProject_3;
+﻿using csharp.Services;
 using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
+
 
 namespace csharp;
 
@@ -59,6 +60,6 @@ class Program
 
         Console.WriteLine("\nProgram finished.");
 
-        Console.WriteLine(" YOu are fat...Hot reload works!");
+        Console.WriteLine(" You are fat...Hot reload works!");
     }
 }
