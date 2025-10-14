@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  app:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    working_dir: /src/csharp
+    command:
+      - dotnet
+      - watch
+      - run
+      - --urls
+      - http://0.0.0.0:8080
+    volumes:
+      - ./csharp:/src/csharp
+    env_file:
+      - .env.development
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8080:8080"
