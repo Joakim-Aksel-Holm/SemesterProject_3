@@ -1278,19 +1278,19 @@
     ]
   },
   "packageFolders": {
-    "/root/.nuget/packages/": {}
+    "C:\\Users\\abode\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/src/csharp/csharp.csproj",
+      "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\csharp.csproj",
       "projectName": "csharp",
-      "projectPath": "/src/csharp/csharp.csproj",
-      "packagesPath": "/root/.nuget/packages/",
-      "outputPath": "/src/csharp/obj/",
+      "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\csharp.csproj",
+      "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/root/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -1314,7 +1314,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net9.0": {
@@ -1349,7 +1349,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.205/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
