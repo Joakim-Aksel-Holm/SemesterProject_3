@@ -1,8 +1,7 @@
-using System;
 using System.Data;
 using Npgsql;
 
-namespace SemesterProject_3
+namespace csharp.SemesterProject_3
 {
     public class DatabaseConnection : IDisposable
     {

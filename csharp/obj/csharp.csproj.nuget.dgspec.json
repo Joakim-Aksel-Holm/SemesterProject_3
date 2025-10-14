@@ -46,7 +46,7 @@
           "dependencies": {
             "Npgsql": {
               "target": "Package",
-              "version": "[9.0.4, )"
+              "version": "[10.0.0-rc.1, )"
             },
             "OPCFoundation.NetStandard.Opc.Ua": {
               "target": "Package",
