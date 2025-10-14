@@ -9,14 +9,12 @@ services:
       - watch
       - run
       - --urls
-      - http://0.0.0.0.8080
-        
+      - http://0.0.0.0:8080
     volumes:
       - ./csharp:/src/csharp
     env_file:
       - .env.development
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      
     ports:
-      - 8080:8080
+      - "8080:8080"
