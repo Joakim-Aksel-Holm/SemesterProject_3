@@ -1,7 +1,8 @@
+using System.Data;
+using Npgsql;
+
 namespace DefaultNamespace;
 
-public class DatabaseConnection
-{
     public class DatabaseConnection : IDisposable
     {
         private readonly string _connectionString;
@@ -35,4 +36,3 @@ public class DatabaseConnection
                 _connection.Close();
         }
     }
-}
