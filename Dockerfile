@@ -1,6 +1,4 @@
-﻿# Multi-Stage Dockerfile
-
-# =======================
+﻿# =======================
 # 1) BUILD STAGE (SDK)
 # =======================
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
