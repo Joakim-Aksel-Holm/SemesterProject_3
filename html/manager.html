@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Manager Page</title>
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/manageStyle.css">
+        <link rel="stylesheet" href="../css/headerStyle.css">
+        <link rel="stylesheet" href="../css/footerStyle.css">
+        <link rel="stylesheet" href="../css/bodyStyle.css">
+    </head>
+    
+    <body class="Layout">
+        <header class="header-bar">
+            <a href="#"><img class="logo" src="#" alt="logo"></a><!-- Insert customer logo -->
+            <div class="header-menu-bar"> <!-- Encapsulates all menu items -->
+                <ul>
+                    <li class="dropdown">
+                        <a href="#">Workers</a>
+                        <div class="dropdown-menu" role="menu">
+                            <ul>
+                                <li><a class="menuitem" href="#">Operator</a></li>
+                                <li><a class="menuitem" href="#">Analyzer</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </div>
+        </header>
+        
+        <main class="body-content">
+            <h2>Production Line</h2>
+        
+            <!-- Machine Card -->
+            <div class="machine-card"> <!-- Structure for a single machine -->
+                <img src="#" alt="Machine image" class="machine-image">
+        
+                <div class="machine-info">
+                    <h3 class="machine-name">Carlsberg Machine</h3>
+                    <p><strong>Status:</strong> <span class="status online">Online</span></p>
+                    <p><strong>Serial Number:</strong> MCH-12345</p>
+                </div>
+                <div class="machine-variables">
+                    <h4>Variables</h4>
+                    <label><input type="checkbox" value="temperature"> Temperature</label><br>
+                    <label><input type="checkbox" value="batch"> Batch ID</label><br>
+                    <label><input type="checkbox" value="ppm"> Products/minute</label><br>
+                    <label><input type="checkbox" value="defects"> Defect Products</label><br>
+                    <label><input type="checkbox" value="acceptable"> Acceptable Products</label>
+                </div>
+            </div>
+            <a href="#" class="machine-card-add">Add machine</a> <!-- Add machine for scalability -->
+        </main>
+        
+        <div class="footer-container"> <!-- Information box from the distributor -->
+            <p>©2025 Beer Clan Industries</p> <!-- Copyright box for the distributor -->
+        </div>
+        
+        <p id="testField" ></p>
+        
+        <script src="../js/Functionality.js"/>
+    </body>
+</html>
