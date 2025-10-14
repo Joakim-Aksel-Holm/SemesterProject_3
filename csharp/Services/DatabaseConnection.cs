@@ -1,38 +1,42 @@
 using System.Data;
 using Npgsql;
 
-namespace DefaultNamespace;
+namespace csharp.Services;
 
-    public class DatabaseConnection : IDisposable
+public class DatabaseConnection : IDisposable
+{
+    private readonly string _connectionString;
+    private NpgsqlConnection? _connection;
+
+    public DatabaseConnection()
     {
-        private readonly string _connectionString;
-        private NpgsqlConnection? _connection;
+        // read the connection string from environment variables.
+        // In docker compose we pass: ConnectionString_Default= ..
 
-        public DatabaseConnection()
+        var conn = Environment.GetEnvironmentVariable("ConnectionStrings__Default");
+
+        if (string.IsNullOrEmpty(conn))
         {
-            // Your actual connection info
-            string host = "147.185.221.211";
-            int port = 7617;
-            string database = "semesterprojekt3db";
-            string username = "remote_user";
-            string password = "X3Kd0f38dbaFdFto";
-            _connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true;";
+            throw new InvalidOperationException(" Missing ConnectionStrings__Default environment variable." +
+                                                "Create a .env.development file (for compose) or set the env var before running.");
         }
 
-        public NpgsqlConnection GetConnection()
-        {
-            if (_connection == null)
-                _connection = new NpgsqlConnection(_connectionString);
-
-            if (_connection.State != ConnectionState.Open)
-                _connection.Open();
-
-            return _connection;
-        }
-
-        public void Dispose()
-        {
-            if (_connection != null && _connection.State == ConnectionState.Open)
-                _connection.Close();
-        }
+        _connectionString = conn;
     }
+
+    public NpgsqlConnection GetConnection()
+    {
+        _connection ??= new NpgsqlConnection(_connectionString);
+
+        if (_connection.State != ConnectionState.Open)
+            _connection.Open();
+
+        return _connection;
+    }
+
+    public void Dispose()
+    {
+        if (_connection is { State: ConnectionState.Open })
+            _connection.Close();
+    }
+}

@@ -42,7 +42,7 @@ class Program
             Console.WriteLine("❌ Unexpected error: " + ex.Message);
         }
 
-        // ---- PostgreSQL ----
+        // ---- PostgresSQL ----
         try
         {
             using var db = new DatabaseConnection();
@@ -57,7 +57,8 @@ class Program
             Console.WriteLine("⚠️ Database connection failed: " + ex.Message);
         }
 
-        Console.WriteLine("\nProgram finished. Press any key to exit.");
-        Console.ReadKey();
+        Console.WriteLine("\nProgram finished.");
+
+        Console.WriteLine(" YOu are fat...Hot reload works!");
     }
 }
