@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\csharp.csproj": {}
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\csharp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\csharp.csproj": {
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\csharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\csharp.csproj",
+        "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\csharp.csproj",
         "projectName": "csharp",
-        "projectPath": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\csharp.csproj",
-        "packagesPath": "C:\\Users\\nikla\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\csharp\\obj\\",
+        "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\csharp.csproj",
+        "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\csharp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nikla\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,12 +38,16 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Npgsql": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
             "OPCFoundation.NetStandard.Opc.Ua": {
               "target": "Package",
               "version": "[1.5.377.21, )"
@@ -69,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
