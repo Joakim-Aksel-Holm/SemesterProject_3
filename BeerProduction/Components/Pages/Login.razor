@@ -1,0 +1,47 @@
+@page "/Login"
+
+<PageTitle>Login</PageTitle>
+<link rel="Stylesheet" href="css/loginStyle.css"/>
+<!--         <div class="header-container"> -->
+<!--             <div> -->
+<!--                 <header > -->
+<!--                     <div class="header-logo">  --><!-- Adjusted depending on the logo -->
+<!--                         <img src="/solution/images/pmarket-logo.png" class="w-1" alt="logo">  --><!-- Insert customer logo -->
+<!--                     </div> -->
+<!--                 </header> -->
+<!--             </div> -->
+<!--             <div class="header-menu-container"> -->
+<!--                 <button class="header-button"> -->
+<!--                     <a href="login.html">Login</a>  --><!-- Returns to the login-page -->
+<!--                 </button> -->
+<!--             </div> -->
+<!--         </div> -->
+        <div class="body-container"> <!-- Blurs the background behind the login-container -->
+            <!-- Indsæt blankt program her -->
+        </div>
+        <div class="login-container"> <!-- Contains login-form -->
+            <form action="/PHP/loginAction.php" method="post">
+                <div class="container"> <!-- Allows for columns -->
+                    <div class="column">
+                        <label for="uname"><b>Username</b> <!-- Username label -->
+                            <input type="text" placeholder="Enter Username" name="uname" required> <!-- Username input-bar -->
+                        </label>
+
+                        <label for="psw"><b>Password</b> <!-- Password label -->
+                            <input type="password" placeholder="Enter Password" name="psw" required><!-- Password input-bar -->
+                        </label>
+                    </div>
+                    <div class="column">
+                        <div class="login-right-column">
+                            <label>If you experience any problems, contact your nearest leader.</label> <!-- "Forgot password"-like -->
+
+                            <button type="submit">Login</button> <!-- Submits the form -->
+                        </div>
+                    </div>
+                </div>
+                 <div class="footer-container">  <!-- Information box from the distributor -->
+                     <p>©2025 Beer Machine industries</p><!-- Copyright box for the distributor -->
+                </div>
+            </form>
+            
+        </div>
