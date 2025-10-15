@@ -77,3 +77,12 @@ C:\Users\abode\RiderProjects\SemesterProject_3\csharp\obj\Debug\net9.0\refint\cs
 C:\Users\abode\RiderProjects\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.pdb
 C:\Users\abode\RiderProjects\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.genruntimeconfig.cache
 C:\Users\abode\RiderProjects\SemesterProject_3\csharp\obj\Debug\net9.0\ref\csharp.dll
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.csproj.AssemblyReference.cache
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.AssemblyInfoInputs.cache
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.AssemblyInfo.cs
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.csproj.CoreCompileInputs.cache
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.sourcelink.json
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.dll
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\refint\csharp.dll
+C:\Users\nikla\OneDrive\Skrivebord\sem3_project\SemesterProject_3\csharp\obj\Debug\net9.0\csharp.pdb
