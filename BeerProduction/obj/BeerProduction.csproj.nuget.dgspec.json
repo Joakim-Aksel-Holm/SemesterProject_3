@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {}
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
+        "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
         "projectName": "BeerProduction",
-        "projectPath": "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
-        "packagesPath": "C:\\Users\\lille\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lille\\OneDrive - Syddansk Universitet\\SemesterProject\\repo\\SemesterProject_3\\BeerProduction\\obj\\",
+        "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
+        "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lille\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -36,13 +36,31 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "AspNetCore.HealthChecks.NpgSql": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "OPCFoundation.NetStandard.Opc.Ua": {
+              "target": "Package",
+              "version": "[1.5.377.21, )"
+            },
+            "Opc.UaFx.Client": {
+              "target": "Package",
+              "version": "[2.50.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -62,7 +80,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
