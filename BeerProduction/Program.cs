@@ -1,29 +1,40 @@
 using System.Text;
 using BeerProduction.Components;
+using BeerProduction.Services;
 using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 🔽 Add this block so each dev's Local file is loaded (last wins)
+builder.Configuration.AddJsonFile(
+    $"appsettings.{builder.Environment.EnvironmentName}.Local.json",
+    optional: true, // OK if the file doesn't exist (e.g., CI/Prod)
+    reloadOnChange: true); // nice for live edits during dev
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddSingleton<DatabaseConnection>();
+
+
 var app = builder.Build();
+
+// Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
+//app.MapGet("/", ()=> Results.Redirect("/html/manager.html"));
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
-
 app.UseAntiforgery();
+
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
@@ -31,7 +42,7 @@ app.MapRazorComponents<App>()
 
 app.MapGet("/run-diagnostics", (IConfiguration config) =>
 {
-    var log = new System.Text.StringBuilder();
+    var log = new StringBuilder();
 
     // ---- OPC UA ----
     try
@@ -82,8 +93,33 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
 
     log.AppendLine();
     log.AppendLine("Program finished.");
-    log.AppendLine("You are fat...Hot reload works!");
+
 
     return Results.Text(log.ToString(), "text/plain; charset=utf-8", Encoding.UTF8);
 });
+
+// GET /api/employee  -> returns all rows from public.employee
+app.MapGet("/api/employee", (BeerProduction.Services.DatabaseConnection db) =>
+{
+    using var conn = db.Open();
+    using var cmd = new Npgsql.NpgsqlCommand(
+        "SELECT id, name, role, hired_on FROM public.employee ORDER BY id;", conn);
+
+    using var rdr = cmd.ExecuteReader();
+    var list = new List<object>();
+    while (rdr.Read())
+    {
+        list.Add(new
+        {
+            id = rdr.GetInt32(0),
+            name = rdr.GetString(1),
+            role = rdr.GetString(2),
+            hiredOn = rdr.GetDateTime(3).ToString("yyyy-MM-dd")
+        });
+    }
+
+    return Results.Json(list);
+});
+
+
 app.Run();
