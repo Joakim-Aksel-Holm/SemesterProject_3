@@ -1,42 +1,26 @@
-﻿using System.Data;
+﻿// BeerProduction/Services/DatabaseConnection.cs
 using Npgsql;
 
 namespace BeerProduction.Services;
 
-public class DatabaseConnection : IDisposable
+public class DatabaseConnection
 {
-    private readonly string _connectionString;
-    private NpgsqlConnection? _connection;
+    private readonly string _cs;
 
-    public DatabaseConnection()
+    public DatabaseConnection(IConfiguration cfg)
     {
-        // read the connection string from environment variables.
-        // In docker compose we pass: ConnectionString_Default= ..
-
-        var conn = Environment.GetEnvironmentVariable("ConnectionStrings__Default");
-
-        if (string.IsNullOrEmpty(conn))
-        {
-            throw new InvalidOperationException(" Missing ConnectionStrings__Default environment variable." +
-                                                "Create a .env.development file (for compose) or set the env var before running.");
-        }
-
-        _connectionString = conn;
+        // Pulls the value from Configuration["ConnectionStrings:Default"]
+        // which is built from appsettings.json → appsettings.Development.json
+        // → appsettings.Development.Local.json (last wins)
+        _cs = cfg.GetConnectionString("Default")
+              ?? throw new InvalidOperationException("Missing ConnectionStrings:Default");
     }
 
-    public NpgsqlConnection GetConnection()
+    /// Get a NEW open connection (caller must dispose).
+    public NpgsqlConnection Open()
     {
-        _connection ??= new NpgsqlConnection(_connectionString);
-
-        if (_connection.State != ConnectionState.Open)
-            _connection.Open();
-
-        return _connection;
-    }
-
-    public void Dispose()
-    {
-        if (_connection is { State: ConnectionState.Open })
-            _connection.Close();
+        var conn = new NpgsqlConnection(_cs);
+        conn.Open();                 // Npgsql uses pooling under the hood
+        return conn;
     }
 }

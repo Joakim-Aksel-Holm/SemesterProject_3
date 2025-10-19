@@ -32,3 +32,5 @@ Thumbs.db
 # ------------------------------
 .env.development
 
+# ignore personal/local appsettings
+BeerProduction/appsettings.*.Local.json
