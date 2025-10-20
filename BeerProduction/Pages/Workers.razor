@@ -1,50 +1,66 @@
-@inject HttpClient Http
-@using BeerProduction.Components
-@using BeerProduction.Pages
-@using Microsoft.AspNetCore.Components.Web
 @page "/Workers"
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Web
+
 <PageTitle>Workers Page</PageTitle>
-<main class="body-content">
+<link rel="stylesheet" href="css/operatorStyle.css" />
+<div class="body-content">
     <h2>Employees</h2>
 
-    <div style="color:red;margin:.5rem 0;">@errorMessage</div>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div style="color:red;margin:.5rem 0;">@errorMessage</div>
+    }
 
-    <table class="table" style="width:100%;border-collapse:collapse;">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Hired</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var emp in employees)
-            {
+    @if (employees == null)
+    {
+        <p>Loading employees...</p>
+    }
+    else if (!employees.Any())
+    {
+        <p>No employees found.</p>
+    }
+    else
+    {
+        <table class="table" style="width:100%;border-collapse:collapse;">
+            <thead>
                 <tr>
-                    <td>@emp.Id</td>
-                    <td>@emp.Name</td>
-                    <td>@emp.Role</td>
-                    <td>@emp.HiredOn.ToString("yyyy-MM-dd")</td>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Hired</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</main>
+            </thead>
+            <tbody>
+                @foreach (var emp in employees)
+                {
+                    <tr>
+                        <td>@emp.Id</td>
+                        <td>@emp.Name</td>
+                        <td>@emp.Role</td>
+                        <td>@emp.HiredOn ?? "N/A"</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
 @code {
-    private List<Employee> employees = new();
+    private List<Employee>? employees;
     private string errorMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            employees = await Http.GetFromJsonAsync<List<Employee>>("/api/employee")
-            ?? new List<Employee>();
+            var result = await Http.GetFromJsonAsync<List<Employee>>("/api/employee");
+            employees = result ?? new List<Employee>();
         }
         catch (Exception ex)
         {
+            employees = new List<Employee>();
             errorMessage = "Failed to load employees: " + ex.Message;
         }
     }
@@ -54,6 +70,6 @@
         public int Id { get; set; }
         public string Name { get; set; } = "";
         public string Role { get; set; } = "";
-        public DateTime HiredOn { get; set; }
+        public string? HiredOn { get; set; } // Use string? to match API
     }
 }

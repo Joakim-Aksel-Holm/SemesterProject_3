@@ -6,6 +6,7 @@ using Opc.UaFx;
 using Opc.UaFx.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient();
 
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
 builder.Configuration.AddJsonFile(

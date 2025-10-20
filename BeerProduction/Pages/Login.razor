@@ -1,35 +1,52 @@
 @page "/Login"
-@using System.Diagnostics
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
-@using BeerProduction.Components
-@using BeerProduction.Pages
-<div class="login-container"> <!-- Contains login-form -->
-    <form action="/PHP/loginAction.php" method="post">
-        <div class="container"> <!-- Allows for columns -->
-            <div class="column">
-                <label for="uname"><b>Username</b> <!-- Username label -->
-                    <input type="text" placeholder="Enter Username" name="uname" required> <!-- Username input-bar -->
-                </label>
 
-                <label for="psw"><b>Password</b> <!-- Password label -->
-                    <input type="password" placeholder="Enter Password" name="psw" required><!-- Password input-bar -->
-                </label>
+<PageTitle>Login</PageTitle>
+<link rel="stylesheet" href="css/loginStyle.css" />
+<div class="login-container">
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <div class="container">
+            <div class="column">
+                <label for="uname"><b>Username</b></label>
+                <InputText id="uname" placeholder="Enter Username" @bind-Value="loginModel.Username" class="input-field"
+                    required />
+
+                <label for="psw"><b>Password</b></label>
+                <InputText id="psw" placeholder="Enter Password" @bind-Value="loginModel.Password" type="password"
+                    class="input-field" required />
             </div>
+
             <div class="column">
                 <div class="login-right-column">
                     <label>If you experience any problems, contact your nearest leader.</label>
-                    <!-- "Forgot password"-like -->
-
-                    <button type="submit">Login</button> <!-- Submits the form -->
+                    <button type="submit">Login</button>
                 </div>
             </div>
         </div>
-        <div class="login-footer-container"> <!-- Information box from the distributor -->
-            <p>©2025 Beer Machine industries</p> <!-- Copyright box for the distributor -->
+
+        <div class="login-footer-container">
+            <p>©2025 Beer Machine Industries</p>
         </div>
-    </form>
+    </EditForm>
 </div>
 
-<div class="footer-container"> <!-- Information box from the distributor -->
-    <p>©2025 Beer Clan Industries</p> <!-- Copyright box for the distributor -->
-</div>
+<footer class="footer-container">
+    <p>©2025 Beer Clan Industries</p>
+</footer>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private void HandleLogin()
+    {
+        // TODO: Implement actual login logic here
+        Console.WriteLine($"Logging in: {loginModel.Username}");
+    }
+
+    private class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}

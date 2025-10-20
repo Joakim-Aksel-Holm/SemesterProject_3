@@ -1,30 +1,64 @@
+@page "/Manager"
+@using BeerProduction.Components
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
 @namespace BeerProduction.Pages
 
-@page "/Manager"
-@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using BeerProduction.Components
-@using BeerProduction.Pages
 <PageTitle>Manager Page</PageTitle>
-
-
-<main class="body-content">
+<link rel="stylesheet" href="css/manageStyle.css" />
+<div class="body-content">
     <h2>Production Line</h2>
-    <div class="machine-card">
-        <img src="#" alt="Machine image" class="machine-image" />
-        <div class="machine-info">
-            <h3>Carlsberg Machine</h3>
-            <p>Status: <span class="status online">Online</span></p>
-            <p>Serial Number: MCH-12345</p>
+
+    @foreach (var machine in Machines)
+    {
+        <div class="machine-card">
+            <img src="@machine.ImageUrl" alt="Machine image" class="machine-image" />
+            <div class="machine-info">
+                <h3>@machine.Name</h3>
+                <p>Status: <span class="status @(machine.IsOnline ? "online" : "offline")">@machine.Status</span></p>
+                <p>Serial Number: @machine.SerialNumber</p>
+            </div>
+            <div class="machine-variables">
+                <h4>Variables</h4>
+                <label>
+                    <InputCheckbox @bind-Value="machine.Temperature" /> Temperature
+                </label><br />
+                <label>
+                    <InputCheckbox @bind-Value="machine.BatchId" /> Batch ID
+                </label><br />
+            </div>
         </div>
-        <div class="machine-variables">
-            <h4>Variables</h4>
-            <label><input type="checkbox" /> Temperature</label><br />
-            <label><input type="checkbox" /> Batch ID</label><br />
-        </div>
-    </div>
-</main>
+    }
+</div>
 
 <footer class="footer-container">
     <p>©2025 Beer Clan Industries</p>
 </footer>
+<script src="/_framework/aspnetcore-browser-refresh.js"></script>
+
+@code {
+    private List<Machine> Machines = new()
+{
+new Machine
+{
+Name = "Carlsberg Machine",
+SerialNumber = "MCH-12345",
+IsOnline = true,
+ImageUrl = "#"
+}
+};
+
+    private class Machine
+    {
+        public string Name { get; set; } = "";
+        public string SerialNumber { get; set; } = "";
+        public bool IsOnline { get; set; }
+        public string Status => IsOnline ? "Online" : "Offline";
+        public string ImageUrl { get; set; } = "";
+
+        // Variables
+        public bool Temperature { get; set; }
+        public bool BatchId { get; set; }
+    }
+}
