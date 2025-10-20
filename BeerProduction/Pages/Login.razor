@@ -1,75 +1,35 @@
-@namespace BeerProduction.Pages
-
 @page "/Login"
-@using Microsoft.AspNetCore.Components.Forms
+@using System.Diagnostics
 @using Microsoft.AspNetCore.Components.Web
 @using BeerProduction.Components
 @using BeerProduction.Pages
-@inject NavigationManager Nav
-@inject HttpClient Http
+<div class="login-container"> <!-- Contains login-form -->
+    <form action="/PHP/loginAction.php" method="post">
+        <div class="container"> <!-- Allows for columns -->
+            <div class="column">
+                <label for="uname"><b>Username</b> <!-- Username label -->
+                    <input type="text" placeholder="Enter Username" name="uname" required> <!-- Username input-bar -->
+                </label>
 
-<PageTitle>Login</PageTitle>
+                <label for="psw"><b>Password</b> <!-- Password label -->
+                    <input type="password" placeholder="Enter Password" name="psw" required><!-- Password input-bar -->
+                </label>
+            </div>
+            <div class="column">
+                <div class="login-right-column">
+                    <label>If you experience any problems, contact your nearest leader.</label>
+                    <!-- "Forgot password"-like -->
 
-<main class="body-content login-container">
-    <h2>Login</h2>
-
-    @if (!string.IsNullOrEmpty(Error))
-    {
-        <div style="color:red">@Error</div>
-    }
-
-    <EditForm Model="LoginModel" OnValidSubmit="HandleLogin">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="column">
-            <label>Username
-                <InputText @bind-Value="LoginModel.Username" />
-            </label>
-
-            <label>Password
-                <InputText @bind-Value="LoginModel.Password" type="password" />
-            </label>
+                    <button type="submit">Login</button> <!-- Submits the form -->
+                </div>
+            </div>
         </div>
-
-        <div class="column">
-            <button type="submit">Login</button>
+        <div class="login-footer-container"> <!-- Information box from the distributor -->
+            <p>©2025 Beer Machine industries</p> <!-- Copyright box for the distributor -->
         </div>
+    </form>
+</div>
 
-        <div class="login-footer-container">
-            <p>©2025 Beer Clan Industries</p>
-        </div>
-    </EditForm>
-</main>
-
-@code {
-    private LoginModel LoginModel = new();
-    private string? Error;
-
-    private class LoginModel
-    {
-        public string Username { get; set; } = "";
-        public string Password { get; set; } = "";
-    }
-
-    private async Task HandleLogin()
-    {
-        try
-        {
-            // Example: call your API endpoint
-            var response = await Http.PostAsJsonAsync("/api/login", LoginModel);
-            if (response.IsSuccessStatusCode)
-            {
-                Nav.NavigateTo("/Manager");
-            }
-            else
-            {
-                Error = "Invalid username or password.";
-            }
-        }
-        catch (Exception ex)
-        {
-            Error = "Login failed: " + ex.Message;
-        }
-    }
-}
+<div class="footer-container"> <!-- Information box from the distributor -->
+    <p>©2025 Beer Clan Industries</p> <!-- Copyright box for the distributor -->
+</div>
