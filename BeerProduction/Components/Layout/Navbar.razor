@@ -1,17 +1,24 @@
 @page "/Navbar"
-
-<link rel="Stylesheet" href="css/loginStyle.css"/>
-         <div class="header-container">
-             <div>
-                 <header >
-                     <div class="header-logo">  @* Adjusted depending on the logo *@
-                         <img src="assets/logo.png" class="w-1" alt="logo"> @* Insert customer logo *@
-                     </div>
-                 </header>
-             </div>
-             <div class="header-menu-container">
-                 <button class="header-button">
-                     <a href="login.html">Login</a> @* Returns to the login-page *@
-                 </button>
-             </div>
-         </div>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/manageStyle.css">
+<link rel="stylesheet" href="/css/headerStyle.css">
+<link rel="stylesheet" href="/css/bodyStyle.css">
+<header class="header-bar">
+    <a href="/" aria-label="Back to Manager">
+        <img class="logo" src="/assets/logo.png" alt="BeerProduction logo">
+    </a>
+    <div class="header-menu-bar"> <!-- Encapsulates all menu items -->
+        <ul>
+            <li class="dropdown"><a href="#">Workers</a>
+                <div class="dropdown-menu" role="menu">
+                    <ul>
+                        <li><a class="menuitem" href="/html/workers.html">Employees</a></li>
+                        <li><a class="menuitem" href="#">Operator</a></li>
+                        <li><a class="menuitem" href="#">Analyzer</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+</header>

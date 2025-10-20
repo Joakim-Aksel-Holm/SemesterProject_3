@@ -1,0 +1,52 @@
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Mvc.RazorPages
+
+@page "/Workers"
+
+<PageTitle>Workers</PageTitle>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/manageStyle.css">
+<link rel="stylesheet" href="/css/headerStyle.css">
+<link rel="stylesheet" href="/css/bodyStyle.css">
+
+<h2>Employees</h2>
+
+<div id="error" style="color:red;margin:.5rem 0;"></div>
+
+<table class="table" id="emp-table" style="width:100%;border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ccc;">ID</th>
+            <th style="text-align:left;border-bottom:1px solid #ccc;">Name</th>
+            <th style="text-align:left;border-bottom:1px solid #ccc;">Role</th>
+            <th style="text-align:left;border-bottom:1px solid #ccc;">Hired</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+<script>
+    async function loadEmployees() {
+        const err = document.getElementById('error');
+        err.textContent = '';
+        try {
+            const res = await fetch('/api/employee');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+
+            const tbody = document.querySelector('#emp-table tbody');
+            tbody.innerHTML = '';
+            for (const e of data) {
+                const tr = document.createElement('tr');
+                tr.innerHTML =
+                    `<td>${e.id}</td><td>${e.name}</td><td>${e.role}</td><td>${e.hiredOn ?? ''}</td>`;
+                tbody.appendChild(tr);
+            }
+        } catch (ex) {
+            console.error(ex);
+            err.textContent = 'Failed to load employees: ' + ex.message;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', loadEmployees);
+</script>
