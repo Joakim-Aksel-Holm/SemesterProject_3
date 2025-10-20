@@ -1,0 +1,32 @@
+@namespace BeerProduction.Pages
+
+@page "/Manager"
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+<PageTitle>Manager Page</PageTitle>
+
+<header class="header-bar">
+    <NavLink href="/Manager"><img class="logo" src="/assets/logo.png" alt="BeerProduction logo" /></NavLink>
+    <!-- Navigation menu -->
+</header>
+
+<main class="body-content">
+    <h2>Production Line</h2>
+    <div class="machine-card">
+        <img src="#" alt="Machine image" class="machine-image" />
+        <div class="machine-info">
+            <h3>Carlsberg Machine</h3>
+            <p>Status: <span class="status online">Online</span></p>
+            <p>Serial Number: MCH-12345</p>
+        </div>
+        <div class="machine-variables">
+            <h4>Variables</h4>
+            <label><input type="checkbox" /> Temperature</label><br />
+            <label><input type="checkbox" /> Batch ID</label><br />
+        </div>
+    </div>
+</main>
+
+<footer class="footer-container">
+    <p>©2025 Beer Clan Industries</p>
+</footer>

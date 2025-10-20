@@ -1,0 +1,24 @@
+@namespace BeerProduction.Pages
+@page "/Workers"
+@using Microsoft.AspNetCore.Components.Web
+<PageTitle>Workers</PageTitle>
+
+
+<main class="body-content">
+    <h2>Employees</h2>
+
+    <div id="error" style="color:red;margin:.5rem 0;"></div>
+
+    <table class="table" id="emp-table" style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th style="text-align:left;border-bottom:1px solid #ccc;">ID</th>
+                <th style="text-align:left;border-bottom:1px solid #ccc;">Name</th>
+                <th style="text-align:left;border-bottom:1px solid #ccc;">Role</th>
+                <th style="text-align:left;border-bottom:1px solid #ccc;">Hired</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</main>
+

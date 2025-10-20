@@ -1,0 +1,73 @@
+@namespace BeerProduction.Pages
+
+@page "/Login"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@inject NavigationManager Nav
+@inject HttpClient Http
+
+<PageTitle>Login</PageTitle>
+
+<main class="body-content login-container">
+    <h2>Login</h2>
+
+    @if (!string.IsNullOrEmpty(Error))
+    {
+        <div style="color:red">@Error</div>
+    }
+
+    <EditForm Model="LoginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="column">
+            <label>Username
+                <InputText @bind-Value="LoginModel.Username" />
+            </label>
+
+            <label>Password
+                <InputText @bind-Value="LoginModel.Password" type="password" />
+            </label>
+        </div>
+
+        <div class="column">
+            <button type="submit">Login</button>
+        </div>
+
+        <div class="login-footer-container">
+            <p>©2025 Beer Clan Industries</p>
+        </div>
+    </EditForm>
+</main>
+
+@code {
+    private LoginModel LoginModel = new();
+    private string? Error;
+
+    private class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            // Example: call your API endpoint
+            var response = await Http.PostAsJsonAsync("/api/login", LoginModel);
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/Manager");
+            }
+            else
+            {
+                Error = "Invalid username or password.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = "Login failed: " + ex.Message;
+        }
+    }
+}
