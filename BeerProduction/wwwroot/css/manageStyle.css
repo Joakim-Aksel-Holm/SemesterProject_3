@@ -60,3 +60,8 @@
 }
 
 .machine-variables h4 {margin-top: 0; font-size: 14px;}
+
+.w-error {
+    color:red;
+    margin:.5rem 0;
+}
