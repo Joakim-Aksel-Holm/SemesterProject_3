@@ -30,3 +30,8 @@
     font-family: "Times New Roman", serif;
     justify-content: right;
 }
+
+table tr th {
+    text-align:left;
+    border-bottom:1px solid #ccc;
+}

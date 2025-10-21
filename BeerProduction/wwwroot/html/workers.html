@@ -15,10 +15,9 @@
     </a>
     <div class="header-menu-bar"> <!-- Encapsulates all menu items -->
         <ul>
-            <li class="dropdown"><a href="#">Workers</a>
+            <li class="dropdown"><a href="/html/workers.html">Employees</a>
                 <div class="dropdown-menu" role="menu">
                     <ul>
-                        <li><a class="menuitem" href="/html/workers.html">Employees</a></li>
                         <li><a class="menuitem" href="#">Operator</a></li>
                         <li><a class="menuitem" href="#">Analyzer</a></li>
                     </ul>
@@ -32,20 +31,23 @@
 <main class="body-content">
     <h2>Employees</h2>
 
-    <div id="error" style="color:red;margin:.5rem 0;"></div>
+    <div class="w-error" id="error"></div>
 
     <table class="table" id="emp-table" style="width:100%;border-collapse:collapse;">
         <thead>
         <tr>
-            <th style="text-align:left;border-bottom:1px solid #ccc;">ID</th>
-            <th style="text-align:left;border-bottom:1px solid #ccc;">Name</th>
-            <th style="text-align:left;border-bottom:1px solid #ccc;">Role</th>
-            <th style="text-align:left;border-bottom:1px solid #ccc;">Hired</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Hired</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
 </main>
+
+<div class="footer-container"> <!-- Information box from the distributor --> <p>©2025 Beer Clan Industries</p>
+    <!-- Copyright box for the distributor --> </div>
 
 <script>
     async function loadEmployees() {
