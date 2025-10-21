@@ -1,0 +1,35 @@
+﻿# --- Source control ---
+.git/
+.gitignore
+
+# --- Build outputs ---
+**/bin/
+**/obj/
+**/out/
+**/dist/
+**/coverage/
+
+# --- IDEs ---
+**/.vs/
+**/.idea/
+**/.vscode/
+**/*.user
+**/*.suo
+**/*.swp
+
+# --- Node (if present) ---
+**/node_modules/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+
+# --- Env / local secrets (we pass conn strings via env at runtime) ---
+.env
+.env.*
+**/appsettings.*.Local.json
+**/secrets.json
+
+# --- Editor/compose backups ---
+Dockerfile.*~
+docker-compose.*.override.yml

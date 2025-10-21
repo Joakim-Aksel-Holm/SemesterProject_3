@@ -1,0 +1,7 @@
+﻿BeerProduction/appsettings.Development.Local.json
+appsettings.*.Local.json
+**/bin/
+**/obj/
+.idea/
+.vscode/
+.env

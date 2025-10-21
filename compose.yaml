@@ -1,0 +1,17 @@
+﻿services:
+  beerproduction:
+    build:
+      context: .
+      dockerfile: BeerProduction/Dockerfile
+    container_name: beerproduction
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+    ports:
+      - "7053:8080"             # open http://localhost:7053
+    volumes:
+      # mount each dev's local config (git-ignored) into the container content root
+      - ./BeerProduction/appsettings.Development.Local.json:/app/appsettings.Development.Local.json:ro
+      # (optional) live-override static files if you want to tweak CSS/HTML without rebuilds
+      # - ./BeerProduction/wwwroot:/app/wwwroot:ro
+    restart: unless-stopped
