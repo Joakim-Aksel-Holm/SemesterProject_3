@@ -18,7 +18,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<DatabaseConnection>();
-
+builder.Services.AddSingleton<BatchQueue>();
 
 var app = builder.Build();
 
