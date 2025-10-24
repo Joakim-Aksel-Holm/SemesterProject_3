@@ -21,44 +21,75 @@ main {
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
+.top-row ::deep a, .top-row ::deep .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+}
 
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
+.top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+    text-decoration: underline;
+}
 
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .top-row ul {
-        list-style: none;
-        display: flex;
-        align-items: center;
-    }
-    
-    .top-row ul li {
-        position: relative;
-        display: flex;
-        font-size: 20px;
-    }
-    
-    .top-row ul li a {
-        text-decoration: none;
-        display: block;
-        color: black;
-        height: 100%;
-        padding: 26px 30px;
-    }
-    
-    .top-row ul li a:active {
-        color: gray;
-    }
+.top-row ::deep a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-row ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.top-row ul li {
+    position: relative;
+    display: flex;
+    font-size: 20px;
+}
+
+.top-row ul li a {
+    text-decoration: none;
+    display: block;
+    color: black;
+    height: 100%;
+    padding: 26px 30px;
+}
+
+.top-row ul li a:active {
+    color: gray;
+}
+
+.c-dropdown-menu {
+    display: none;
+    position: absolute;
+    overflow: hidden;
+    align-items: center;
+    top: 100%;
+    background-color: var(--secondary-color);
+    z-index: 100;
+}
+
+.c-dropdown:hover > .c-dropdown-menu,
+.c-dropdown:active > .c-dropdown-menu {
+    display: block;
+    visibility: visible;
+}
+
+.c-dropdown-menu ul {
+    display: block;
+
+}
+.c-dropdown-menu ul li a {
+    padding: 15px 43px;
+    border-bottom: 0;
+    font-size: 18px;
+}
+
+.c-dropdown-menu ul li a:hover {
+    border-bottom: 0;
+    text-decoration: underline;
+}
 
 @media (max-width: 640.98px) {
     .top-row {
@@ -114,9 +145,9 @@ main {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

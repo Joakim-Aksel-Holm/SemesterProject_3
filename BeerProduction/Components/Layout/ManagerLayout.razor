@@ -1,0 +1,33 @@
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4; link">
+            <ul>
+                <li class="c-dropdown"><a href="/html/workers.html">Employees</a>
+                    <div class="c-dropdown-menu" role="menu">
+                        <ul>
+                            <li><a class="menuitem" href="#">Operator</a></li>
+                            <li><a class="menuitem" href="#">Analyzer</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
