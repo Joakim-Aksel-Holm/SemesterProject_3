@@ -1,0 +1,18 @@
+@page "/Machines"
+@using BeerProduction.Components.Layout
+@layout ManagerLayout
+
+<PageTitle>Home</PageTitle>
+<link rel="stylesheet" href="/css/manageStyle.css">
+
+<div class="machine-card"> <!-- Structure for a single machine --> <img src="#" alt="Machine image"
+                                                                        class="machine-image">
+    <div class="machine-info"><h3 class="machine-name">Carlsberg Machine</h3>
+        <p><strong>Status:</strong> <span class="status online">Online</span></p>
+        <p><strong>Serial Number:</strong> MCH-12345</p></div>
+    <div class="machine-variables"><h4>Variables</h4> <label><input type="checkbox" value="temperature"> Temperature</label><br>
+        <label><input type="checkbox" value="batch"> Batch ID</label><br> <label><input type="checkbox" value="ppm">
+            Products/minute</label><br> <label><input type="checkbox" value="defects"> Defect Products</label><br>
+        <label><input type="checkbox" value="acceptable"> Acceptable Products</label></div>
+</div>
+<a href="#" class="machine-card-add">Add machine</a> <!-- Add machine for scalability -->
