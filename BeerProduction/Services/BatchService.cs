@@ -3,21 +3,30 @@ using System.Linq;
 
 public class BatchService
 {
-    private readonly List<Batch> _batches = new();
+    private BatchQueue _batches;
+
+    public BatchService()
+    {
+        _batches = BatchQueue.Instance;
+    }
 
     public void AddBatch(Batch batch)
     {
-        _batches.Add(batch);
+        _batches.EnqueueBatch(batch);
     }
 
     public void RemoveBatch(int id)
     {
-        var batch = _batches.FirstOrDefault(b => b.Id == id);
-        _batches.Remove(batch);
+        _batches.RemoveBatch(id);
     }
 
-    public List<Batch> GetBatches()
+    public Queue<Batch> GetBatches()
     {
-        return _batches;
+        return _batches.GetAllBatches();
+    }
+
+    public int GetBatchCount()
+    {
+        return _batches.GetAllBatches().Count;
     }
 }
