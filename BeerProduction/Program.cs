@@ -99,13 +99,13 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
 });
 
 // GET /api/employee  -> returns all rows from public.employee
-app.MapGet("/api/employee", (BeerProduction.Services.DatabaseConnection db) =>
+app.MapGet("/api/employee", async (DatabaseConnection db, CancellationToken ct) =>
 {
-    using var conn = db.Open();
-    using var cmd = new Npgsql.NpgsqlCommand(
+    await using var conn = await db.OpenAsync(ct);
+    await using var cmd = new Npgsql.NpgsqlCommand(
         "SELECT id, name, role, hired_on FROM public.employee ORDER BY id;", conn);
 
-    using var rdr = cmd.ExecuteReader();
+    await using var rdr = cmd.ExecuteReader();
     var list = new List<object>();
     while (rdr.Read())
     {
@@ -119,6 +119,15 @@ app.MapGet("/api/employee", (BeerProduction.Services.DatabaseConnection db) =>
     }
 
     return Results.Json(list);
+});
+
+app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
+{
+    await using var conn = await db.OpenAsync(ct);
+    await using var cmd = conn.CreateCommand();
+    cmd.CommandText = "SELECT 1";
+    var result = await cmd.ExecuteScalarAsync(ct);
+    return Results.Ok(new { ok = (int)result == 1 });
 });
 
 

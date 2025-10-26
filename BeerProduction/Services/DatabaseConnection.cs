@@ -1,4 +1,5 @@
 ﻿// BeerProduction/Services/DatabaseConnection.cs
+
 using Npgsql;
 
 namespace BeerProduction.Services;
@@ -16,11 +17,14 @@ public class DatabaseConnection
               ?? throw new InvalidOperationException("Missing ConnectionStrings:Default");
     }
 
-    /// Get a NEW open connection (caller must dispose).
-    public NpgsqlConnection Open()
+    /// <summary>Get a new logical connection (pooled under the hood). Caller must dispose.</summary>>
+    public async Task<NpgsqlConnection> OpenAsync(CancellationToken cancellationToken = default)
     {
         var conn = new NpgsqlConnection(_cs);
-        conn.Open();                 // Npgsql uses pooling under the hood
+        await conn.OpenAsync(cancellationToken);
         return conn;
     }
+
+    // * Npgsql uses pooling under the hood already by default through the Npgsql package as long as callers dispose the returned connection
+    // * So we don't have to make our own pooling process.
 }
