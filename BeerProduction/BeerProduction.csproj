@@ -14,4 +14,8 @@
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.5.377.21" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\html\" />
+  </ItemGroup>
+
 </Project>

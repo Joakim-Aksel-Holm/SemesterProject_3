@@ -17,7 +17,7 @@ public class DatabaseConnection
               ?? throw new InvalidOperationException("Missing ConnectionStrings:Default");
     }
 
-    /// <summary>Get a new logical connection (pooled under the hood). Caller must dispose.</summary>>
+    /// <summary>Get a new logical connection (pooled under the hood). Caller must dispose.</summary>
     public async Task<NpgsqlConnection> OpenAsync(CancellationToken cancellationToken = default)
     {
         var conn = new NpgsqlConnection(_cs);

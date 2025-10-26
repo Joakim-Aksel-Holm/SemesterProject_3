@@ -98,28 +98,7 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
     return Results.Text(log.ToString(), "text/plain; charset=utf-8", Encoding.UTF8);
 });
 
-// GET /api/employee  -> returns all rows from public.employee
-app.MapGet("/api/employee", async (DatabaseConnection db, CancellationToken ct) =>
-{
-    await using var conn = await db.OpenAsync(ct);
-    await using var cmd = new Npgsql.NpgsqlCommand(
-        "SELECT id, name, role, hired_on FROM public.employee ORDER BY id;", conn);
 
-    await using var rdr = cmd.ExecuteReader();
-    var list = new List<object>();
-    while (rdr.Read())
-    {
-        list.Add(new
-        {
-            id = rdr.GetInt32(0),
-            name = rdr.GetString(1),
-            role = rdr.GetString(2),
-            hiredOn = rdr.GetDateTime(3).ToString("yyyy-MM-dd")
-        });
-    }
-
-    return Results.Json(list);
-});
 
 app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
 {

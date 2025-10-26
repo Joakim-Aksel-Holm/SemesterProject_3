@@ -1,19 +1,77 @@
-@page "/Workers"
+@page "/workers"
 @using BeerProduction.Components.Layout
-@layout ManagerLayout
+@using BeerProduction.Components.Model
+@using BeerProduction.Services
+@layout WorkerLayout
+@inject DatabaseConnection Db
 
 <h2>Employees</h2>
 
-<div class="w-error" id="error"></div>
+@if (_loading)
+{
+    <p>Loading…</p>
+}
+else if (!string.IsNullOrEmpty(_error))
+{
+    <p style="color:#b00">@_error</p>
+}
+else if (_employees.Count == 0)
+{
+    <p>No employees found.</p>
+}
+else
+{
+    <table class="table" style="width:100%; border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th>ID</th><th>Name</th><th>Role</th><th>Hired</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var e in _employees)
+        {
+            <tr>
+                <td>@e.Id</td>
+                <td>@e.Name</td>
+                <td>@e.Role</td>
+                <td>@e.HiredOn.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
-<table class="table" id="emp-table" style="width:100%;border-collapse:collapse;">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Role</th>
-        <th>Hired</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+@code {
+    private bool _loading = true;
+    private string? _error;
+    private readonly List<Employees> _employees = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await using var conn = await Db.OpenAsync();   // pooled under the hood
+            await using var cmd  = conn.CreateCommand();
+            cmd.CommandText = "SELECT id, name, role, hired_on FROM public.employee ORDER BY id;";
+            await using var rdr = await cmd.ExecuteReaderAsync();
+
+            while (await rdr.ReadAsync())
+            {
+                _employees.Add(new Employees(
+                    rdr.GetInt32(0),
+                    rdr.GetString(1),
+                    rdr.GetString(2),
+                    rdr.GetDateTime(3)
+                ));
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = "Failed to load employees: " + ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}
