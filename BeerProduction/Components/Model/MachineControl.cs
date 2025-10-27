@@ -1,4 +1,5 @@
 using System.Reflection.PortableExecutable;
+using Opc.Ua;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
@@ -16,13 +17,15 @@ public class MachineControl
 
     public int MachineID { get; }
 
+    public OpcClient Client { get; } 
+
 
     //Constructor 
     public MachineControl(int machineId, string machineURL)
     {
         MachineID = machineId;
         MachineURL = machineURL;
-        var client = new OpcClient(machineURL);
+        Client = new OpcClient(machineURL);
     }
      
  }
