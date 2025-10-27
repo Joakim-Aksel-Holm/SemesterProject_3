@@ -16,13 +16,16 @@ public class MachineControl
 
     public int MachineID { get; }
 
+    public OpcClient Client { get; set; }
+
 
     //Constructor 
     public MachineControl(int machineId, string machineURL)
     {
         MachineID = machineId;
         MachineURL = machineURL;
-        var client = new OpcClient(machineURL);
+        Client = new OpcClient(machineURL);
+        Client.Connect();
     }
-     
- }
+
+}
