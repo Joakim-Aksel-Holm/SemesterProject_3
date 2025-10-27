@@ -1,7 +1,39 @@
-﻿BeerProduction/appsettings.Development.Local.json
-appsettings.*.Local.json
+﻿# ------------------------------
+# IDEs
+# ------------------------------
+.vscode/
+*.code-workspace
+.idea/
+*.iml
+*.ipr
+*.iws
+*.DotSettings.user
+
+# ------------------------------
+# Build outputs
+# ------------------------------
 **/bin/
 **/obj/
-.idea/
-.vscode/
-.env
+**/out/
+**/build/
+
+# ------------------------------
+# OS junk
+# ------------------------------
+.DS_Store
+Thumbs.db
+
+# ------------------------------
+# Logs
+# ------------------------------
+*.log
+
+# ------------------------------
+# Local env & secrets
+# ------------------------------
+.env*              # ignore ALL .env files...
+!.env.example      # ...but allow a template in repo
+
+# Per-dev appsettings (never commit secrets)
+**/appsettings.*.Local.json
+**/appsettings.Local.json
