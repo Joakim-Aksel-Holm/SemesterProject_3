@@ -21,7 +21,22 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 
+
+
+
 var app = builder.Build();
+try
+{
+    MachineControl machine1 = new MachineControl(1, "opc.tcp://127.0.0.1:4840");
+    MachineControlService machineService1 = new MachineControlService(machine1);
+    int status = machineService1.GetStatus();
+    Console.WriteLine("Machine 1 status: " + status);
+    machineService1.StartMachine();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+}
 
 // Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
 //app.MapGet("/", ()=> Results.Redirect("/html/manager.html"));
