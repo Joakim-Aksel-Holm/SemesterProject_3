@@ -5,6 +5,7 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
+//hello
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
@@ -97,7 +98,6 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
 
     return Results.Text(log.ToString(), "text/plain; charset=utf-8", Encoding.UTF8);
 });
-
 
 
 app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
