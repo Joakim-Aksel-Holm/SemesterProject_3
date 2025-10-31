@@ -14,7 +14,7 @@ public abstract class User
         Email = email;
         Password = password;
     }
-
+    
     public void Login(string password, string userName)
     {
         
@@ -24,7 +24,5 @@ public abstract class User
     {
         
     }
-    
-
 }
 

@@ -1,30 +1,101 @@
-@page "/Login"
+@page "/login"
+@using BeerProduction.Components.Layout
+@using BeerProduction.Components.Model
+@using BeerProduction.Services
+@inject DatabaseConnection Db
+@inject NavigationManager NavigationManager
+
 
 <PageTitle>Login</PageTitle>
 <link rel="Stylesheet" href="css/loginStyle.css"/>
-        <div class="login-container"> <!-- Contains login-form -->
-            <form action="" method="post">
-                <div class="container"> <!-- Allows for columns -->
-                    <div class="column">
-                        <label for="uname"><b>Username</b> <!-- Username label -->
-                            <input type="text" placeholder="Enter Username" id="uname" required> <!-- Username input-bar -->
-                        </label>
 
-                        <label for="psw"><b>Password</b> <!-- Password label -->
-                            <input type="password" placeholder="Enter Password" id="psw" required><!-- Password input-bar -->
-                        </label>
-                    </div>
-                    <div class="column">
-                        <div class="login-right-column">
-                            <label>If you experience any problems, contact your nearest leader.</label> <!-- "Forgot password"-like -->
+<div class="login-container"> <!-- Contains login-form -->
+    <EditForm Model="@LoginModel" OnSubmit="LoginAsync" FormName="LoginForm">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        
+        <div class="container"> <!-- Allows for columns -->
+            <div class="column">
+                <label for="uname"><b>Username</b></label> <!-- Username label -->
+                    <InputText id="uname" @bind-Value="LoginModel.Username" placeholder="Enter Username" required class="input"/> <!-- Username input-bar -->
 
-                            <button type="submit">Login</button> <!-- Submits the form -->
-                        </div>
-                    </div>
-                </div>
-                 <div class="footer-container">  <!-- Information box from the distributor -->
-                     <p>©2025 Beer Machine industries</p><!-- Copyright box for the distributor -->
-                </div>
-            </form>
+                <label for="psw"><b>Password</b></label> <!-- Password label -->
+                    <InputText id="psw" @bind-Value="LoginModel.Password" placeholder="Enter Password" type="password" required class="input"/><!-- Password input-bar -->
+            </div>
             
+            <div class="column">
+                <div class="login-right-column">
+                    <label>If you experience any problems, contact your nearest leader.</label> <!-- "Forgot password"-like -->
+                    <p style="color:red">
+                        DEBUG → Username: @LoginModel.Username | Password: @LoginModel.Password
+                    </p>
+
+                    <button type="submit" disabled="@_loading">Login</button> <!-- Submits the form -->
+                </div>
+            </div>
         </div>
+        @if (_error is not null)
+        {
+            <div class="error_message">@_error</div>
+        }
+    </EditForm>
+</div>
+
+@code {
+    public Model.Login LoginModel { get; set; } = new();
+    
+    private bool _loading;
+    private string? _error;
+    
+    protected async Task LoginAsync()
+    {
+        _loading = true;
+        _error = null;
+        
+        try
+        {
+            await using var conn = await Db.OpenAsync();   // pooled under the hood
+            await using var cmd  = conn.CreateCommand();
+
+            var user = LoginModel.Username.Trim();
+            var pass = LoginModel.Password.Trim();
+            
+            cmd.CommandText = @"SELECT u.username, r.role_name 
+                                FROM public.user_table u 
+                                JOIN public.roles r ON u.role_id = r.role_id 
+                                WHERE TRIM(u.username) = @user AND TRIM(u.password) = @pass;";
+
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@pass", pass);
+            
+            Console.WriteLine($"DEBUG: Username='{user}', Password='{pass}'");
+            
+            await using var rdr = await cmd.ExecuteReaderAsync();
+
+            if (await rdr.ReadAsync())
+            {
+                var username = rdr.GetString(rdr.GetOrdinal("username"));
+                var role = rdr.GetString(rdr.GetOrdinal("role_name"));
+                var result = await cmd.ExecuteScalarAsync();
+
+                Console.WriteLine($"Connection test result: {result}");
+                
+                Console.WriteLine($"Successfully logged in as {username} ({role})");
+                
+                await InvokeAsync(() => NavigationManager.NavigateTo("/Machines", forceLoad: true));
+            }
+            else
+            {
+                _error = "Incorrect username or password.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = "Failed to login: " + ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}
