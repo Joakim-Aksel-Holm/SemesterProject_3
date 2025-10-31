@@ -1,25 +1,31 @@
 @inherits LayoutComponentBase
-
+<link rel="stylesheet" href="css/Navbar.css"/>
+<link rel="stylesheet" href="css/manageStyle.css"/>
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
+        <NavMenu/>
     </div>
 
     <main>
         <div class="top-row px-4; link">
             <ul>
-                <li class="c-dropdown"><a href="/html/workers.html">Employees</a>
+                <li class="c-dropdown">
+                    <NavLink class="nav-link" href="/Workers">
+                        Employees
+                    </NavLink>
                     <div class="c-dropdown-menu" role="menu">
-                        <ul>
-                            <li><a class="menuitem" href="#">Operator</a></li>
-                            <li><a class="menuitem" href="#">Analyzer</a></li>
-                        </ul>
+
+                        <NavLink class="nav-link" href="/Workers">
+                            Analyzer
+                        </NavLink>
+                        <NavLink class="nav-link" href="/Workers">
+                            Operators
+                        </NavLink>
                     </div>
                 </li>
-                <li><a href="#">Logout</a></li>
+                <NavLink class="nav-link" href="#">Logout</NavLink>
             </ul>
         </div>
-
         <article class="content px-4">
             @Body
         </article>

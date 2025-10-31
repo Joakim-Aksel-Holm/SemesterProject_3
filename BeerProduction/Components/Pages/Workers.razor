@@ -50,8 +50,8 @@ else
     {
         try
         {
-            await using var conn = await Db.OpenAsync();   // pooled under the hood
-            await using var cmd  = conn.CreateCommand();
+            await using var conn = await Db.OpenAsync(); // pooled under the hood
+            await using var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT id, name, role, hired_on FROM public.employee ORDER BY id;";
             await using var rdr = await cmd.ExecuteReaderAsync();
 
@@ -74,4 +74,5 @@ else
             _loading = false;
         }
     }
+
 }
