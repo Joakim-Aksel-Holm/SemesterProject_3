@@ -6,11 +6,6 @@ public class MachineControlService
 
     public MachineControl MachineControl { get; set; }
 
-
-
-
-
-
     // contructor 
     public MachineControlService(MachineControl machineControl)
     {

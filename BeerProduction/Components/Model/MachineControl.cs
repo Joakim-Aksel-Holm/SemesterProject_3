@@ -17,7 +17,7 @@ public class MachineControl
 
     public int MachineID { get; }
 
-    public OpcClient Client { get; } 
+    public OpcClient Client { get; set; }
 
 
     //Constructor 
@@ -26,6 +26,7 @@ public class MachineControl
         MachineID = machineId;
         MachineURL = machineURL;
         Client = new OpcClient(machineURL);
+        Client.Connect();
     }
-     
- }
+
+}
