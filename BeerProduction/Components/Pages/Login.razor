@@ -1,30 +1,40 @@
 @page "/Login"
-
+@using BeerProduction.Components.Layout
+@layout MainLayout
 <PageTitle>Login</PageTitle>
+
 <link rel="Stylesheet" href="css/loginStyle.css"/>
-        <div class="login-container"> <!-- Contains login-form -->
-            <form action="" method="post">
-                <div class="container"> <!-- Allows for columns -->
-                    <div class="column">
-                        <label for="uname"><b>Username</b> <!-- Username label -->
-                            <input type="text" placeholder="Enter Username" id="uname" required> <!-- Username input-bar -->
-                        </label>
 
-                        <label for="psw"><b>Password</b> <!-- Password label -->
-                            <input type="password" placeholder="Enter Password" id="psw" required><!-- Password input-bar -->
-                        </label>
-                    </div>
-                    <div class="column">
-                        <div class="login-right-column">
-                            <label>If you experience any problems, contact your nearest leader.</label> <!-- "Forgot password"-like -->
+<div class="login-container">
 
-                            <button type="submit">Login</button> <!-- Submits the form -->
-                        </div>
-                    </div>
+    <!-- Contains login-form -->
+    <form action="" method="post">
+        <div class="container">
+            <!-- Allows for columns -->
+            <div class="column">
+                <label for="uname">
+                    <b>Username</b> <!-- Username label -->
+                    <input type="text" placeholder="Enter Username" id="uname" required> <!-- Username input-bar -->
+                </label>
+
+                <label for="psw">
+                    <b>Password</b> <!-- Password label -->
+                    <input type="password" placeholder="Enter Password" id="psw" required><!-- Password input-bar -->
+                </label>
+            </div>
+            <div class="column">
+                <div class="login-right-column">
+                    <label>If you experience any problems, contact your nearest leader.</label> <!-- "Forgot password"-like -->
+
+                    <button type="submit">Login</button> <!-- Submits the form -->
                 </div>
-                 <div class="footer-container">  <!-- Information box from the distributor -->
-                     <p>©2025 Beer Machine industries</p><!-- Copyright box for the distributor -->
-                </div>
-            </form>
-            
+            </div>
         </div>
+        <div class="footer-container">
+            <!-- Information box from the distributor -->
+            <p>©2025 Beer Machine industries</p><!-- Copyright box for the distributor -->
+        </div>
+    </form>
+
+</div>
+

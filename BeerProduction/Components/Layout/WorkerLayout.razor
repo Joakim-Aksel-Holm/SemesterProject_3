@@ -1,21 +1,17 @@
-@inherits LayoutComponentBase
+@* @inherits LayoutComponentBase
 
-<div class="navbar">
-    <Navbar/>
-</div>
+
 <div class="page">
 
     <div class="sidebar">
-        <NavMenu />
+        <NavMenu/>
     </div>
 
     <main>
-        <div class="top-row px-4; link">
-            <ul>
-                <li><a href="#">Logout</a></li>
-            </ul>
-        </div>
 
+        <div>
+            <Navbar/>
+        </div>
         <article class="content px-4">
             @Body
         </article>
@@ -26,4 +22,4 @@
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
-</div>
+</div> *@
