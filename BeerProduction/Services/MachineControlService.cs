@@ -63,10 +63,6 @@ public class MachineControlService
         SetChangeRequestTrue();
     }
 
-
-
-
-
     public void StartMachine() //prove of concept refactor
     {
         int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
@@ -79,7 +75,7 @@ public class MachineControlService
         else if (statusVal == 2)
         {
             ResetCommand();
-            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            //Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
             StartCommand();
         }
         else if (statusVal == 3)
@@ -93,7 +89,7 @@ public class MachineControlService
         else if (statusVal == 5)
         {
             ResetCommand();
-            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            //Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
             StartCommand();
         }
         else if (statusVal == 6)
@@ -103,9 +99,9 @@ public class MachineControlService
         else if (statusVal == 9)
         {
             ClearCommand();
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
             ResetCommand();
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
             StartCommand();
         }
         else if (statusVal == 11)
@@ -115,13 +111,12 @@ public class MachineControlService
         else if (statusVal == 17)
         {
             ResetCommand();
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
             StartCommand();
-
         }
         else
         {
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
             StartMachine();
         }
     }

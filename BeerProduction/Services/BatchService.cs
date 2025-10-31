@@ -10,8 +10,6 @@ public class BatchService
         _batches = BatchQueue.Instance;
     }
 
-
-
     public void AddBatch(Batch batch)
     {
         _batches.EnqueueBatch(batch);
