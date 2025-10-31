@@ -7,6 +7,7 @@ using Opc.UaFx.Client;
 public class MachineControlService
 {
 
+
     public MachineControl MachineControl { get; set; }
 
     // contructor 
@@ -19,7 +20,7 @@ public class MachineControlService
     // methods
     public int GetStatus()
     {
-        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>(); // Reading the current status.
         return status;
     }
     
@@ -69,8 +70,9 @@ public class MachineControlService
 
         else if ((statusVal == 2))
         {
-            // send komando, som resetter maskinen
-            // send komando, som starter maskinen.
+            ResetCommand();
+            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            StartCommand();
         }
         else if (statusVal == 3)
         {
@@ -78,8 +80,9 @@ public class MachineControlService
         }
         else if (statusVal == 5)
         {
-            return;
-            // check de steps der skal til for at starte igen.
+            ResetCommand();
+            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            StartCommand();
         }
         else if (statusVal == 6)
         {
@@ -87,15 +90,22 @@ public class MachineControlService
         }
         else if (statusVal == 9)
         {
-            // find de forskellige steps
+            ClearCommand();
+            Thread.Sleep(1000);
+            ResetCommand();
+            Thread.Sleep(1000);
+            StartMachine();
         }
         else if (statusVal == 11)
         {
-            // find de forskellige steps
+            return;
         }
         else if (statusVal == 17)
         {
-            // find the steps
+             ResetCommand();
+             Thread.Sleep(1000);
+             StartMachine();
+
         }
         else 
         {
@@ -108,45 +118,14 @@ public class MachineControlService
     {
         int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
 
-        if (statusVal == 0)
+        if (statusVal == 9)
         {
             return;
-        }
-
-        else if ((statusVal == 2))
-        {
-            // send komando, som resetter maskinen
-            // send komando, som starter maskinen.
-        }
-        else if (statusVal == 3)
-        {
-            return;
-        }
-        else if (statusVal == 5)
-        {
-            return;
-            // check de steps der skal til for at starte igen.
-        }
-        else if (statusVal == 6)
-        {
-            return;
-        }
-        else if (statusVal == 9)
-        {
-            // find de forskellige steps
-        }
-        else if (statusVal == 11)
-        {
-            // find de forskellige steps
-        }
-        else if (statusVal == 17)
-        {
-            // find the steps
         }
         else 
         {
-            Thread.Sleep(2000);
-            StartMachine();
+            StopCommand();
         }
+        
     }
  }
