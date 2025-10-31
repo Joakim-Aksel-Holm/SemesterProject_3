@@ -1,7 +1,8 @@
 using System.Reflection.PortableExecutable;
 using Microsoft.AspNetCore.Mvc;
-using UaFx;
-using UaFx.Client;
+using Opc.Ua;
+using Opc.UaFx;
+using Opc.UaFx.Client;
 
 public class MachineControlService
 {

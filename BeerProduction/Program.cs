@@ -25,6 +25,7 @@ MachineControl machine1 = new MachineControl(1, "opc.tcp://127.0.0.1:4840");
 MachineControlService machineService1 = new MachineControlService(machine1);
 int status = machineService1.GetStatus();
 Console.WriteLine("Machine 1 status: " + status);
+machineService1.StartMachine();
 
 
 
