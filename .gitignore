@@ -98,3 +98,17 @@ Thumbs.db
 *.suo
 *.userosscache
 *.sln.docstates
+BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.dll
+BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.pdb
+BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.Tests.dll
+BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.Tests.pdb
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.AssemblyInfo.cs
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.AssemblyInfoInputs.cache
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.csproj.AssemblyReference.cache
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.csproj.CoreCompileInputs.cache
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.dll
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.genruntimeconfig.cache
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.pdb
+BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.sourcelink.json
+BeerProduction.Tests/obj/Debug/net9.0/ref/BeerProduction.Tests.dll
+BeerProduction.Tests/obj/Debug/net9.0/refint/BeerProduction.Tests.dll
