@@ -18,7 +18,7 @@
 *.rider/
 
 # ------------------------------
-# Build outputs
+# Build outputs and tests
 # ------------------------------
 **/bin/
 **/obj/
@@ -29,6 +29,8 @@
 *.xunit.xml
 Debug/
 Release/
+Beerproduction.Tests/bin
+Beerproduction.Tests/obj
 
 # ------------------------------
 # OS junk
