@@ -1,0 +1,90 @@
+﻿# ------------------------------
+# IDEs
+# ------------------------------
+.vscode/
+*.code-workspace
+.idea/
+*.iml
+*.ipr
+*.iws
+*.DotSettings.user
+*.sln.DotSettings.user
+*.sln.DotSettings
+*.sln.ide
+*.dotCover
+*.resharper
+*.ncrunch*
+*.vs/
+*.rider/
+
+# ------------------------------
+# Build outputs and tests
+# ------------------------------
+**/bin/
+**/obj/
+**/out/
+**/build/
+**/TestResults/
+*.trx
+*.xunit.xml
+Debug/
+Release/
+Beerproduction.Tests/bin
+Beerproduction.Tests/obj
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.log
+*.scc
+
+# ------------------------------
+# OS junk
+# ------------------------------
+.DS_Store
+Thumbs.db
+
+# ------------------------------
+# Logs
+# ------------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+
+# ------------------------------
+# Local env & secrets
+# ------------------------------
+.env*              # ignore ALL .env files
+!.env.example      # allow template in repo
+**/appsettings.*.Local.json
+**/appsettings.Local.json
+
+# ------------------------------
+# User-specific files
+# ------------------------------
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
