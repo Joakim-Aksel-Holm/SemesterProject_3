@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj": {}
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj": {}
   },
   "projects": {
-    "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj": {
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj",
         "projectName": "BeerProduction.Tests",
-        "projectPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj",
-        "packagesPath": "/Users/holm/.nuget/packages/",
-        "outputPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/obj/",
+        "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj",
+        "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/holm/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -26,8 +26,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj": {
-                "projectPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj"
+              "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {
+                "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj"
               }
             }
           }
@@ -42,7 +42,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -81,21 +81,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj": {
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj",
+        "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
         "projectName": "BeerProduction",
-        "projectPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj",
-        "packagesPath": "/Users/holm/.nuget/packages/",
-        "outputPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction/obj/",
+        "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
+        "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\BeerProduction\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/holm/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -119,7 +119,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -161,7 +161,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

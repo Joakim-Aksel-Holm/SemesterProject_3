@@ -26,7 +26,8 @@ public class BatchQueue
     {
         lock (_lock)
         {
-            _batchQueue.Enqueue(batch, (int)priority);
+            _batchQueue.Enqueue(batch, -(int)priority);
+            
         }
     }
 
@@ -78,8 +79,8 @@ public class BatchQueue
 
             // Return list highest-priority first
             return drained
+                .OrderBy(t => t.priority)
                 .Select(t => t.batch)
-                .Reverse()
                 .ToList();
         }
     }
