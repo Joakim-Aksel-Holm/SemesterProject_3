@@ -10,7 +10,12 @@
 *.DotSettings.user
 *.sln.DotSettings.user
 *.sln.DotSettings
-
+*.sln.ide
+*.dotCover
+*.resharper
+*.ncrunch*
+*.vs/
+*.rider/
 
 # ------------------------------
 # Build outputs
@@ -20,6 +25,11 @@
 **/out/
 **/build/
 **/TestResults/
+*.trx
+*.xunit.xml
+Debug/
+Release/
+
 # ------------------------------
 # OS junk
 # ------------------------------
@@ -30,13 +40,22 @@ Thumbs.db
 # Logs
 # ------------------------------
 *.log
+*.tmp
+*.bak
+*.swp
 
 # ------------------------------
 # Local env & secrets
 # ------------------------------
-.env*              # ignore ALL .env files...
-!.env.example      # ...but allow a template in repo
-
-# Per-dev appsettings (never commit secrets)
+.env*              # ignore ALL .env files
+!.env.example      # allow template in repo
 **/appsettings.*.Local.json
 **/appsettings.Local.json
+
+# ------------------------------
+# User-specific files
+# ------------------------------
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
