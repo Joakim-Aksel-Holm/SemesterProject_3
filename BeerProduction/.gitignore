@@ -19,10 +19,7 @@
 **/obj/
 **/out/
 **/build/
-./Beerproduction.Test/bin
-./Beerproduction.Test/obj
-.SemesterProject_3/BeerProduction.Tests/bin
-.SemesterProject_3/BeerProduction.Tests/obj
+**/TestResults/
 # ------------------------------
 # OS junk
 # ------------------------------
