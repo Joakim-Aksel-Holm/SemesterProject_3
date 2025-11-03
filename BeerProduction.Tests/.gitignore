@@ -16,6 +16,11 @@
 *.ncrunch*
 *.vs/
 *.rider/
+*.pidb
+*.vspscc
+*.vssscc
+.builds
+*.scc
 
 # ------------------------------
 # Build outputs and tests
@@ -25,16 +30,16 @@
 **/out/
 **/build/
 **/TestResults/
-*.trx
-*.xunit.xml
 Debug/
 Release/
-Beerproduction.Tests/bin
-Beerproduction.Tests/obj
-# MSTest test Results
+*.trx
+*.xunit.xml
+
+# MSTest test results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# Build artifacts
 *_i.c
 *_p.c
 *.ilk
@@ -51,13 +56,18 @@ Beerproduction.Tests/obj
 *.tlh
 *.tmp
 *.tmp_proj
-*.log
-*.vspscc
-*.vssscc
-.builds
-*.pidb
-*.log
-*.scc
+
+# ------------------------------
+# Binaries / NuGet / dependencies
+# ------------------------------
+*.dll
+*.exe
+*.app
+*.so
+*.dylib
+*.nupkg
+*.zip
+packages/
 
 # ------------------------------
 # OS junk
@@ -66,7 +76,7 @@ Beerproduction.Tests/obj
 Thumbs.db
 
 # ------------------------------
-# Logs
+# Logs and temp files
 # ------------------------------
 *.log
 *.tmp
