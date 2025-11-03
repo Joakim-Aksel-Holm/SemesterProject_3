@@ -1,16 +1,15 @@
 @page "/login"
-@using BeerProduction.Components.Layout
-@using BeerProduction.Components.Model
 @using BeerProduction.Services
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
 
 <PageTitle>Login</PageTitle>
 <link rel="Stylesheet" href="css/loginStyle.css"/>
 
 <div class="login-container"> <!-- Contains login-form -->
-    <EditForm Model="@LoginModel" OnSubmit="LoginAsync" FormName="LoginForm">
+    <EditForm Model="@LoginModel" OnValidSubmit="LoginAsync" FormName="LoginForm">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
         
@@ -42,7 +41,7 @@
 </div>
 
 @code {
-    public Model.Login LoginModel { get; set; } = new();
+    public Model.Login LoginModel { get; } = new();
     
     private bool _loading;
     private string? _error;
