@@ -16,11 +16,6 @@
 *.ncrunch*
 *.vs/
 *.rider/
-*.pidb
-*.vspscc
-*.vssscc
-.builds
-*.scc
 
 # ------------------------------
 # Build outputs and tests
@@ -30,16 +25,16 @@
 **/out/
 **/build/
 **/TestResults/
-Debug/
-Release/
 *.trx
 *.xunit.xml
-
-# MSTest test results
+Debug/
+Release/
+Beerproduction.Tests/bin
+Beerproduction.Tests/obj
+# MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-# Build artifacts
 *_i.c
 *_p.c
 *.ilk
@@ -56,18 +51,16 @@ Release/
 *.tlh
 *.tmp
 *.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.log
+*.scc
+*.AssemblyInfo
 
-# ------------------------------
-# Binaries / NuGet / dependencies
-# ------------------------------
-*.dll
-*.exe
-*.app
-*.so
-*.dylib
-*.nupkg
-*.zip
-packages/
+
 
 # ------------------------------
 # OS junk
@@ -76,7 +69,7 @@ packages/
 Thumbs.db
 
 # ------------------------------
-# Logs and temp files
+# Logs
 # ------------------------------
 *.log
 *.tmp
@@ -98,17 +91,6 @@ Thumbs.db
 *.suo
 *.userosscache
 *.sln.docstates
-BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.dll
-BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.pdb
-BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.Tests.dll
-BeerProduction.Tests/bin/Debug/net9.0/BeerProduction.Tests.pdb
 BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.AssemblyInfo.cs
 BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.AssemblyInfoInputs.cache
 BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.csproj.AssemblyReference.cache
-BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.csproj.CoreCompileInputs.cache
-BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.dll
-BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.genruntimeconfig.cache
-BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.pdb
-BeerProduction.Tests/obj/Debug/net9.0/BeerProduction.Tests.sourcelink.json
-BeerProduction.Tests/obj/Debug/net9.0/ref/BeerProduction.Tests.dll
-BeerProduction.Tests/obj/Debug/net9.0/refint/BeerProduction.Tests.dll
