@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
+namespace BeerProduction.Services;
 
 public class BatchService
 {
@@ -10,20 +9,23 @@ public class BatchService
         _batches = BatchQueue.Instance;
     }
 
-    public void AddBatch(Batch batch)
+    public void AddBatch(Batch batch, BatchQueue.BatchPriority priority = BatchQueue.BatchPriority.Low)
     {
-        _batches.EnqueueBatch(batch);
+        _batches.EnqueueBatch(batch, priority);
     }
 
-    public void RemoveBatch(int id)
+    //Remove a specific batch by ID (removes the first match)
+    public bool RemoveBatch(int id)
     {
-        _batches.RemoveBatch(id);
+        return _batches.RemoveBatch(id);
     }
 
-    public Queue<Batch> GetBatches()
+    //Get all batches ordered by priority (highest first)
+    public List<Batch> GetBatches()
     {
-        return _batches.GetAllBatches();
+        return _batches.ToOrderedListHighestFirst();
     }
+    
 
     public int GetBatchCount()
     {
