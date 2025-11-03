@@ -45,4 +45,27 @@ public class BatchQueueTests
         Assert.Null(queue.DequeueBatch());
         Assert.Equal(0, queue.Count);
     }
+    
+    public void TestAddBatch()
+    {
+        var service = new BatchService();
+        var queue = BatchQueue.Instance;
+        
+        
+        while (queue.DequeueBatch() != null){}
+        
+        Assert.Equal(0, service.GetBatchCount());
+
+        var batch = new Batch(1,0,100,10,DateTime.Now.AddDays(365));
+        service.AddBatch(batch, BatchQueue.BatchPriority.High);
+        
+        Assert.Equal(1, service.GetBatchCount());
+        
+        
+        var batches = service.GetBatches();
+        Assert.Contains(batches, b=> b.Id == 1);
+        
+        var orderdIds = service.GetBatches().Select(b=>b.Id).ToList();
+        Assert.Equal(new[] {1}, orderdIds);
+    }
 }
