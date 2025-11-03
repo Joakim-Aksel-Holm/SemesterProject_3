@@ -5,6 +5,7 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
+//hello
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
@@ -20,7 +21,22 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 
+
+
+
 var app = builder.Build();
+try
+{
+    MachineControl machine1 = new MachineControl(1, "opc.tcp://127.0.0.1:4840");
+    MachineControlService machineService1 = new MachineControlService(machine1);
+    int status = machineService1.GetStatus();
+    Console.WriteLine("Machine 1 status: " + status);
+    machineService1.StartMachine();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+}
 
 // Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
 //app.MapGet("/", ()=> Results.Redirect("/html/manager.html"));
@@ -97,7 +113,6 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
 
     return Results.Text(log.ToString(), "text/plain; charset=utf-8", Encoding.UTF8);
 });
-
 
 
 app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
