@@ -135,4 +135,40 @@ public class MachineControlService
         }
 
     }
+
+    public void AddBatch(Batch _batch)
+    {
+        int BatchId = _batch.Id;
+        int BeerType = _batch.BeerType;
+        int Quantatiy = _batch.Quantity;
+        int Speed =  _batch.Speed;
+        
+        int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+
+        if (statusVal == 17 || statusVal == 4)
+        {
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Status.Parameter[0].Value", (float)BatchId);
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Status.Parameter[1].Value", (float)BeerType);
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Status.Parameter[2].Value", (float)Quantatiy);
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Status.MachSpeed", (float)Speed);
+        }
+    }
+
+    public void QueueBatchMachine(Queue<Batch> _batch) // Husk priorityQueue ved ændring 
+    {
+        int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+
+        if (statusVal == 17)
+        {
+            AddBatch(_batch.Peek());
+            _batch.Dequeue();
+        }
+        else
+        {
+           Console.WriteLine(statusVal);
+        }
+        
+    }
+
+  
 }

@@ -1,10 +1,10 @@
 namespace BeerProduction.Components.Model;
 
-public class Operator : User
+public class Analyzer : User
 {
     public string Field { get; set; } 
 
-    public Operator(int userId, string userName, string email, string password, string field)
+    public Analyzer(int userId, string userName, string email, string password, string field)
         : base(userId, userName, email, password)
     {
         Field = field;
@@ -13,9 +13,7 @@ public class Operator : User
         Email = email;
         Password = password;
     }
-
-    public void AccessControlMachine()
-    {
-        
-    }
+    
+    
+    
 }
