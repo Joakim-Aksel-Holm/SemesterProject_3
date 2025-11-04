@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\SemesterProject_3.csproj": {}
+    "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\SemesterProject_3.csproj": {
+    "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\SemesterProject_3.csproj",
+        "projectUniqueName": "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj",
         "projectName": "SemesterProject_3",
-        "projectPath": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\SemesterProject_3.csproj",
-        "packagesPath": "C:\\Users\\nikla\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nikla\\OneDrive\\Skrivebord\\sem3_project\\SemesterProject_3\\obj\\",
+        "projectPath": "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj",
+        "packagesPath": "/Users/holm/.nuget/packages/",
+        "outputPath": "/Users/holm/Documents/SemesterProject_3/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nikla\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/holm/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,11 +38,33 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.12.0, )"
+            },
+            "NUnit": {
+              "target": "Package",
+              "version": "[4.2.2, )"
+            },
+            "NUnit.Analyzers": {
+              "target": "Package",
+              "version": "[4.4.0, )"
+            },
+            "NUnit3TestAdapter": {
+              "target": "Package",
+              "version": "[4.6.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -59,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
