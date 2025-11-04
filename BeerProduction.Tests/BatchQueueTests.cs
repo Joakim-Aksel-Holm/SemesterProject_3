@@ -1,4 +1,6 @@
-﻿using BeerProduction.Services;
+﻿using BeerProduction.Components.Model;
+using BeerProduction.Enums;
+using BeerProduction.Services;
 
 namespace BeerProduction.Tests;
 
@@ -12,14 +14,14 @@ public class BatchQueueTests
         //Clear the queue for test purpose only, so that we start with a empty queue.
         while (queue.DequeueBatch() != null){}
         
-        var batchLow = new Batch(1, beerType: 0, quantity: 100, speed: 10, expiryDate: DateTime.Now.AddDays(365));
-        var batchHigh = new Batch(2, beerType: 1, quantity: 50, speed: 20, expiryDate: DateTime.Now.AddDays(365));
-        var batchMedium = new Batch(3, beerType: 2, quantity: 75, speed: 15, expiryDate: DateTime.Now.AddDays(365));
+        var batchLow = new Batch(1, beerType: BeerType.Pilsner, size: BatchQuantity.Small, speed: MachineSpeed.PilsnerSlow);
+        var batchHigh = new Batch(2, beerType: BeerType.Wheat, size: BatchQuantity.Medium, speed: MachineSpeed.WheatMedium);
+        var batchMedium = new Batch(3, beerType: BeerType.IPA, size: BatchQuantity.Large, speed: MachineSpeed.IPAMedium);
 
         // Enqueue batches with priorities
-        queue.EnqueueBatch(batchLow, BatchQueue.BatchPriority.Low);
-        queue.EnqueueBatch(batchHigh, BatchQueue.BatchPriority.High);
-        queue.EnqueueBatch(batchMedium, BatchQueue.BatchPriority.Medium);
+        queue.EnqueueBatch(batchLow, BatchPriority.Low);
+        queue.EnqueueBatch(batchHigh, BatchPriority.High);
+        queue.EnqueueBatch(batchMedium, BatchPriority.Medium);
         
         // Check order (highest-priority first)
         var ordered = queue.ToOrderedListHighestFirst().Select(b => b.Id).ToList();
@@ -56,8 +58,8 @@ public class BatchQueueTests
         
         Assert.Equal(0, service.GetBatchCount());
 
-        var batch = new Batch(1,0,100,10,DateTime.Now.AddDays(365));
-        service.AddBatch(batch, BatchQueue.BatchPriority.High);
+        var batch = new Batch(1,0,BatchQuantity.Medium,MachineSpeed.AlcoholFreeFast,BatchPriority.Medium);
+        service.AddBatch(batch, BatchPriority.High);
         
         Assert.Equal(1, service.GetBatchCount());
         
