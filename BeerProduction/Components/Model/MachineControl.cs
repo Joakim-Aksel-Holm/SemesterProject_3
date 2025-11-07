@@ -5,13 +5,16 @@ using Opc.UaFx.Client;
 
 public class MachineControl
 {
-    public float Tempurature { get; }
     public int BatchId { get; }
-    public int Speed { get; }
-    public bool AcceptedProduct { get; }
-    public int QuantityAcceptedProduct { get; }
+    public int Amount { get; }
+    public int PPM { get; }
+    public float Temperature { get; }
+    public decimal Humidity { get; }
+    public decimal Vibration { get; }
+    public int Defects { get; }
+    public int Acceptable { get; }
 
-    public int status { get; }
+    public int MaintenanceStatus { get; }
 
     public string MachineURL { get; }
 
