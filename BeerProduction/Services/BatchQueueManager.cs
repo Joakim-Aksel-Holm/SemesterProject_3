@@ -1,3 +1,6 @@
+using BeerProduction.Components.Model;
+using BeerProduction.Enums;
+
 namespace BeerProduction.Services;
 
 public class BatchQueue
@@ -12,12 +15,6 @@ public class BatchQueue
     // so we use numeric priorities as-is and reverse in ToOrderedListHighestFirst.
     private PriorityQueue<Batch, int> _batchQueue = new();
 
-    public enum BatchPriority
-    {
-        High = 1,
-        Medium = 2,
-        Low = 3
-    }
 
     // --------------------------------------------
     // Enqueue a batch with optional priority
@@ -27,7 +24,6 @@ public class BatchQueue
         lock (_lock)
         {
             _batchQueue.Enqueue(batch, -(int)priority);
-            
         }
     }
 
