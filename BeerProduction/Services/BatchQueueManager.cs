@@ -1,3 +1,5 @@
+using BeerProduction.Components.Model;
+
 namespace BeerProduction.Services;
 
 public class BatchQueue
