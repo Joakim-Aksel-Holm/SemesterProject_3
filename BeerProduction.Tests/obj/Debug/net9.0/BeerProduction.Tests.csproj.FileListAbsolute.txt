@@ -263,3 +263,4 @@ C:\Users\abode\RiderProjects\SemesterProject_3\BeerProduction.Tests\obj\Debug\ne
 C:\Users\abode\RiderProjects\SemesterProject_3\BeerProduction.Tests\obj\Debug\net9.0\BeerProduction.Tests.pdb
 C:\Users\abode\RiderProjects\SemesterProject_3\BeerProduction.Tests\obj\Debug\net9.0\BeerProduction.Tests.genruntimeconfig.cache
 C:\Users\abode\RiderProjects\SemesterProject_3\BeerProduction.Tests\obj\Debug\net9.0\ref\BeerProduction.Tests.dll
+C:\Users\abode\RiderProjects\SemesterProject_3\BeerProduction.Tests\bin\Debug\net9.0\appsettings.Development.Local.json

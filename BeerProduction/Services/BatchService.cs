@@ -1,3 +1,6 @@
+using BeerProduction.Components.Model;
+using BeerProduction.Enums;
+
 namespace BeerProduction.Services;
 
 public class BatchService
@@ -9,7 +12,7 @@ public class BatchService
         _batches = BatchQueue.Instance;
     }
 
-    public void AddBatch(Batch batch, BatchQueue.BatchPriority priority = BatchQueue.BatchPriority.Low)
+    public void AddBatch(Batch batch, BatchPriority priority = BatchPriority.Low)
     {
         _batches.EnqueueBatch(batch, priority);
     }
