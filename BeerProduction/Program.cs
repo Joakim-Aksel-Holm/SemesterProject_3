@@ -6,6 +6,8 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
+
+// it is working take 1
 //hello
 var builder = WebApplication.CreateBuilder(args);
 
