@@ -23,17 +23,17 @@
             <ul>
                 <li>
                     <label>
-                        <img class="variable-img" alt="" src=""/>Batch ID: @_machine?.BatchId
+                        <img class="variable-img" alt="" src=""/>Batch ID: @_machineService?.GetBatchId()
                     </label>
                 </li>
                 <li>
                     <label>
-                        <img class="variable-img" alt="" src=""/>Amount to produce: @_machine?.Amount
+                        <img class="variable-img" alt="" src=""/>Amount to produce: @_machineService?.GetAmount()
                     </label>
                 </li>
                 <li>
                     <label>
-                        <img class="variable-img" alt="" src=""/>PPM: @_machine?.PPM
+                        <img class="variable-img" alt="" src=""/>PPM: @_machineService?.GetPPM()
                     </label>
                 </li>
 
@@ -41,7 +41,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="" src=""/>Temperature: @_machine?.Temperature
+                            <img class="variable-img" alt="" src=""/>Temperature: @_machineService?.GetTemperature()
                         </label>
                     </li>
                 }
@@ -49,7 +49,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="" src=""/>Humidity: @_machine?.Humidity
+                            <img class="variable-img" alt="" src=""/>Humidity: @_machineService?.GetHumidity()
                         </label>
                     </li>
                 }
@@ -57,7 +57,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="" src=""/>Vibration: @_machine?.Vibration
+                            <img class="variable-img" alt="" src=""/>Vibration: @_machineService?.GetVibration()
                         </label>
                     </li>
                 }
@@ -65,7 +65,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="" src=""/>Defect products: @_machine?.Defects
+                            <img class="variable-img" alt="" src=""/>Defect products: @_machineService?.GetDefects()
                         </label>
                     </li>
                 }
@@ -73,7 +73,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="" src=""/>Acceptable products: @_machine?.Acceptable
+                            <img class="variable-img" alt="" src=""/>Acceptable products: @_machineService?.GetAcceptable()
                         </label>
                     </li>
                 }
@@ -109,6 +109,7 @@
     private string? _error;
 
     private MachineControl? _machine;
+    private MachineControlService _machineService;
     private static int _machineId;
     private static string? _machineURL;
 
@@ -124,9 +125,9 @@
             await using var conn = await Db.OpenAsync();   // pooled under the hood
             await using var cmd  = conn.CreateCommand();
 
-            cmd.CommandText = @"SELECT m.machineURL, m.machineId 
+            cmd.CommandText = @"SELECT m.machine_url, m.machine_id 
                                 FROM public.user_table u
-                                JOIN public.machines m ON u.machine_id = m.machineId
+                                JOIN public.machine_table m ON u.machine_id = m.machineId
                                 WHERE u.token = @token;
             ";
             var token = "test";
@@ -140,6 +141,7 @@
                 _machineURL = rdr.GetString(rdr.GetOrdinal("machineURL"));
                 
                 _machine = new MachineControl(_machineId, _machineURL);
+                _machineService = new MachineControlService(_machine);
             }
             else
             {

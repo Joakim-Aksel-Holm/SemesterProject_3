@@ -70,9 +70,8 @@
                 {
                     var username = rdr.GetString(rdr.GetOrdinal("username"));
                     var role = rdr.GetString(rdr.GetOrdinal("role_name"));
-                    var result = await cmd.ExecuteScalarAsync();
 
-                    Console.WriteLine($"Connection test result: {result}");
+                    Console.WriteLine($"Connection test result: {rdr}");
 
                     Console.WriteLine($"Successfully logged in as {username} ({role})");
 
