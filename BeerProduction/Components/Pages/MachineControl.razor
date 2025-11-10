@@ -1,5 +1,5 @@
 @using BeerProduction.Components.Layout
-@inject MachineControlService machineControlService
+@inject MachineControlService MachineControlService
 
 @page "/MachineControl"
 @layout MainLayout
@@ -13,8 +13,8 @@
         <div class="div1">
             <p>her er nogle ting i det ene grid</p>
             <div class="buttonControl">
-                <button onclick="machineConstolService" name="startButton">Start</button>
-                <button>Stop</button>
+                <button onclick="startMachine()" name="startButton">Start</button>
+                <button onclick="stopMachine()" name="stopButton">Stop</button>
                 <button>Abort</button>
             </div>
 
@@ -27,8 +27,17 @@
 
 </div>
 
-@code{
+@code
+{
 
+    private async Task startMachine()
+    {
+        await Task.Run(() => MachineControlService.StartMachine());
+    }
 
+    private async Task stopMachine()
+    {
+        await Task.Run(() => MachineControlService.StopMachine());
+    }
 
 }
