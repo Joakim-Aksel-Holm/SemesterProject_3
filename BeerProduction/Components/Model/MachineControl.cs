@@ -22,7 +22,7 @@ public class MachineControl
         MachineID = machineId;
         MachineURL = machineURL;
         Client = new OpcClient(machineURL);
-
+        TryConnect();
         // Optional: subscribe to the Connected event
         Client.Connected += (s, e) =>
         {

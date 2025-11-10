@@ -1,5 +1,8 @@
 @using BeerProduction.Components.Layout
+@using BeerProduction.Components.Model
+@using BeerProduction.Services
 @inject MachineControlService MachineControlService
+@rendermode InteractiveServer   
 
 @page "/MachineControl"
 @layout MainLayout
@@ -29,6 +32,7 @@
 
 @code
 {
+
     private async Task startMachine()
     {
         await MachineControlService.StartMachineAsync();

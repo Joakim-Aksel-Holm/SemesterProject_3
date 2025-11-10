@@ -5,6 +5,7 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
@@ -23,37 +24,16 @@ builder.Services.AddSingleton<BatchQueue>();
 // Register OPC machine and service
 builder.Services.AddSingleton<MachineControl>(sp =>
     new MachineControl(1, "opc.tcp://127.0.0.1:4840"));
-builder.Services.AddSingleton<MachineControlService>();
+
+
+builder.Services.AddSingleton<MachineControlService>(sp =>
+{
+    var machine = sp.GetRequiredService<MachineControl>();
+    return new MachineControlService(machine);
+});
+
 
 var app = builder.Build();
-
-// ✅ Try connecting to the machine safely using DI
-using (var scope = app.Services.CreateScope())
-{
-    var machine = scope.ServiceProvider.GetRequiredService<MachineControl>();
-    var machineService = scope.ServiceProvider.GetRequiredService<MachineControlService>();
-
-    if (!machine.TryConnect())
-    {
-        Console.WriteLine("⚠️ Machine not connected, continuing without OPC UA.");
-    }
-    else
-    {
-        try
-        {
-            // Test StartMachineAsync
-            Console.WriteLine("▶️ Testing StartMachineAsync...");
-            machineService.StartMachineAsync();
-            Console.WriteLine("✅ StartMachineAsync finished.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("⚠️ Error during machine test: " + ex.Message);
-        }
-    }
-}
-
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -83,16 +63,6 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
 
         var controlValue = client.ReadNode("ns=6;s=::Program:Cube.Command.CntrlCmd");
         log.AppendLine("Værdi for control: " + controlValue);
-
-        var commands = new OpcWriteNode[]
-        {
-            new OpcWriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", 300.0f),
-            new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", 2.0f),
-            new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", 20.0f)
-        };
-
-        client.WriteNodes(commands);
-        client.Disconnect();
     }
     catch (OpcException ex)
     {
