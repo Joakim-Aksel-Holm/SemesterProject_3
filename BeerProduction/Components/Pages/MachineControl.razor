@@ -13,8 +13,8 @@
         <div class="div1">
             <p>her er nogle ting i det ene grid</p>
             <div class="buttonControl">
-                <button onclick="startMachine()" name="startButton">Start</button>
-                <button onclick="stopMachine()" name="stopButton">Stop</button>
+                <button @onclick="startMachine" name="startButton">Start</button>
+                <button @onclick="stopMachine" name="stopButton">Stop</button>
                 <button>Abort</button>
             </div>
 
@@ -29,15 +29,13 @@
 
 @code
 {
-
     private async Task startMachine()
     {
-        await Task.Run(() => MachineControlService.StartMachine());
+        await MachineControlService.StartMachineAsync();
     }
 
     private async Task stopMachine()
     {
-        await Task.Run(() => MachineControlService.StopMachine());
+        await MachineControlService.StopMachineAsync();
     }
-
 }
