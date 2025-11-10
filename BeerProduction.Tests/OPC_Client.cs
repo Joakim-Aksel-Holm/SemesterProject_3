@@ -18,6 +18,7 @@ public class OPC_Client
         _testMachineControlService.StopMachine(); // Make sure that machine is stopped
         // Act
         _testMachineControlService.StartMachine(); // Start the machien
+        status = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
         // Assert that the status of the machine is executing and therefor the current status in 6. 
         Assert.Equal(6,status);
     }
@@ -29,6 +30,7 @@ public class OPC_Client
         _testMachineControlService.StartMachine(); // ensure that the machine is started
         // Act
         _testMachineControlService.StopMachine();
+        status = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
 
         // Assert that the current status of the machine is 2 and therefor stopped. 
         Assert.Equal(2,status);
