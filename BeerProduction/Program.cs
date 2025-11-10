@@ -30,8 +30,8 @@ var app = builder.Build();
 // ✅ Try connecting to the machine safely using DI
 using (var scope = app.Services.CreateScope())
 {
-    MachineControl machine = new MachineControl(1, "opc.tcp://127.0.0.1:4840");
-    MachineControlService machineService = new MachineControlService(machine);
+    var machine = scope.ServiceProvider.GetRequiredService<MachineControl>();
+    var machineService = scope.ServiceProvider.GetRequiredService<MachineControlService>();
 
     if (!machine.TryConnect())
     {
@@ -45,8 +45,6 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine("▶️ Testing StartMachineAsync...");
             machineService.StartMachineAsync();
             Console.WriteLine("✅ StartMachineAsync finished.");
-
-
         }
         catch (Exception ex)
         {
