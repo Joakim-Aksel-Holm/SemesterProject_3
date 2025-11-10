@@ -1,10 +1,14 @@
+using System.Reflection.PortableExecutable;
 using System.Text;
 using BeerProduction.Components;
 using BeerProduction.Services;
+using BeerProduction.Components.Model;
 using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
+
+// it is working take 1
 //hello
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +33,12 @@ try
 {
     MachineControl machine1 = new MachineControl(1, "opc.tcp://127.0.0.1:4840");
     MachineControlService machineService1 = new MachineControlService(machine1);
+    BatchQueue batchQueue1 = new BatchQueue();
+    Batch batch = new Batch(1, 0, 7, 500, DateTime.Now);
+    BatchService batchService = new BatchService();
+
+    batchQueue1.EnqueueBatch(batch);
+    machineService1.AddBatch(batch);
     int status = machineService1.GetStatus();
     Console.WriteLine("Machine 1 status: " + status);
     machineService1.StartMachine();
