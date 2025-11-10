@@ -16,9 +16,20 @@ public class OPC_Client
     {
         // Arrange
         _testMachineControlService.StopMachine(); // Make sure that machine is stopped
-        Thread.Sleep(1000);
+        Thread.Sleep(200);
+        //add beers
+        _testMachine.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value",100f); // add 100 beers
+        Thread.Sleep(200);
+        // Set speed 
+        _testMachine.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed",600f); // set speed 600 beer a minute
+        Thread.Sleep(200);
+        //set type to pilsner
+        _testMachine.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value",0f);
+        Thread.Sleep(200);
+        
         // Act
         _testMachineControlService.StartMachine(); // Start the machine
+        Thread.Sleep(200);
         status = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
         // Assert that the status of the machine is executing and therefor the current status in 6. 
         Assert.Equal(6,status);
@@ -30,9 +41,6 @@ public class OPC_Client
         // Arrange
         
         // Add some beer to production
-        
-        // Set speed 
-        
         _testMachineControlService.StartMachine(); // ensure that the machine is started
         // Act
         _testMachineControlService.StopMachine();
