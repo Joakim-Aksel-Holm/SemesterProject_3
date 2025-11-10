@@ -1,4 +1,6 @@
 @using BeerProduction.Components.Layout
+@inject MachineControlService machineControlService
+
 @page "/MachineControl"
 @layout MainLayout
 <link rel="stylesheet" href="/css/homeStyle.css">
@@ -11,7 +13,7 @@
         <div class="div1">
             <p>her er nogle ting i det ene grid</p>
             <div class="buttonControl">
-                <button>Start</button>
+                <button onclick="machineConstolService" name="startButton">Start</button>
                 <button>Stop</button>
                 <button>Abort</button>
             </div>
@@ -24,3 +26,9 @@
     </div>
 
 </div>
+
+@code{
+
+
+
+}

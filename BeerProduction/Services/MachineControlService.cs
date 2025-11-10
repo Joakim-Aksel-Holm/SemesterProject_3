@@ -65,6 +65,8 @@ public class MachineControlService
 
     public void StartMachine() //prove of concept refactor
     {
+        Console.WriteLine("Wow the machine started up!!");
+
         int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
 
         if (statusVal == 0)
@@ -123,6 +125,7 @@ public class MachineControlService
 
     public void StopMachine()
     {
+        Console.WriteLine("Wow the machine stopped");
         int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
 
         if (statusVal == 9)
