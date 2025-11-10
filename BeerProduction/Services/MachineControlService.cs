@@ -64,8 +64,6 @@ public class MachineControlService
     // -------------------
     public async Task StartMachineAsync()
     {
-        Console.WriteLine("Starting machine...");
-
         int statusVal = GetStatus();
 
         if (statusVal == 0 || statusVal == 3 || statusVal == 6 || statusVal == 11)
@@ -98,7 +96,6 @@ public class MachineControlService
 
     public async Task StopMachineAsync()
     {
-        Console.WriteLine("Stopping machine...");
 
         int statusVal = GetStatus();
 

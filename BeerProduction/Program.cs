@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
 builder.Configuration.AddJsonFile(
     $"appsettings.{builder.Environment.EnvironmentName}.Local.json",
-    optional: true, 
+    optional: true,
     reloadOnChange: true);
 
 // Add services to the container.
@@ -30,24 +30,31 @@ var app = builder.Build();
 // ✅ Try connecting to the machine safely using DI
 using (var scope = app.Services.CreateScope())
 {
-    var machine = scope.ServiceProvider.GetRequiredService<MachineControl>();
-    var machineService = scope.ServiceProvider.GetRequiredService<MachineControlService>();
+    MachineControl machine = new MachineControl(1, "opc.tcp://127.0.0.1:4840");
+    MachineControlService machineService = new MachineControlService(machine);
 
     if (!machine.TryConnect())
+    {
         Console.WriteLine("⚠️ Machine not connected, continuing without OPC UA.");
+    }
     else
     {
         try
         {
-            int status = machineService.GetStatus();
-            Console.WriteLine($"Machine 1 status: {status}");
+            // Test StartMachineAsync
+            Console.WriteLine("▶️ Testing StartMachineAsync...");
+            machineService.StartMachineAsync();
+            Console.WriteLine("✅ StartMachineAsync finished.");
+
+
         }
         catch (Exception ex)
         {
-            Console.WriteLine("⚠️ Error reading machine status: " + ex.Message);
+            Console.WriteLine("⚠️ Error during machine test: " + ex.Message);
         }
     }
 }
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
