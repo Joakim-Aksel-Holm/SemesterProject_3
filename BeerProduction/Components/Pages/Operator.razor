@@ -6,9 +6,15 @@
 
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 
-@if (MachineValidation())
+@if (_loading)
 {
-<div class="machine-view">
+    <div class="loading-box">
+        <label><img alt="" src=""/>@_loadingMessage</label>
+    </div>
+}
+@if (!_loading)
+{
+    <div class="machine-view">
     <div class="machine-inventory">
 
     </div>
@@ -17,17 +23,17 @@
             <ul>
                 <li>
                     <label>
-                        <img class="variable-img" alt="Batch ID: " src=""/>@_machine.BatchId
+                        <img class="variable-img" alt="" src=""/>Batch ID: @_machine?.BatchId
                     </label>
                 </li>
                 <li>
                     <label>
-                        <img class="variable-img" alt="Amount to produce: " src=""/>@_machine.Amount
+                        <img class="variable-img" alt="" src=""/>Amount to produce: @_machine?.Amount
                     </label>
                 </li>
                 <li>
                     <label>
-                        <img class="variable-img" alt="PPM: " src=""/>@_machine.PPM
+                        <img class="variable-img" alt="" src=""/>PPM: @_machine?.PPM
                     </label>
                 </li>
 
@@ -35,7 +41,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="Temperature: " src=""/>@_machine.Temperature
+                            <img class="variable-img" alt="" src=""/>Temperature: @_machine?.Temperature
                         </label>
                     </li>
                 }
@@ -43,7 +49,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="Humidity: " src=""/>@_machine.Humidity
+                            <img class="variable-img" alt="" src=""/>Humidity: @_machine?.Humidity
                         </label>
                     </li>
                 }
@@ -51,7 +57,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="Vibration" src=""/>@_machine.Vibration
+                            <img class="variable-img" alt="" src=""/>Vibration: @_machine?.Vibration
                         </label>
                     </li>
                 }
@@ -59,7 +65,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="Defect products: " src=""/>@_machine.Defects
+                            <img class="variable-img" alt="" src=""/>Defect products: @_machine?.Defects
                         </label>
                     </li>
                 }
@@ -67,7 +73,7 @@
                 {
                     <li>
                         <label>
-                            <img class="variable-img" alt="Acceptable products:" src=""/>@_machine.Acceptable
+                            <img class="variable-img" alt="" src=""/>Acceptable products: @_machine?.Acceptable
                         </label>
                     </li>
                 }
@@ -86,20 +92,10 @@
     </div>
 </div>
 }
-@if (!MachineValidation())
-{
-    <div class="machine-error">
-        
-    </div>
-}
-    
 
-
-@if (_machineId == 0 || _machineURL == "")
+@if (_error is not null)
 {
-    <div class="error-box">
-        <p>An error occurred</p>
-    </div>
+    <div class="error_message">@_error</div>
 }
 
 @code {
@@ -108,49 +104,72 @@
     private bool _vibrationCheck;
     private bool _defectsCheck;
     private bool _acceptableCheck;
-    
+    private bool _loading = true;
+    private string _loadingMessage;
+    private string? _error;
+
+    private MachineControl? _machine;
     private static int _machineId;
     private static string? _machineURL;
 
-    
-
-    protected async Task MachineAsync()
+    protected override async Task OnInitializedAsync()
     {
         _loading = true;
         _error = null;
 
+        var loadingTask = LoadingAnimation();
+        
         try
         {
             await using var conn = await Db.OpenAsync();   // pooled under the hood
             await using var cmd  = conn.CreateCommand();
 
-            cmd.CommandText = @"SELECT u.username, m.machineId 
-                                FROM public.user_table u 
-                                JOIN public.roles r ON u.role_id = r.role_id 
-                                WHERE TRIM(u.username) = _ AND TRIM(u.password) = @pass;";
-
+            cmd.CommandText = @"SELECT m.machineURL, m.machineId 
+                                FROM public.user_table u
+                                JOIN public.machines m ON u.machine_id = m.machineId
+                                WHERE u.token = @token;
+            ";
+            var token = "test";
+            cmd.Parameters.AddWithValue("@token", token);
+            
             await using var rdr = await cmd.ExecuteReaderAsync();
 
             if (await rdr.ReadAsync())
             {
-                var username = rdr.GetString(rdr.GetOrdinal("_machineId"));
-                var role = rdr.GetString(rdr.GetOrdinal("_machineURL"));
-                var result = await cmd.ExecuteScalarAsync();
-
-                MachineControl _machine = new MachineControl(_machineId, _machineURL);
+                _machineId = rdr.GetInt32(rdr.GetOrdinal("machineId"));
+                _machineURL = rdr.GetString(rdr.GetOrdinal("machineURL"));
+                
+                _machine = new MachineControl(_machineId, _machineURL);
             }
             else
             {
-                _error = "Incorrect username or password.";
+                _error = "No machines found.";
             }
         }
         catch (Exception ex)
         {
-            _error = "" + ex.Message;
+            _error = "Database error: " + ex.Message;
         }
         finally
         {
             _loading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+
+        await loadingTask;
+    }
+
+    private async Task LoadingAnimation()
+    {
+        while (_loading)
+        {
+            _loadingMessage = "Loading";
+            for (int i = 0; i < 3 && _loading; i++)
+            {
+                await Task.Delay(250);
+                _loadingMessage += ".";
+                await InvokeAsync(StateHasChanged);
+            }
         }
     }
 }
