@@ -1,0 +1,61 @@
+﻿@page "/manager"
+@layout ManagerLayout
+@using BeerProduction.Components.Layout
+@using BeerProduction.Components.Model
+@using BeerProduction.Services
+@using BeerProduction.Components.Model
+@using BeerProduction.Services
+@inject ManagerService ManagerService
+
+<PageTitle>Manager Dashboard</PageTitle>
+
+<h3>Manager Dashboard</h3>
+
+@if (_machines == null)
+{
+    <p>Loading machines...</p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h5>All Machines</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Last Maintenance</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var machine in _machines)
+                    {
+                        <tr>
+                            <td>@machine.MachineId</td>
+                            <td>@machine.Name</td>
+                            <td>@machine.Status</td>
+                            <td>@machine.Location</td>
+                            <td>@machine.LastMaintenance.ToString("MM/dd/yyyy")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Machine> _machines = new List<Machine>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _machines = await ManagerService.GetAllMachinesAsync();
+    }
+}

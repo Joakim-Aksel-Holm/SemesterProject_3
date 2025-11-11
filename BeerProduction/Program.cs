@@ -24,6 +24,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 
+builder.Services.AddScoped<ManagerService>(); 
 
 
 
