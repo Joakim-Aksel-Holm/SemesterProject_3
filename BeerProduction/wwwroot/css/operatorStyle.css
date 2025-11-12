@@ -1,0 +1,18 @@
+.machine-view {
+    display: flex;
+    width: 100%; 
+}
+
+.machine-inventory {
+    flex-basis: 25%; 
+    flex-shrink: 0;  
+    
+    background-color: #80EF80 ; 
+    padding: 15px;
+    height: 100vh; 
+}
+
+.machine-meter {
+    flex-grow: 1; /* Vokser og fylder al resterende plads */
+    padding: 20px;
+}
