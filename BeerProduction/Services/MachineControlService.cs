@@ -1,14 +1,8 @@
 namespace BeerProduction.Services;
 
-public class MachineControlService
+public class MachineControlService(MachineControl machineControl)
 {
-    public MachineControl MachineControl { get; set; }
-
-    // Contructor 
-    public MachineControlService(MachineControl machineControl)
-    {
-        MachineControl = machineControl;
-    }
+    public MachineControl MachineControl { get; set; } = machineControl;
 
     // Methods
     // Reads the Batch ID value
