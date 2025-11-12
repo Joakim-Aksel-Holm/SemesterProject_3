@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj": {}
+    "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj": {}
   },
   "projects": {
-    "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj": {
+    "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj",
         "projectName": "BeerProduction.Tests",
-        "projectPath": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj",
-        "packagesPath": "/Users/jwan/.nuget/packages/",
-        "outputPath": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction.Tests/obj/",
+        "projectPath": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction.Tests\\BeerProduction.Tests.csproj",
+        "packagesPath": "C:\\Users\\jwans\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/jwan/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\jwans\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -26,8 +26,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction/BeerProduction.csproj": {
-                "projectPath": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction/BeerProduction.csproj"
+              "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {
+                "projectPath": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj"
               }
             }
           }
@@ -81,21 +81,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction/BeerProduction.csproj": {
+    "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction/BeerProduction.csproj",
+        "projectUniqueName": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
         "projectName": "BeerProduction",
-        "projectPath": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction/BeerProduction.csproj",
-        "packagesPath": "/Users/jwan/.nuget/packages/",
-        "outputPath": "/Users/jwan/RiderProjects/SemesterProject_3/BeerProduction/obj/",
+        "projectPath": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction\\BeerProduction.csproj",
+        "packagesPath": "C:\\Users\\jwans\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jwans\\Desktop\\projekt\\SemesterProject_3\\BeerProduction\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/jwan/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\jwans\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -161,7 +161,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
