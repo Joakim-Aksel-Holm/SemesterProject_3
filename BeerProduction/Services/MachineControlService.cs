@@ -53,20 +53,43 @@ public class MachineControlService(MachineControl machineControl)
         return MachineControl.Client.ReadNode("ns=6;s=::Program:product.good").As<int>();
     }
 
+    public decimal GetBatchProcess()
+    {
+        int defects = GetDefects();
+        int acceptable = GetAcceptable();
+        int total = GetAmount();
+
+        return ((decimal)(acceptable + defects) / total) * 100m;
+        ;
+    }
+
+    public bool GetOnline()
+    {
+        if (GetStatus() != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     // Reads the Maintenance value
     public int GetMaintenanceStatus()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
     }
-    
+
     public void SetChangeRequestTrue()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", true);
     }
-    
+
     public int GetStatus()
     {
-        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>(); // Reading the current status.
+        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent")
+            .As<int>(); // Reading the current status.
         return status;
     }
 
