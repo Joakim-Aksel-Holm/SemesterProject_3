@@ -1,125 +1,138 @@
-using System;
-using System.Threading.Tasks;
+using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Mvc;
+using Opc.Ua;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
 public class MachineControlService
 {
+
+
     public MachineControl MachineControl { get; set; }
 
+    // contructor 
     public MachineControlService(MachineControl machineControl)
     {
-        MachineControl = machineControl ?? throw new ArgumentNullException(nameof(machineControl));
+        MachineControl = machineControl;
     }
 
-    // -------------------
-    // Basic commands
-    // -------------------
-    public async Task SetChangeRequestTrueAsync()
+    public void SetChangeRequestTrue()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", true);
-        await Task.CompletedTask; // async placeholder
     }
-
-    public async Task ResetCommandAsync()
-    {
-        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 1);
-        await SetChangeRequestTrueAsync();
-    }
-
-    public async Task StartCommandAsync()
-    {
-        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 2);
-        await SetChangeRequestTrueAsync();
-    }
-
-    public async Task StopCommandAsync()
-    {
-        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 3);
-        await SetChangeRequestTrueAsync();
-    }
-
-    public async Task AbortCommandAsync()
-    {
-        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 4);
-        await SetChangeRequestTrueAsync();
-    }
-
-    public async Task ClearCommandAsync()
-    {
-        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 5);
-        await SetChangeRequestTrueAsync();
-    }
-
-    // -------------------
-    // Status
-    // -------------------
+    // methods
     public int GetStatus()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>(); // Reading the current status.
+        return status;
     }
 
-    // -------------------
-    // High-level operations
-    // -------------------
-    public async Task StartMachineAsync()
+    // Basic method to Reset machine by directly writing the Reset command.
+    public void ResetCommand()
     {
-        int statusVal = GetStatus();
+        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 1);
+        SetChangeRequestTrue();
+    }
 
-        if (statusVal == 0 || statusVal == 3 || statusVal == 6 || statusVal == 11)
-            return;
+    // Basic method to start machine by directly writing the start command.
 
-        if (statusVal == 2 || statusVal == 5 || statusVal == 17)
+    public void StartCommand()
+    {
+        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 2);
+        SetChangeRequestTrue();
+    }
+
+    // Basic method to stop machine by directly writing the stop command.
+    public void StopCommand()
+    {
+        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 3);
+        SetChangeRequestTrue();
+    }
+
+    // Basic method to Abort machine by directly writing the Abort command.
+    public void AbortCommand()
+    {
+        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 4);
+        SetChangeRequestTrue();
+    }
+
+    // Basic method to Clear machine by directly writing the Clear command.
+    public void ClearCommand()
+    {
+        MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 5);
+        SetChangeRequestTrue();
+    }
+
+    public void StartMachine() //prove of concept refactor
+    {
+        int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+
+        if (statusVal == 0)
         {
-            await ResetCommandAsync();
-            await Task.Delay(1000);
-            await StartCommandAsync();
+            return;
+        }
+
+        else if (statusVal == 2)
+        {
+            ResetCommand();
+            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            StartCommand();
+        }
+        else if (statusVal == 3)
+        {
+            return;
         }
         else if (statusVal == 4)
         {
-            await StartCommandAsync();
+            StartCommand();
+        }
+        else if (statusVal == 5)
+        {
+            ResetCommand();
+            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            StartCommand();
+        }
+        else if (statusVal == 6)
+        {
+            return;
         }
         else if (statusVal == 9)
         {
-            await ClearCommandAsync();
-            await Task.Delay(1000);
-            await ResetCommandAsync();
-            await Task.Delay(1000);
-            await StartCommandAsync();
+            ClearCommand();
+            Thread.Sleep(1000);
+            ResetCommand();
+            Thread.Sleep(1000);
+            StartCommand();
+        }
+        else if (statusVal == 11)
+        {
+            return;
+        }
+        else if (statusVal == 17)
+        {
+            ResetCommand();
+            Thread.Sleep(1000);
+            StartCommand();
         }
         else
         {
-            await Task.Delay(2000);
-            await StartMachineAsync(); // recursive retry
+            Thread.Sleep(2000);
+            StartMachine();
         }
     }
 
-    public async Task StopMachineAsync()
+    public void StopMachine()
     {
-
-        int statusVal = GetStatus();
+        int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
 
         if (statusVal == 9)
+        {
             return;
+        }
+        else
+        {
+            StopCommand();
+        }
 
-        await StopCommandAsync();
-    }
-
-    public async Task AbortMachineAsync()
-    {
-        Console.WriteLine("Aborting machine...");
-        await AbortCommandAsync();
-    }
-
-    public async Task ClearMachineAsync()
-    {
-        Console.WriteLine("Clearing machine...");
-        await ClearCommandAsync();
-    }
-
-    public async Task ResetMachineAsync()
-    {
-        Console.WriteLine("Resetting machine...");
-        await ResetCommandAsync();
     }
 }
