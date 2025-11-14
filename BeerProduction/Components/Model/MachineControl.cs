@@ -5,17 +5,6 @@ using Opc.UaFx.Client;
 
 public class MachineControl
 {
-    public int BatchId { get; }
-    public int Amount { get; }
-    public int PPM { get; }
-    public float Temperature { get; }
-    public decimal Humidity { get; }
-    public decimal Vibration { get; }
-    public int Defects { get; }
-    public int Acceptable { get; }
-
-    public int MaintenanceStatus { get; }
-
     public string MachineURL { get; }
 
     public int MachineID { get; }
@@ -31,5 +20,4 @@ public class MachineControl
         Client = new OpcClient(machineURL);
         Client.Connect();
     }
-
 }
