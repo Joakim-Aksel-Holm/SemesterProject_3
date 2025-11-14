@@ -1,5 +1,120 @@
 @page "/operator"
-<h3>operator</h3>
+@using BeerProduction.Services
+@inject DatabaseConnection Db
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<link rel="stylesheet" href="css/operatorStyle.css"/>
+
+@if (_loading)
+{
+    <div class="loading-box">
+        <label><img alt="" src=""/>@_loadingMessage</label>
+    </div>
+}
+@if (!_loading)
+{
+    <div class="machine-view">
+    
+    <div class="machine-inventory">
+        <ol class="ordered-queue">
+        
+            <li class="queue-item" >
+            <h4 class="BatchId"> BatchId </h4>
+            <p>Status: venter</p> 
+            </li>
+
+
+            <li class="queue-item">
+            <h4 class="BatchId">BatchId</h4>
+            <p>Status: Venter</p>
+            </li>
+
+            <li class="queue-item">
+            <h4 class="BatchId">BatchId</h4>
+            <p>Status: Venter</p>
+            </li>
+        </ol>
+    </div>
+    <div class="machine-meter">
+        <div class="variables">
+            <ul>
+                <li>
+                    <label>
+                        <img class="variable-img" alt="" src=""/>Batch ID: @_machine?.BatchId
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <img class="variable-img" alt="" src=""/>Amount to produce: @_machine?.Amount
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <img class="variable-img" alt="" src=""/>PPM: @_machine?.PPM
+                    </label>
+                </li>
+
+                @if (_temperatureCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Temperature: @_machine?.Temperature
+                        </label>
+                    </li>
+                }
+                @if (_humidityCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Humidity: @_machine?.Humidity
+                        </label>
+                    </li>
+                }
+                @if (_vibrationCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Vibration: @_machine?.Vibration
+                        </label>
+                    </li>
+                }
+                @if (_defectsCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Defect products: @_machine?.Defects
+                        </label>
+                    </li>
+                }
+                @if (_acceptableCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Acceptable products: @_machine?.Acceptable
+                        </label>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="machine-settings">
+            <label><InputCheckbox @bind-Value="_temperatureCheck"/> Temperature</label><br/>
+            <label><InputCheckbox @bind-Value="_humidityCheck"/> Humidity</label><br/>
+            <label><InputCheckbox @bind-Value="_vibrationCheck"/> Vibration</label><br/>
+            <label><InputCheckbox @bind-Value="_defectsCheck"/> Defect products</label><br/>
+            <label><InputCheckbox @bind-Value="_acceptableCheck"/> Acceptable products</label><br/>
+        </div>
+    </div>
+    <div class="machine-maintenance">
+
+    </div>
+</div>
+}
+
+@if (_error is not null)
+{
+    <div class="error_message">@_error</div>
+}
 
 @code {
     
