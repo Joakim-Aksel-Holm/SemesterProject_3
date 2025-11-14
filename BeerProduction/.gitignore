@@ -37,3 +37,20 @@ Thumbs.db
 # Per-dev appsettings (never commit secrets)
 **/appsettings.*.Local.json
 **/appsettings.Local.json
+# Build artifacts
+bin/
+obj/
+out/
+*/bin/
+*/obj/
+
+# VS Code
+.vscode/
+
+# Rider / VS
+.idea/
+*.user
+*.suo
+
+# Test result caches
+TestResults/
