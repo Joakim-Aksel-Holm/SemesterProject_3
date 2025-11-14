@@ -1,0 +1,242 @@
+@using BeerProduction.Components.Model
+
+<div class="card machine-card mb-4">
+    <!-- Header -->
+    <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">@Machine.Name</h5>
+            <div class="text-end">
+                <span class="badge @(Machine.IsOnline ? "bg-success" : "bg-danger")">
+                    @(Machine.IsOnline ? "Online" : "Offline")
+                </span>
+                <div class="small mt-1">Serial: MCH-@Machine.MachineId.ToString("D5")</div>
+            </div>
+        </div>
+    </div>
+    <!-- ADD THIS TEST BUTTON -->
+    <div class="alert alert-warning m-2">
+        <button class="btn btn-danger" @onclick="TestClick">TEST CLICK - Check Console (F12)</button>
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <!-- Left: Variable Selection -->
+            <div class="col-md-4 border-end">
+                <h6 class="border-bottom pb-2">Variables</h6>
+                <div class="d-grid gap-2">
+                    @foreach (var variable in availableVariables)
+                    {
+                        <button
+                            class="btn btn-sm @(selectedVariables.Contains(variable) ? "btn-primary" : "btn-outline-primary") text-start"
+                            @onclick="() => ToggleVariable(variable)">
+                            @if (selectedVariables.Contains(variable))
+                            {
+                                <i class="bi bi-check-square me-2"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-square me-2"></i>
+                            }
+                            @variable.DisplayName
+                        </button>
+                    }
+                </div>
+                <button class="btn btn-sm btn-outline-secondary w-100 mt-2" @onclick="SelectAllVariables">
+                    <i class="bi bi-check-all me-1"></i>Select All
+                </button>
+            </div>
+
+            <!-- Right: Variable Display -->
+            <div class="col-md-8">
+                @if (!selectedVariables.Any())
+                {
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-graph-up display-4 d-block mb-2"></i>
+                        <p>Select variables to display</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var variable in selectedVariables)
+                        {
+                            <div class="col-sm-6">
+                                <div class="card h-100">
+                                    <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                                        <small class="fw-bold">@variable.DisplayName</small>
+                                        <button class="btn btn-sm btn-outline-danger p-1"
+                                                @onclick="() => RemoveVariable(variable)"
+                                                title="Remove">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card-body text-center py-3">
+                                        @if (variable.Name == "Temperature")
+                                        {
+                                            <div class="@GetTemperatureClass(Machine.Temperature) display-6 fw-bold">
+                                                @Machine.Temperature°C
+                                            </div>
+                                        }
+                                        else if (variable.Name == "Pressure")
+                                        {
+                                            <div class="display-6 fw-bold text-info">@Machine.Pressure bar</div>
+                                        }
+                                        else if (variable.Name == "BatchProgress")
+                                        {
+                                            <div>
+                                                <!-- Batch ID above the progress bar -->
+                                                <div class="small text-muted mb-1">
+                                                    Batch: #@GetBatchId(Machine.MachineId)
+                                                </div>
+
+                                                <!-- Progress Bar -->
+                                                <div class="progress" style="height: 25px;">
+                                                    <div
+                                                        class="progress-bar @GetProgressBarClass(Machine.BatchProgress) fw-bold d-flex align-items-center justify-content-center"
+                                                        style="width: @Machine.BatchProgress%">
+                                                        @Machine.BatchProgress%
+                                                    </div>
+                                                </div>
+
+                                                <!-- Additional batch info -->
+                                                <div class="small text-muted mt-1">
+                                                    @Machine.CurrentBatch
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (variable.Name == "ProductionRate")
+                                        {
+                                            <div class="h4 fw-bold text-success">@Machine.ProductionRate<small
+                                                    class="h6">/min</small></div>
+                                        }
+                                        else if (variable.Name == "DefectCount")
+                                        {
+                                            <div class="h3 fw-bold text-danger">@Machine.DefectCount</div>
+                                            <small class="text-muted">Defect Products</small>
+                                        }
+                                        else if (variable.Name == "AcceptableCount")
+                                        {
+                                            <div class="h3 fw-bold text-success">@Machine.AcceptableCount</div>
+                                            <small class="text-muted">Acceptable Products</small>
+                                        }
+                                        else if (variable.Name == "CurrentBatch")
+                                        {
+                                            <span class="badge bg-secondary fs-6">@Machine.CurrentBatch</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Machine Machine { get; set; } = new();
+
+    private void TestClick()
+    {
+        Console.WriteLine("🎯 TEST BUTTON CLICKED! If you see this, clicks work!");
+        StateHasChanged();
+    }
+
+    private List<VariableOption> availableVariables = new()
+    {
+        new VariableOption { Name = "Temperature", DisplayName = "Temperature" },
+        new VariableOption { Name = "Pressure", DisplayName = "Pressure" },
+        new VariableOption { Name = "BatchProgress", DisplayName = "Batch Progress" },
+        new VariableOption { Name = "ProductionRate", DisplayName = "Production/Minute" },
+        new VariableOption { Name = "DefectCount", DisplayName = "Defect Products" },
+        new VariableOption { Name = "AcceptableCount", DisplayName = "Acceptable Products" },
+        new VariableOption { Name = "CurrentBatch", DisplayName = "Current Batch" }
+    };
+
+    private List<VariableOption> selectedVariables = new();
+
+    protected override void OnInitialized()
+    {
+        // Start with Temperature and Batch Progress selected
+        selectedVariables.Add(availableVariables[0]); // Temperature
+        selectedVariables.Add(availableVariables[2]); // Batch Progress
+    }
+
+    private void ToggleVariable(VariableOption variable)
+    {
+        Console.WriteLine($"Toggling variable: {variable.DisplayName}");
+        if (selectedVariables.Contains(variable))
+        {
+            selectedVariables.Remove(variable);
+            Console.WriteLine($"Removed {variable.DisplayName}");
+        }
+        else
+        {
+            selectedVariables.Add(variable);
+            Console.WriteLine($"Added {variable.DisplayName}");
+        }
+        StateHasChanged();
+        Console.WriteLine($"Selected variables count: {selectedVariables.Count}");
+    }
+
+    private void RemoveVariable(VariableOption variable)
+    {
+        Console.WriteLine($"Removing variable: {variable.DisplayName}");
+        selectedVariables.Remove(variable);
+        StateHasChanged();
+        Console.WriteLine($"Selected variables count: {selectedVariables.Count}");
+    }
+
+    private void SelectAllVariables()
+    {
+        Console.WriteLine("Selecting all variables");
+        selectedVariables = new List<VariableOption>(availableVariables);
+        StateHasChanged();
+        Console.WriteLine($"Selected variables count: {selectedVariables.Count}");
+    }
+
+    private string GetTemperatureClass(decimal temperature)
+    {
+        return temperature switch
+        {
+            > 70 => "text-danger",
+            > 60 => "text-warning",
+            _ => "text-success"
+        };
+    }
+
+    private string GetBatchId(int machineId)
+    {
+        var random = new Random();
+        return $"{machineId}{random.Next(1000, 9999)}";
+    }
+
+    private string GetProgressBarClass(int progress)
+    {
+        return progress switch
+        {
+            >= 90 => "bg-success",
+            >= 50 => "bg-primary",
+            _ => "bg-info"
+        };
+    }
+
+    private class VariableOption
+    {
+        public string Name { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
+
+        // Important: Override Equals and GetHashCode for proper comparison
+        public override bool Equals(object obj)
+        {
+            return obj is VariableOption option && Name == option.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name?.GetHashCode() ?? 0;
+        }
+    }
+
+}

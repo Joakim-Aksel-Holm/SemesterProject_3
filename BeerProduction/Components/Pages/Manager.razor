@@ -3,8 +3,6 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
-@using BeerProduction.Components.Model
-@using BeerProduction.Services
 @inject ManagerService ManagerService
 
 <PageTitle>Manager Dashboard</PageTitle>
@@ -18,38 +16,60 @@
 else
 {
     <div class="container-fluid">
-        <div class="card">
-            <div class="card-header">
-                <h5>All Machines</h5>
+        <!-- Quick Stats Summary -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body text-center">
+                        <h6>Online Machines</h6>
+                        <h2>@_machines.Count(m => m.IsOnline)</h2>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Location</th>
-                        <th>Last Maintenance</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var machine in _machines)
-                    {
-                        <tr>
-                            <td>@machine.MachineId</td>
-                            <td>@machine.Name</td>
-                            <td>@machine.Status</td>
-                            <td>@machine.Location</td>
-                            <td>@machine.LastMaintenance.ToString("MM/dd/yyyy")</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h6>In Production</h6>
+                        <h2>@_machines.Count(m => m.BatchProgress > 0)</h2>
+                    </div>
+                </div>
             </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body text-center">
+                        <h6>Total Production</h6>
+                        <h2>@_machines.Sum(m => m.AcceptableCount)</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                        <h6>Defect Rate</h6>
+                        <h2>@GetOverallDefectRate()%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Machine Cards -->
+        <div class="machines-grid">
+            @foreach (var machine in _machines)
+            {
+                <MachineCard Machine="@machine" />
+            }
         </div>
     </div>
 }
+
+<style>
+    .machines-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+</style>
 
 @code {
     private List<Machine> _machines = new List<Machine>();
@@ -57,5 +77,12 @@ else
     protected override async Task OnInitializedAsync()
     {
         _machines = await ManagerService.GetAllMachinesAsync();
+    }
+
+    private double GetOverallDefectRate()
+    {
+        var total = _machines.Sum(m => m.AcceptableCount + m.DefectCount);
+        if (total == 0) return 0;
+        return Math.Round((_machines.Sum(m => m.DefectCount) / (double)total) * 100, 1);
     }
 }
