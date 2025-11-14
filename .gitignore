@@ -54,3 +54,11 @@ out/
 
 # Test result caches
 TestResults/
+
+# Ignore build artifacts
+bin/
+obj/
+
+# Ignore nested obj/bin as well
+*/bin/
+*/obj/
