@@ -1,33 +1,39 @@
 {
   "format": 1,
   "restore": {
-    "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj": {}
+    "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction.Tests\\BeerProduction.Tests.csproj": {}
   },
   "projects": {
-    "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj": {
+    "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction.Tests\\BeerProduction.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction.Tests\\BeerProduction.Tests.csproj",
         "projectName": "BeerProduction.Tests",
-        "projectPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/BeerProduction.Tests.csproj",
-        "packagesPath": "/Users/holm/.nuget/packages/",
-        "outputPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction.Tests/obj/",
+        "projectPath": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction.Tests\\BeerProduction.Tests.csproj",
+        "packagesPath": "C:\\Users\\kontu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction.Tests\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/holm/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\kontu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj": {
-                "projectPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj"
+              "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction\\BeerProduction.csproj": {
+                "projectPath": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction\\BeerProduction.csproj"
               }
             }
           }
@@ -58,11 +64,13 @@
             },
             "xunit": {
               "target": "Package",
-              "version": "[2.9.2, )"
+              "version": "[2.9.3, )"
             },
             "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[2.8.2, )"
+              "version": "[3.1.5, )"
             }
           },
           "imports": [
@@ -81,26 +89,32 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj": {
+    "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction\\BeerProduction.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj",
+        "projectUniqueName": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction\\BeerProduction.csproj",
         "projectName": "BeerProduction",
-        "projectPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction/BeerProduction.csproj",
-        "packagesPath": "/Users/holm/.nuget/packages/",
-        "outputPath": "/Users/holm/Documents/SemesterProject_3/BeerProduction/obj/",
+        "projectPath": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction\\BeerProduction.csproj",
+        "packagesPath": "C:\\Users\\kontu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kontu\\RiderProjects\\Semester_3_14_11\\BeerProduction\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/holm/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\kontu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -128,6 +142,14 @@
             "AspNetCore.HealthChecks.NpgSql": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[10.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[10.0.0, )"
             },
             "Npgsql": {
               "target": "Package",
@@ -161,7 +183,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
