@@ -28,6 +28,7 @@ public class MachineControl
         {
             Console.WriteLine($"✅ Machine {MachineID} connected.");
         };
+        
     }
 
     public bool TryConnect()

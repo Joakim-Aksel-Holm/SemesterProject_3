@@ -1,8 +1,9 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
+
 @inject MachineControlService MachineControlService
-@rendermode InteractiveServer   
+@rendermode InteractiveServer
 
 @page "/MachineControl"
 @layout MainLayout
@@ -10,29 +11,35 @@
 <link rel="stylesheet" href="/css/machinecontrol.css">
 <PageTitle>MachineControl</PageTitle>
 
+
 <div>
-    <h1>Her er dine machine controls</h1>
-    <div class="parent">
-        <div class="div1">
-            <p>her er nogle ting i det ene grid</p>
-            <div class="buttonControl">
-                <button @onclick="startMachine" name="startButton">Start</button>
-                <button @onclick="stopMachine" name="stopButton">Stop</button>
-                <button>Abort</button>
-            </div>
-
-        </div>
-        <div class="div2">
-            <p>Her er nogle ting i det andet grid</p>
-            <button>WUuuuCLICK</button>
-        </div>
+    <h1>Machine control</h1>
+</div>
+<div class="parent">
+    <div class="div1">
+        <button @onclick="startMachine" name="startButton">Start</button>
     </div>
-
+    <div class="div2">
+        <button @onclick="stopMachine" name="stopButton">Stop</button>
+    </div>
+    <div class="div3">
+        <button @onclick="resetMachine">Reset</button>
+    </div>
+    <div class="div4">
+        <button @onclick="clearMachine">Clear</button>
+    </div>
+    <div class="div5">
+        <button @onclick="abortMachine">Abort</button>
+    </div>
 </div>
 
 @code
 {
 
+    private async Task abortMachine()
+    {
+        await MachineControlService.AbortCommandAsync();
+    }
     private async Task startMachine()
     {
         await MachineControlService.StartMachineAsync();
@@ -41,5 +48,15 @@
     private async Task stopMachine()
     {
         await MachineControlService.StopMachineAsync();
+    }
+
+    private async Task resetMachine()
+    {
+        await MachineControlService.ResetCommandAsync();
+    }
+
+    private async Task clearMachine()
+    {
+        await MachineControlService.ClearCommandAsync();
     }
 }
