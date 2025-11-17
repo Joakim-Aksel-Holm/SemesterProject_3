@@ -1,5 +1,7 @@
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
+@inject MachineControlService Machine
+
 
 <div class="card machine-card mb-4">
     <!-- Header -->
@@ -143,8 +145,6 @@
 </div>
 
 @code {
-    [Parameter] public MachineControlService Machine { get; set; } = new();
-
     private void TestClick()
     {
         Console.WriteLine("🎯 TEST BUTTON CLICKED! If you see this, clicks work!");

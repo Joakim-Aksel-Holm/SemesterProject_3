@@ -8,17 +8,20 @@ namespace BeerProduction.Services;
 [Authorize(Roles = "Manager")]
 public class ManagerService
 {
-    private DatabaseConnection Db;
+    private DatabaseConnection _db;
 
+    public ManagerService(DatabaseConnection db)
+    {
+        _db = db;
+    }
     //Manager-specific methods :
-
     public async Task<List<MachineControlService>> GetAllMachinesAsync()
     {
         //Sql queries specific to manager dashboard
 
         var machines = new List<MachineControlService>();
             
-        await using var conn = await Db.OpenAsync();   // pooled under the hood
+        await using var conn = await _db.OpenAsync();   // pooled under the hood
         await using var cmd  = conn.CreateCommand();
         
         cmd.CommandText = @"SELECT id, url, name
