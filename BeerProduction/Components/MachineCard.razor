@@ -5,12 +5,12 @@
     <!-- Header -->
     <div class="card-header bg-primary text-white">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">@Machine.Name</h5>
+            <h5 class="mb-0">Maskine</h5>
             <div class="text-end">
                 <span class="badge @(Machine.IsOnline ? "bg-success" : "bg-danger")">
                     @(Machine.IsOnline ? "Online" : "Offline")
                 </span>
-                <div class="small mt-1">Serial: MCH-@Machine.MachineId.ToString("D5")</div>
+                <div class="small mt-1">Serial: MCH-@Machine.GetMachineId().ToString("D5")</div>
             </div>
         </div>
     </div>
@@ -72,57 +72,64 @@
                                         </button>
                                     </div>
                                     <div class="card-body text-center py-3">
-                                        @if (variable.Name == "Temperature")
+                                        @if (variable.Name == "Amount")
                                         {
-                                            <div class="display-6 fw-bold text-info">
-                                                @Machine.Temperature°C
-                                            </div>
+                                            <div class="display-6 fw-bold text-info">@Machine.GetAmount()</div>
                                         }
-                                        else if (variable.Name == "Pressure")
+                                        else if (variable.Name == "PPM")
                                         {
-                                            <div class="display-6 fw-bold text-info">@Machine.Pressure bar</div>
+                                            <div class="display-6 fw-bold text-info">@Machine.GetPPM()<small class="h6">
+                                                /min
+                                            </small></div>
+                                        }
+                                        else if (variable.Name == "Temperature")
+                                        {
+                                            <div class="h4 fw-bold text-success">@Machine.GetTemperature()°C</div>
+                                        }
+                                        else if (variable.Name == "Humidity")
+                                        {
+                                            <div class="h4 fw-bold text-success">@Machine.GetHumidity()</div>
+                                        }
+                                        else if (variable.Name == "Vibration")
+                                        {
+                                            <div class="h4 fw-bold text-success">@Machine.GetVibration()°C</div>
+                                        }
+                                        else if (variable.Name == "DefectCount")
+                                        {
+                                            <div class="h3 fw-bold text-danger">@Machine.GetDefects()</div>
+                                            <small class="text-muted">Defect Products</small>
+                                        }
+                                        else if (variable.Name == "AcceptableCount")
+                                        {
+                                            <div class="h3 fw-bold text-success">@Machine.GetAcceptable()</div>
+                                            <small class="text-muted">Acceptable Products</small>
                                         }
                                         else if (variable.Name == "BatchProgress")
                                         {
                                             <div>
                                                 <!-- Batch ID above the progress bar -->
                                                 <div class="small text-muted mb-1">
-                                                    Batch: #@GetBatchId(Machine.MachineId)
+                                                    Batch: #@GetBatchId(Machine.GetBatchId())
                                                 </div>
 
                                                 <!-- Progress Bar -->
                                                 <div class="progress" style="height: 25px;">
                                                     <div
-                                                        class="progress-bar @GetProgressBarClass(Machine.BatchProgress) fw-bold d-flex align-items-center justify-content-center"
-                                                        style="width: @Machine.BatchProgress%">
-                                                        @Machine.BatchProgress%
+                                                        class="progress-bar @GetProgressBarClass(Machine.GetBatchProcess()) fw-bold d-flex align-items-center justify-content-center"
+                                                        style="width: @Machine.GetBatchProcess()%">
+                                                        @Machine.GetBatchProcess()%
                                                     </div>
                                                 </div>
 
                                                 <!-- Additional batch info -->
                                                 <div class="small text-muted mt-1">
-                                                    @Machine.CurrentBatch
+                                                    @Machine.GetCurrentBatch()
                                                 </div>
                                             </div>
                                         }
-                                        else if (variable.Name == "ProductionRate")
-                                        {
-                                            <div class="h4 fw-bold text-success">@Machine.ProductionRate<small
-                                                    class="h6">/min</small></div>
-                                        }
-                                        else if (variable.Name == "DefectCount")
-                                        {
-                                            <div class="h3 fw-bold text-danger">@Machine.DefectCount</div>
-                                            <small class="text-muted">Defect Products</small>
-                                        }
-                                        else if (variable.Name == "AcceptableCount")
-                                        {
-                                            <div class="h3 fw-bold text-success">@Machine.AcceptableCount</div>
-                                            <small class="text-muted">Acceptable Products</small>
-                                        }
                                         else if (variable.Name == "CurrentBatch")
                                         {
-                                            <span class="badge bg-secondary fs-6">@Machine.CurrentBatch</span>
+                                            <span class="badge bg-secondary fs-6">@Machine.GetCurrentBatch()</span>
                                         }
                                     </div>
                                 </div>
@@ -146,13 +153,16 @@
 
     private List<VariableOption> availableVariables = new()
     {
+        new VariableOption { Name = "Amount", DisplayName = "Produce Amount" },
+        new VariableOption { Name = "PPM", DisplayName = "Products/min" },
         new VariableOption { Name = "Temperature", DisplayName = "Temperature" },
-        new VariableOption { Name = "Pressure", DisplayName = "Pressure" },
-        new VariableOption { Name = "BatchProgress", DisplayName = "Batch Progress" },
-        new VariableOption { Name = "ProductionRate", DisplayName = "Production/Minute" },
-        new VariableOption { Name = "DefectCount", DisplayName = "Defect Products" },
-        new VariableOption { Name = "AcceptableCount", DisplayName = "Acceptable Products" },
-        new VariableOption { Name = "CurrentBatch", DisplayName = "Current Batch" }
+        new VariableOption { Name = "Humidity", DisplayName = "Humidity" },
+        new VariableOption { Name = "Vibration", DisplayName = "Vibration" },
+        new VariableOption { Name = "Defect", DisplayName = "Defect products" },
+        new VariableOption { Name = "Accepted", DisplayName = "Accepted products" },
+        new VariableOption { Name = "BatchProcess", DisplayName = "Batch process" },
+        new VariableOption { Name = "Maintenance", DisplayName = "Maintenance status" },
+        new VariableOption { Name = "CurrentBatch", DisplayName = "Current Batch"}
     };
 
     private List<VariableOption> selectedVariables = new();
