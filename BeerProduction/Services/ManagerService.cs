@@ -21,7 +21,7 @@ public class ManagerService
         await using var conn = await Db.OpenAsync();   // pooled under the hood
         await using var cmd  = conn.CreateCommand();
         
-        cmd.CommandText = @"SELECT machine_id, machine_url
+        cmd.CommandText = @"SELECT id, url, name
                             FROM machine_table;
                         ";
         
@@ -31,8 +31,9 @@ public class ManagerService
         {
             var machineId = reader.GetInt32(0);
             var machineUrl = reader.GetString(1);
+            var machineName = reader.GetString(2);
             
-            var machine = new MachineControl(machineId, machineUrl);
+            var machine = new MachineControl(machineId, machineUrl, machineName);
             var machineService = new MachineControlService(machine);
 
             machines.Add(machineService);

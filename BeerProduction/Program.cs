@@ -31,7 +31,7 @@ builder.Services.AddScoped<ManagerService>();
 var app = builder.Build();
 try
 {
-    MachineControl machine1 = new MachineControl(1, "opc.tcp://192.168.0.122:4840");
+    MachineControl machine1 = new MachineControl(1, "opc.tcp://192.168.0.122:4840", "Primary Brewer");
     MachineControlService machineService1 = new MachineControlService(machine1);
     int status = machineService1.GetStatus();
     Console.WriteLine("Machine 1 status: " + status);

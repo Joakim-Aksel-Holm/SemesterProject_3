@@ -13,6 +13,13 @@ public class MachineControlService(MachineControl machineControl)
         return machineControl.MachineID;
     }
 
+    // Reads name from table
+    public string GetMachineName()
+    {
+        return machineControl.MachineName;
+    }
+
+    // Reads the ID of the current batch
     public int GetBatchId()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[0]").As<int>();
@@ -72,9 +79,23 @@ public class MachineControlService(MachineControl machineControl)
 
     public bool GetOnline()
     {
-        return true;
+        var serverStatus = false;
+        try
+        {
+            if (MachineControl.Client.ReadNode("i=2256 [Server_ServerStatus]") >= 0)
+            {
+                serverStatus = true;
+            }
+            return serverStatus;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
+    // Reads the value of current type and converts with enum
     public BeerType GetCurrentBatch()
     {
         var current = MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.Parameter[0].Value").As<int>();
@@ -98,10 +119,11 @@ public class MachineControlService(MachineControl machineControl)
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", true);
     }
 
+    // Reading the current status.
     public int GetStatus()
     {
         int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent")
-            .As<int>(); // Reading the current status.
+            .As<int>(); 
         return status;
     }
 

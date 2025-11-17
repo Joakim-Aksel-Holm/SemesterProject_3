@@ -8,15 +8,18 @@ public class MachineControl
     public string MachineURL { get; }
 
     public int MachineID { get; }
+    
+    public string MachineName { get; }
 
     public OpcClient Client { get; set; }
 
 
     //Constructor 
-    public MachineControl(int machineId, string machineURL)
+    public MachineControl(int machineId, string machineURL, string machineName)
     {
         MachineID = machineId;
         MachineURL = machineURL;
+        MachineName = machineName;
         Client = new OpcClient(machineURL);
         Client.Connect();
     }
