@@ -12,6 +12,8 @@ public class MachineControl
     public string MachineName { get; }
 
     public OpcClient Client { get; set; }
+    
+    public bool IsConnected => Client?.State == OpcClientState.Connected;
 
 
     //Constructor 

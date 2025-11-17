@@ -4,7 +4,7 @@ namespace BeerProduction.Services;
 
 public class MachineControlService(MachineControl machineControl)
 {
-    public MachineControl MachineControl { get; set; } = machineControl;
+    public MachineControl MachineControl { get; } = machineControl;
 
     //todo list:
     //todo: Online machines method.
@@ -94,15 +94,19 @@ public class MachineControlService(MachineControl machineControl)
         {
             return 0;
         }
-
+        
         return (GetAmount() / GetProduced()) * 100;
     }
 
-    /*public bool GetOnline()
-    { 
-        return true;
+    public bool GetOnline()
+    {
+        var serverStatus = false;
+        if (MachineControl.IsConnected)
+        {
+            return true;
+        }
+        return serverStatus;
     }
-    */
 
     // Reads the value of current type and converts with enum
     public BeerType GetCurrentBatch()
