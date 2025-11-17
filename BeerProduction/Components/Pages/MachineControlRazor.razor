@@ -7,8 +7,10 @@
 
 @page "/MachineControl"
 @layout MainLayout
+@* Rendermode very important, makes buttons clickable:) *@
 @rendermode InteractiveServer
-
+@* Stylesheet, main one is machinecontrol.css 
+   the other is only navbar and global style *@
 <link rel="stylesheet" href="/css/homeStyle.css">
 <link rel="stylesheet" href="/css/machinecontrol.css">
 <PageTitle>MachineControl</PageTitle>
@@ -32,6 +34,7 @@
         <button @onclick="abortMachine">Abort</button>
     </div>
     <div class="div6">
+        @* Selection for selecting beer type *@
         <label for="BeerType">Select a Beer type</label>
         <select name="Beer type" id="BeerType">
             <option value="">Pilsner</option>
@@ -43,6 +46,7 @@
         </select>
     </div>
     <div class="div7">
+        @* Form for adding batch size and batch speed *@
         <EditForm Model="@batchForm">
             <label>
                 Amount:
@@ -55,7 +59,7 @@
             </label>
         </EditForm>
     </div>
-    <div>
+    <div class="div8">
         <label for="BatchButton">Add to batch</label>
         <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
     </div>
@@ -64,8 +68,10 @@
 
 @code {
     private BatchForm batchForm = new();
+
     private BatchService batchService = new();
 
+    @* Methods for controlling machine with buttons *@
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
     private async Task startMachine() => await MachineControlService.StartMachineAsync();
     private async Task stopMachine() => await MachineControlService.StopMachineAsync();
@@ -75,12 +81,11 @@
 
     private void AddBatchButton()
     {
-        Batch batch = new Batch(1, BeerType.Pilsner, 400, 450,BatchPriority.High);
+        Batch batch = new Batch(1, BeerType.Pilsner, 400, 450, BatchPriority.High);
         Console.WriteLine("Batch has been created!!");
 
         batchService.AddBatch(batch, batch.Priority);
         Console.WriteLine("Batch have been added to queue");
-   
     }
 
 }

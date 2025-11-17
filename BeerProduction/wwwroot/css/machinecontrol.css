@@ -34,5 +34,17 @@
 select {
   display: flex;
   flex-direction: column;
-  margin: 10px;
+  margin: 20px;
+}
+
+.div7 label {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.div8 {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
 }
