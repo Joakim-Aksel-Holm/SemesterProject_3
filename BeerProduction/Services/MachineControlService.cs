@@ -1,3 +1,4 @@
+using System.Reflection.PortableExecutable;
 using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
@@ -8,7 +9,7 @@ public class MachineControlService(MachineControl machineControl)
 
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
-    //todo: In Production (running) machines.
+    //todo: In Production (running) machines. "Done"
     //todo: Total Production method.
     //todo: Defect rate mathod.
     //todo: Method for  Produce Amount.
@@ -23,6 +24,7 @@ public class MachineControlService(MachineControl machineControl)
     //todo: Method for Current Batch beer type.
     
     // Methods
+    
     // Reads the Batch ID value
     public int GetMachineId()
     {
@@ -100,7 +102,11 @@ public class MachineControlService(MachineControl machineControl)
 
     public string GetOnline()
     {
-        bool serverStatus = MachineControl.IsConnected;
+        var serverStatus = false;
+        if (MachineControl.IsConnected)
+        {
+            serverStatus = true;
+        }
         return serverStatus ? "Online" : "Offline";
     }
 
