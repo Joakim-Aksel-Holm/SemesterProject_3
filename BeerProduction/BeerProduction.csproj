@@ -18,4 +18,8 @@
     <_ContentIncludedByDefault Remove="wwwroot\js\Functionality.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\VariablesPics\" />
+  </ItemGroup>
+
 </Project>
