@@ -34,6 +34,7 @@
 select {
   display: flex;
   flex-direction: column;
+  color: black;
   margin: 20px;
 }
 

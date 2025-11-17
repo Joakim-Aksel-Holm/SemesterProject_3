@@ -36,8 +36,8 @@
     <div class="div6">
         @* Selection for selecting beer type *@
         <label for="BeerType">Select a Beer type</label>
-        <select name="Beer type" id="BeerType">
-            <option value="">Pilsner</option>
+        <select  @bind="batchForm.SelectedBeerType" id="BeerType">
+            <option value="0">Pilsner</option>
             <option value="1">Wheat</option>
             <option value="2">IPA</option>
             <option value="3">Stout</option>
@@ -86,7 +86,7 @@
 
     private void AddBatchButton()
     {
-        Batch batch = new Batch(id, BeerType.AlcoholFree, batchForm.Size, batchForm.Speed, BatchPriority.High);
+        Batch batch = new Batch(id, batchForm.SelectedBeerType, batchForm.Size, batchForm.Speed, BatchPriority.High);
         @* Batch batch = new Batch(1, BeerType.Pilsner, 400, 450, BatchPriority.High); *@
         @* Batch batch2 = new Batch(2, BeerType.Pilsner, 400, 450, BatchPriority.High); *@
 
