@@ -6,6 +6,22 @@ public class MachineControlService(MachineControl machineControl)
 {
     public MachineControl MachineControl { get; } = machineControl;
 
+    //todo list:
+    //todo: Online machines method.
+    //todo: In Production (running) machines.
+    //todo: Total Production method.
+    //todo: Defect rate mathod.
+    //todo: Method for  Produce Amount.
+    //todo: Method for Temperature sensor reading.
+    //todo: Method for Humidity sensor reading.
+    //todo: Method for Vibration sensore reading.
+    //todo: Method for defect products on each machine.
+    //todo: Method for Accepted products on each machine.
+    //todo: Method for Batch process progression rate.
+    //todo: Method forMaintenance status progression rate.
+    //todo: Method for Current Batch (ID).
+    //todo: Method for Current Batch beer type.
+    
     // Methods
     // Reads the Batch ID value
     public int GetMachineId()

@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 
 
+
 <div class="card machine-card mb-4">
     <!-- Header -->
     <div class="card-header bg-primary text-white">
@@ -10,7 +11,6 @@
             <h5 class="mb-0">@MachineControlService.GetMachineName()</h5>
             <div class="text-end">
                 <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId().ToString("D5")</div>
-                <h2 class="border-bottom pb-2">Machine Status: @MachineControlService.GetOnline()</h2>
             </div>
         </div>
     </div>
@@ -74,10 +74,9 @@
                                         }
                                         else if (variable.Name == "PPM")
                                         {
-                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPPM()
-                                                <small class="h6">
-                                                    /min
-                                                </small></div>
+                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPPM()<small class="h6">
+                                                /min
+                                            </small></div>
                                         }
                                         else if (variable.Name == "Temperature")
                                         {
@@ -89,7 +88,7 @@
                                         }
                                         else if (variable.Name == "Vibration")
                                         {
-                                            <div class="h4 fw-bold text-success">@MachineControlService.GetVibration()</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetVibration()°C</div>
                                         }
                                         else if (variable.Name == "DefectCount")
                                         {
