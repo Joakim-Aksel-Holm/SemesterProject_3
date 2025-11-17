@@ -4,7 +4,7 @@ namespace BeerProduction.Services;
 
 public class MachineControlService(MachineControl machineControl)
 {
-    public MachineControl MachineControl { get; set; } = machineControl;
+    public MachineControl MachineControl { get; } = machineControl;
 
     // Methods
     // Reads the Batch ID value
@@ -74,25 +74,22 @@ public class MachineControlService(MachineControl machineControl)
 
     public int GetBatchProcess()
     {
-        return (GetProduced() / GetAmount()) * 100;
+        if (GetProduced() == 0)
+        {
+            return 0;
+        }
+        
+        return (GetAmount() / GetProduced()) * 100;
     }
 
     public bool GetOnline()
     {
         var serverStatus = false;
-        try
+        if (MachineControl.IsConnected)
         {
-            if (MachineControl.Client.ReadNode("i=2256 [Server_ServerStatus]") >= 0)
-            {
-                serverStatus = true;
-            }
-            return serverStatus;
+            return true;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        return serverStatus;
     }
 
     // Reads the value of current type and converts with enum
