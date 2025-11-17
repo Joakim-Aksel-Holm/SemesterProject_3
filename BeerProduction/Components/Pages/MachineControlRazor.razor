@@ -34,17 +34,19 @@
         <button @onclick="abortMachine">Abort</button>
     </div>
     <div class="div6">
-        @* Selection for selecting beer type *@
         <label for="BeerType">Select a Beer type</label>
-        <select  @bind="batchForm.SelectedBeerType" id="BeerType">
+        <select @bind="SelectedBeerType" id="BeerType">
+            <option value="-1" disabled>Select a beer type</option>
             <option value="0">Pilsner</option>
             <option value="1">Wheat</option>
             <option value="2">IPA</option>
             <option value="3">Stout</option>
             <option value="4">Ale</option>
-            <option value="5">Alchohol free</option>
+            <option value="5">Alcohol free</option>
         </select>
+
     </div>
+
     <div class="div7">
         @* Form for adding batch size and batch speed *@
         <EditForm Model="@batchForm">
@@ -63,11 +65,16 @@
         <label for="BatchButton">Add to batch</label>
         <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
     </div>
-@* hej hajmann *@
+    @* hej hajmann *@
 </div>
 
 @code {
+
     int id = 1;
+
+    // In your component
+    private int SelectedBeerType = -1; // placeholder value
+
 
     private BatchForm batchForm = new();
 

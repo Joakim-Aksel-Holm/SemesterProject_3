@@ -30,8 +30,7 @@
   margin: 20px;
 }
 
-.div6,
-select {
+.div6 select {
   display: flex;
   flex-direction: column;
   color: black;
