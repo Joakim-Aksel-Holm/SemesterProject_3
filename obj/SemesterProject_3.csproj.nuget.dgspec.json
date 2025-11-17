@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/jwan/RiderProjects/SemesterProject_3/SemesterProject_3.csproj": {}
+    "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj": {}
   },
   "projects": {
-    "/Users/jwan/RiderProjects/SemesterProject_3/SemesterProject_3.csproj": {
+    "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/jwan/RiderProjects/SemesterProject_3/SemesterProject_3.csproj",
+        "projectUniqueName": "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj",
         "projectName": "SemesterProject_3",
-        "projectPath": "/Users/jwan/RiderProjects/SemesterProject_3/SemesterProject_3.csproj",
+        "projectPath": "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj",
         "packagesPath": "/Users/jwan/.nuget/packages/",
-        "outputPath": "/Users/jwan/RiderProjects/SemesterProject_3/obj/",
+        "outputPath": "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/jwan/.nuget/NuGet/NuGet.Config"
