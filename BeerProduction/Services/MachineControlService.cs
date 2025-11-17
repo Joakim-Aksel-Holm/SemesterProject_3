@@ -7,7 +7,7 @@ public class MachineControlService(MachineControl machineControl)
     public MachineControl MachineControl { get; } = machineControl;
 
     //todo list:
-    //todo: Online machines method.
+    //todo: Online machines method. "missing refining front-end . Call to front-end team"
     //todo: In Production (running) machines.
     //todo: Total Production method.
     //todo: Defect rate mathod.

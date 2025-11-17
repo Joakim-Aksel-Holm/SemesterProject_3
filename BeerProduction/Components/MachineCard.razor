@@ -11,6 +11,8 @@
             <h5 class="mb-0">@MachineControlService.GetMachineName()</h5>
             <div class="text-end">
                 <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId().ToString("D5")</div>
+                <h2 class="border-bottom pb-2">@MachineControlService.GetOnline()</h2>
+                
             </div>
         </div>
     </div>
