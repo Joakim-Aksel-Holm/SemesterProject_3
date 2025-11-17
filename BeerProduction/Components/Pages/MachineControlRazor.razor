@@ -1,8 +1,7 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Components.Model
+@using BeerProduction.Enums
 @using BeerProduction.Services
-@using BeerProduction.Components.Enums
-@using Microsoft.AspNetCore.Components.Forms
 
 @inject MachineControlService MachineControlService
 
@@ -32,26 +31,56 @@
     <div class="div5">
         <button @onclick="abortMachine">Abort</button>
     </div>
-
     <div class="div6">
+        <label for="BeerType">Select a Beer type</label>
+        <select name="Beer type" id="BeerType">
+            <option value="">Pilsner</option>
+            <option value="1">Wheat</option>
+            <option value="2">IPA</option>
+            <option value="3">Stout</option>
+            <option value="4">Ale</option>
+            <option value="5">Alchohol free</option>
+        </select>
+    </div>
+    <div class="div7">
         <EditForm Model="@batchForm">
-            <label>Amount:
-                <InputText @bind-Value="batchForm.Size" />
+            <label>
+                Amount:
+                <InputNumber @bind-Value="batchForm.Size"/>
             </label>
 
-            <label>Speed:
-                <InputText @bind-Value="batchForm.Speed" />
+            <label>
+                Speed:
+                <InputNumber @bind-Value="batchForm.Speed"/>
             </label>
         </EditForm>
     </div>
+    <div>
+        <label for="BatchButton">Add to batch</label>
+        <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
+    </div>
+
 </div>
 
 @code {
     private BatchForm batchForm = new();
+    private BatchService batchService = new();
 
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
     private async Task startMachine() => await MachineControlService.StartMachineAsync();
     private async Task stopMachine() => await MachineControlService.StopMachineAsync();
     private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
     private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
+
+
+    private void AddBatchButton()
+    {
+        Batch batch = new Batch(1, BeerType.Pilsner, 400, 450,BatchPriority.High);
+        Console.WriteLine("Batch has been created!!");
+
+        batchService.AddBatch(batch, batch.Priority);
+        Console.WriteLine("Batch have been added to queue");
+   
+    }
+
 }

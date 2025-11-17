@@ -29,3 +29,10 @@
   color: red;
   margin: 20px;
 }
+
+.div6,
+select {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
