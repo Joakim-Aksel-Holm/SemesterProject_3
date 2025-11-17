@@ -31,18 +31,7 @@ builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://192.168.
 
 
 var app = builder.Build();
-try
-{
-    MachineControl machine1 = new MachineControl(2, "opc.tcp://192.168.0.122:4840", "Secondary Brewer");
-    MachineControlService machineService1 = new MachineControlService(machine1);
-    int status = machineService1.GetStatus();
-    Console.WriteLine("Machine 1 status: " + status);
-    machineService1.StartMachine();
-}
-catch (Exception e)
-{
-    Console.WriteLine(e);
-}
+
 
 // Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
 //app.MapGet("/", ()=> Results.Redirect("/html/manager.html"));
