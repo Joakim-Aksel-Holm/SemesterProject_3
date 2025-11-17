@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Npgsql" Version="9.0.4" />
     <PackageReference Include="Opc.UaFx.Client" Version="2.50.2" />
     <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.5.377.21" />

@@ -1,26 +1,27 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
+@using BeerProduction.Components.Enums
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject MachineControlService MachineControlService
-@rendermode InteractiveServer
 
 @page "/MachineControl"
 @layout MainLayout
+@rendermode InteractiveServer
+
 <link rel="stylesheet" href="/css/homeStyle.css">
 <link rel="stylesheet" href="/css/machinecontrol.css">
 <PageTitle>MachineControl</PageTitle>
 
+<h1>Machine control</h1>
 
-<div>
-    <h1>Machine control</h1>
-</div>
 <div class="parent">
     <div class="div1">
-        <button @onclick="startMachine" name="startButton">Start</button>
+        <button @onclick="startMachine">Start</button>
     </div>
     <div class="div2">
-        <button @onclick="stopMachine" name="stopButton">Stop</button>
+        <button @onclick="stopMachine">Stop</button>
     </div>
     <div class="div3">
         <button @onclick="resetMachine">Reset</button>
@@ -31,32 +32,26 @@
     <div class="div5">
         <button @onclick="abortMachine">Abort</button>
     </div>
+
+    <div class="div6">
+        <EditForm Model="@batchForm">
+            <label>Amount:
+                <InputText @bind-Value="batchForm.Size" />
+            </label>
+
+            <label>Speed:
+                <InputText @bind-Value="batchForm.Speed" />
+            </label>
+        </EditForm>
+    </div>
 </div>
 
-@code
-{
+@code {
+    private BatchForm batchForm = new();
 
-    private async Task abortMachine()
-    {
-        await MachineControlService.AbortCommandAsync();
-    }
-    private async Task startMachine()
-    {
-        await MachineControlService.StartMachineAsync();
-    }
-
-    private async Task stopMachine()
-    {
-        await MachineControlService.StopMachineAsync();
-    }
-
-    private async Task resetMachine()
-    {
-        await MachineControlService.ResetCommandAsync();
-    }
-
-    private async Task clearMachine()
-    {
-        await MachineControlService.ClearCommandAsync();
-    }
+    private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
+    private async Task startMachine() => await MachineControlService.StartMachineAsync();
+    private async Task stopMachine() => await MachineControlService.StopMachineAsync();
+    private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
+    private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
 }
