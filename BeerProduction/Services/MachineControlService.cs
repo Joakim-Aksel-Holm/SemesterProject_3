@@ -82,14 +82,10 @@ public class MachineControlService(MachineControl machineControl)
         return (GetAmount() / GetProduced()) * 100;
     }
 
-    public bool GetOnline()
+    public string GetOnline()
     {
-        var serverStatus = false;
-        if (MachineControl.IsConnected)
-        {
-            return true;
-        }
-        return serverStatus;
+        bool serverStatus = MachineControl.IsConnected;
+        return serverStatus ? "Online" : "Offline";
     }
 
     // Reads the value of current type and converts with enum
