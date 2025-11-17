@@ -1,24 +1,17 @@
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
-@inject MachineControlService Machine
+
 
 
 <div class="card machine-card mb-4">
     <!-- Header -->
     <div class="card-header bg-primary text-white">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">@Machine.GetMachineName()</h5>
+            <h5 class="mb-0">@MachineControlService.GetMachineName()</h5>
             <div class="text-end">
-                <span class="badge @(Machine.GetOnline() ? "bg-success" : "bg-danger")">
-                    @(Machine.GetOnline() ? "Online" : "Offline")
-                </span>
-                <div class="small mt-1">Serial: MCH-@Machine.GetMachineId().ToString("D5")</div>
+                <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId().ToString("D5")</div>
             </div>
         </div>
-    </div>
-    <!-- ADD THIS TEST BUTTON -->
-    <div class="alert alert-warning m-2">
-        <button class="btn btn-danger" @onclick="TestClick">TEST CLICK - Check Console (F12)</button>
     </div>
 
     <div class="card-body">
@@ -76,34 +69,34 @@
                                     <div class="card-body text-center py-3">
                                         @if (variable.Name == "Amount")
                                         {
-                                            <div class="display-6 fw-bold text-info">@Machine.GetAmount()</div>
+                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetAmount()</div>
                                         }
                                         else if (variable.Name == "PPM")
                                         {
-                                            <div class="display-6 fw-bold text-info">@Machine.GetPPM()<small class="h6">
+                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPPM()<small class="h6">
                                                 /min
                                             </small></div>
                                         }
                                         else if (variable.Name == "Temperature")
                                         {
-                                            <div class="h4 fw-bold text-success">@Machine.GetTemperature()°C</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetTemperature()°C</div>
                                         }
                                         else if (variable.Name == "Humidity")
                                         {
-                                            <div class="h4 fw-bold text-success">@Machine.GetHumidity()</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetHumidity()</div>
                                         }
                                         else if (variable.Name == "Vibration")
                                         {
-                                            <div class="h4 fw-bold text-success">@Machine.GetVibration()°C</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetVibration()°C</div>
                                         }
                                         else if (variable.Name == "DefectCount")
                                         {
-                                            <div class="h3 fw-bold text-danger">@Machine.GetDefects()</div>
+                                            <div class="h3 fw-bold text-danger">@MachineControlService.GetDefects()</div>
                                             <small class="text-muted">Defect Products</small>
                                         }
                                         else if (variable.Name == "AcceptableCount")
                                         {
-                                            <div class="h3 fw-bold text-success">@Machine.GetAcceptable()</div>
+                                            <div class="h3 fw-bold text-success">@MachineControlService.GetAcceptable()</div>
                                             <small class="text-muted">Acceptable Products</small>
                                         }
                                         else if (variable.Name == "BatchProgress")
@@ -111,27 +104,27 @@
                                             <div>
                                                 <!-- Batch ID above the progress bar -->
                                                 <div class="small text-muted mb-1">
-                                                    Batch: #@GetBatchId(Machine.GetBatchId())
+                                                    Batch: #@GetBatchId(MachineControlService.GetBatchId())
                                                 </div>
 
                                                 <!-- Progress Bar -->
                                                 <div class="progress" style="height: 25px;">
                                                     <div
-                                                        class="progress-bar @GetProgressBarClass(Machine.GetBatchProcess()) fw-bold d-flex align-items-center justify-content-center"
-                                                        style="width: @Machine.GetBatchProcess()%">
-                                                        @Machine.GetBatchProcess()%
+                                                        class="progress-bar @GetProgressBarClass(MachineControlService.GetBatchProcess()) fw-bold d-flex align-items-center justify-content-center"
+                                                        style="width: @MachineControlService.GetBatchProcess()%">
+                                                        @MachineControlService.GetBatchProcess()%
                                                     </div>
                                                 </div>
 
                                                 <!-- Additional batch info -->
                                                 <div class="small text-muted mt-1">
-                                                    @Machine.GetCurrentBatch()
+                                                    @MachineControlService.GetCurrentBatch()
                                                 </div>
                                             </div>
                                         }
                                         else if (variable.Name == "CurrentBatch")
                                         {
-                                            <span class="badge bg-secondary fs-6">@Machine.GetCurrentBatch()</span>
+                                            <span class="badge bg-secondary fs-6">@MachineControlService.GetCurrentBatch()</span>
                                         }
                                     </div>
                                 </div>
@@ -145,12 +138,7 @@
 </div>
 
 @code {
-    private void TestClick()
-    {
-        Console.WriteLine("🎯 TEST BUTTON CLICKED! If you see this, clicks work!");
-        StateHasChanged();
-    }
-
+    [Parameter] public MachineControlService MachineControlService { get; set; } = default!;    
     private List<VariableOption> availableVariables = new()
     {
         new VariableOption { Name = "Amount", DisplayName = "Produce Amount" },
