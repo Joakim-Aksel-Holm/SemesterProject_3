@@ -6,6 +6,7 @@ namespace BeerProduction.Services;
 public class MachineControlService(MachineControl machineControl)
 {
     public MachineControl MachineControl { get; } = machineControl;
+    public int TotalInProcutionMachines { get; set; } = 0;
 
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
@@ -24,6 +25,7 @@ public class MachineControlService(MachineControl machineControl)
     //todo: Method for Current Batch beer type.
     
     // Methods
+    
     
     // Reads the Batch ID value
     public int GetMachineId()

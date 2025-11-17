@@ -32,7 +32,7 @@ else
                 <div class="card text-white bg-success">
                     <div class="card-body text-center">
                         <h6>In Production</h6>
-                        <h2>@_machines.Count(m => m.GetBatchProcess() > 0)</h2>
+                        <h2>@GetMachinesInExecuteState()</h2>
                     </div>
                 </div>
             </div>
@@ -86,5 +86,11 @@ else
         var total = _machines.Sum(m => m.GetAcceptable() + m.GetDefects());
         if (total == 0) return 0;
         return Math.Round((_machines.Sum(m => m.GetDefects()) / (double)total) * 100, 1);
+    }
+    
+    //Method for the In production count, that counts all the machines that are in the machine-state: 6:
+    private int GetMachinesInExecuteState()
+    {
+        return _machines.Count(m => m.GetStatus() == 6);
     }
 }
