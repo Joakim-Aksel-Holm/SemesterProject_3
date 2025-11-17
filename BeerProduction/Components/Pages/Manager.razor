@@ -23,7 +23,7 @@ else
                 <div class="card text-white bg-primary">
                     <div class="card-body text-center">
                         <h6>Online Machines</h6>
-                        <h2>@_machines.Count(m => m.IsOnline)</h2>
+                        <h2>@_machines.Count(m => m.GetOnline())</h2>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,7 @@ else
                 <div class="card text-white bg-success">
                     <div class="card-body text-center">
                         <h6>In Production</h6>
-                        <h2>@_machines.Count(m => m.BatchProgress > 0)</h2>
+                        <h2>@_machines.Count(m => m.GetBatchProcess() > 0)</h2>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@ else
                 <div class="card text-white bg-warning">
                     <div class="card-body text-center">
                         <h6>Total Production</h6>
-                        <h2>@_machines.Sum(m => m.AcceptableCount)</h2>
+                        <h2>@_machines.Sum(m => m.GetAcceptable())</h2>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@ else
         <div class="machines-grid">
             @foreach (var machine in _machines)
             {
-                <MachineCard Machine="@machine" />
+                <MachineCard MachineControlService="@machine" />
             }
         </div>
     </div>
@@ -73,7 +73,7 @@ else
 </style>
 
 @code {
-    private List<Machine> _machines = new List<Machine>();
+    private List<MachineControlService> _machines = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,8 +82,8 @@ else
 
     private double GetOverallDefectRate()
     {
-        var total = _machines.Sum(m => m.AcceptableCount + m.DefectCount);
+        var total = _machines.Sum(m => m.GetAcceptable() + m.GetDefects());
         if (total == 0) return 0;
-        return Math.Round((_machines.Sum(m => m.DefectCount) / (double)total) * 100, 1);
+        return Math.Round((_machines.Sum(m => m.GetDefects()) / (double)total) * 100, 1);
     }
 }

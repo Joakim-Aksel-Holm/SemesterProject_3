@@ -1,3 +1,5 @@
+using BeerProduction.Enums;
+
 namespace BeerProduction.Services;
 
 public class MachineControlService(MachineControl machineControl)
@@ -6,6 +8,11 @@ public class MachineControlService(MachineControl machineControl)
 
     // Methods
     // Reads the Batch ID value
+    public int GetMachineId()
+    {
+        return machineControl.MachineID;
+    }
+
     public int GetBatchId()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[0]").As<int>();
@@ -44,13 +51,40 @@ public class MachineControlService(MachineControl machineControl)
     // Reads the Defected products value
     public int GetDefects()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:product.bad").As<int>();
+        return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdDefectiveCount").As<int>();
     }
 
     // Reads the Accepted products value
     public int GetAcceptable()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:product.good").As<int>();
+        return GetProduced() - GetDefects();
+    }
+
+    public int GetProduced()
+    {
+        return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdProcessedCount").As<int>();
+    }
+
+    public int GetBatchProcess()
+    {
+        return (GetProduced() / GetAmount()) * 100;
+    }
+
+    public bool GetOnline()
+    {
+        return true;
+    }
+
+    public BeerType GetCurrentBatch()
+    {
+        var current = MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.Parameter[0].Value").As<int>();
+
+        if (Enum.IsDefined(typeof(BeerType), current))
+        {
+            return (BeerType)current;
+        }
+
+        return BeerType.Pilsner;
     }
 
     // Reads the Maintenance value
@@ -58,15 +92,16 @@ public class MachineControlService(MachineControl machineControl)
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
     }
-    
+
     public void SetChangeRequestTrue()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", true);
     }
-    
+
     public int GetStatus()
     {
-        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>(); // Reading the current status.
+        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent")
+            .As<int>(); // Reading the current status.
         return status;
     }
 
