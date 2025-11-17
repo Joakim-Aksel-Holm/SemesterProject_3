@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using BeerProduction.Components.Model;
+using BeerProduction.Enums;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
@@ -122,4 +124,26 @@ public class MachineControlService
         Console.WriteLine("Resetting machine...");
         await ResetCommandAsync();
     }
+
+public async Task AddBatchAsync(Batch _batch)
+    {
+        int BatchId = _batch.Id;
+        BeerType BeerType = _batch.BeerType;
+        int Size = _batch.Size;
+        float Speed = _batch.Speed;
+
+
+        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[0].Value", (float)BatchId));
+        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", (float)BeerType));
+        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", (float)Size));
+        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", (float)Speed));
+    }
+
+    public async Task QueueBatchMachineAsync(Queue<Batch> _batch)
+    {
+        await AddBatchAsync(_batch.Peek());
+        _batch.Dequeue();
+    }
+
+
 }

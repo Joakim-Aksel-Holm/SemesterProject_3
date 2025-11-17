@@ -14,7 +14,7 @@ public class Batch
 
 
     // Fixed constructor
-    public Batch(int id, BeerType beerType, int size, int speed,
+    public Batch(int id, BeerType beerType, int size, float speed,
         BatchPriority priority = BatchPriority.Low)
     {
         Id = id;

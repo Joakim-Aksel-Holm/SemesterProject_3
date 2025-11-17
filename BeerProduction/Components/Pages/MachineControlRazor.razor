@@ -67,9 +67,14 @@
 </div>
 
 @code {
+    int id = 1;
+
     private BatchForm batchForm = new();
 
-    private BatchService batchService = new();
+    @* private BatchService batchService = new(); *@
+
+    private BatchQueue BatchQueue = new();
+
 
     @* Methods for controlling machine with buttons *@
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
@@ -81,11 +86,26 @@
 
     private void AddBatchButton()
     {
-        Batch batch = new Batch(1, BeerType.Pilsner, 400, 450, BatchPriority.High);
+        Batch batch = new Batch(id, BeerType.AlcoholFree, batchForm.Size, batchForm.Speed, BatchPriority.High);
+        @* Batch batch = new Batch(1, BeerType.Pilsner, 400, 450, BatchPriority.High); *@
+        @* Batch batch2 = new Batch(2, BeerType.Pilsner, 400, 450, BatchPriority.High); *@
+
         Console.WriteLine("Batch has been created!!");
 
-        batchService.AddBatch(batch, batch.Priority);
+        BatchQueue.EnqueueBatch(batch, batch.Priority);
+        @* BatchQueue.EnqueueBatch(batch2, batch.Priority); *@
         Console.WriteLine("Batch have been added to queue");
+        foreach (var batches in BatchQueue.ToOrderedListHighestFirst())
+        {
+            Console.WriteLine("Batch ID " + batches.Id);
+            Console.WriteLine("Amount of beers " + batches.Size);
+            Console.WriteLine("Machine speed " + batches.Speed);
+            Console.WriteLine("Batch priority " + batches.Priority);
+        }
+
+        MachineControlService.AddBatchAsync(batch);
+
+        id++;
     }
 
 }
