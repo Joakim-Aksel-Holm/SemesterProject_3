@@ -11,22 +11,26 @@ public class MachineControlService(MachineControl machineControl)
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
     //todo: In Production (running) machines. "Done"
-    //todo: Total Producted Batches method. "Still In progress"
-    //todo: Defect rate mathod.
+    //todo: Total Produced Batches method. "Still In progress"
+    /// <summary>
+    /// everything should work as planned, everything is done to perfection, the only issue might be cuz of the start method that we start out production with!
+    /// perhaps we should wait until the start method is done on the other branch so that we take out the doubt about it, being a start-method issue!
+    /// </summary>
+    /// <returns></returns>
+    //todo: Defect rate method.
     //todo: Method for  Produce Amount.
     //todo: Method for Temperature sensor reading.
     //todo: Method for Humidity sensor reading.
-    //todo: Method for Vibration sensore reading.
+    //todo: Method for Vibration sensors reading.
     //todo: Method for defect products on each machine.
     //todo: Method for Accepted products on each machine.
     //todo: Method for Batch process progression rate.
     //todo: Method forMaintenance status progression rate.
     //todo: Method for Current Batch (ID).
     //todo: Method for Current Batch beer type.
-    
+
     // Methods
-    
-    
+
     // Reads the Batch ID value
     public int GetMachineId()
     {
@@ -81,6 +85,15 @@ public class MachineControlService(MachineControl machineControl)
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdDefectiveCount").As<int>();
     }
 
+    //Defect rate method:
+    public double GetDefectRate()
+    {
+        var total = GetProduced();
+        return total > 0 ? (GetDefects() / (double)total) * 100 : 0;
+    }
+    // Method for Prouce Amount:
+
+
     // Reads the Accepted products value
     public int GetAcceptable()
     {
@@ -94,12 +107,9 @@ public class MachineControlService(MachineControl machineControl)
 
     public int GetBatchProcess()
     {
-        if (GetProduced() == 0)
-        {
-            return 0;
-        }
-        
-        return (GetAmount() / GetProduced()) * 100;
+        var produced = GetProduced();
+        var amount = GetAmount();
+        return amount > 0 ? (produced / amount) * 100 : 0;
     }
 
     public string GetOnline()
@@ -109,6 +119,7 @@ public class MachineControlService(MachineControl machineControl)
         {
             serverStatus = true;
         }
+
         return serverStatus ? "Online" : "Offline";
     }
 
@@ -140,7 +151,7 @@ public class MachineControlService(MachineControl machineControl)
     public int GetStatus()
     {
         int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent")
-            .As<int>(); 
+            .As<int>();
         return status;
     }
 

@@ -1,8 +1,5 @@
-@using BeerProduction.Components.Model
 @using BeerProduction.Services
 @rendermode InteractiveServer
-
-
 
 <div class="card machine-card mb-4">
     <!-- Header -->
@@ -12,7 +9,6 @@
             <div class="text-end">
                 <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId().ToString("D5")</div>
                 <h2 class="border-bottom pb-2">@MachineControlService.GetOnline()</h2>
-                
             </div>
         </div>
     </div>
@@ -76,9 +72,7 @@
                                         }
                                         else if (variable.Name == "PPM")
                                         {
-                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPPM()<small class="h6">
-                                                /min
-                                            </small></div>
+                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPPM()<small class="h6">/min</small></div>
                                         }
                                         else if (variable.Name == "Temperature")
                                         {
@@ -86,23 +80,29 @@
                                         }
                                         else if (variable.Name == "Humidity")
                                         {
-                                            <div class="h4 fw-bold text-success">@MachineControlService.GetHumidity()</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetHumidity()%</div>
                                         }
                                         else if (variable.Name == "Vibration")
                                         {
-                                            <div class="h4 fw-bold text-success">@MachineControlService.GetVibration()°C</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetVibration()</div>
+                                            <small class="text-muted">Vibration Level</small>
                                         }
-                                        else if (variable.Name == "DefectCount")
+                                        else if (variable.Name == "Defect")
                                         {
                                             <div class="h3 fw-bold text-danger">@MachineControlService.GetDefects()</div>
                                             <small class="text-muted">Defect Products</small>
                                         }
-                                        else if (variable.Name == "AcceptableCount")
+                                        else if (variable.Name == "Accepted")
                                         {
                                             <div class="h3 fw-bold text-success">@MachineControlService.GetAcceptable()</div>
                                             <small class="text-muted">Acceptable Products</small>
                                         }
-                                        else if (variable.Name == "BatchProgress")
+                                        else if (variable.Name == "DefectRate")
+                                        {
+                                            <div class="h3 fw-bold text-danger">@MachineControlService.GetDefectRate().ToString("F1")%</div>
+                                            <small class="text-muted">Defect Rate</small>
+                                        }
+                                        else if (variable.Name == "BatchProcess")
                                         {
                                             <div>
                                                 <!-- Batch ID above the progress bar -->
@@ -123,6 +123,16 @@
                                                 <div class="small text-muted mt-1">
                                                     @MachineControlService.GetCurrentBatch()
                                                 </div>
+                                            </div>
+                                        }
+                                        else if (variable.Name == "Maintenance")
+                                        {
+                                            <div>
+                                                <div class="h4 fw-bold text-warning">@MachineControlService.GetMaintenanceStatus()%</div>
+                                                <div class="progress mt-2" style="height: 10px;">
+                                                    <div class="progress-bar bg-warning" style="width: @MachineControlService.GetMaintenanceStatus()%"></div>
+                                                </div>
+                                                <small class="text-muted">Maintenance Status</small>
                                             </div>
                                         }
                                         else if (variable.Name == "CurrentBatch")
@@ -151,6 +161,7 @@
         new VariableOption { Name = "Vibration", DisplayName = "Vibration" },
         new VariableOption { Name = "Defect", DisplayName = "Defect products" },
         new VariableOption { Name = "Accepted", DisplayName = "Accepted products" },
+        new VariableOption { Name = "DefectRate", DisplayName = "Defect Rate" },
         new VariableOption { Name = "BatchProcess", DisplayName = "Batch process" },
         new VariableOption { Name = "Maintenance", DisplayName = "Maintenance status" },
         new VariableOption { Name = "CurrentBatch", DisplayName = "Current Batch"}
@@ -240,5 +251,4 @@
             return Name?.GetHashCode() ?? 0;
         }
     }
-
 }
