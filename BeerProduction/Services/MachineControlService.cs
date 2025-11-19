@@ -11,7 +11,7 @@ public class MachineControlService(MachineControl machineControl)
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
     //todo: In Production (running) machines. "Done"
-    //todo: Total Production method.
+    //todo: Total Producted Batches method. "Still In progress"
     //todo: Defect rate mathod.
     //todo: Method for  Produce Amount.
     //todo: Method for Temperature sensor reading.

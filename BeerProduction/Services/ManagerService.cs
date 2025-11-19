@@ -44,4 +44,23 @@ public class ManagerService
 
         return machines;
     }
+    public async Task<int> GetTotalCompletedBatchesAsync()
+    {
+        await using var conn = await _db.OpenAsync();
+        await using var cmd = conn.CreateCommand();
+    
+        cmd.CommandText = "SELECT COUNT(*) FROM batch_history WHERE status = 'Completed'";
+        var result = await cmd.ExecuteScalarAsync();
+        return Convert.ToInt32(result);
+    }
+
+    public async Task<int> GetTotalProductionLitresAsync()
+    {
+        await using var conn = await _db.OpenAsync();
+        await using var cmd = conn.CreateCommand();
+    
+        cmd.CommandText = "SELECT COALESCE(SUM(amount_liters), 0) FROM batch_history WHERE status = 'Completed'";
+        var result = await cmd.ExecuteScalarAsync();
+        return Convert.ToInt32(result);
+    }
 }

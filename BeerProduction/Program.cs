@@ -27,6 +27,7 @@ builder.Services.AddSingleton<BatchQueue>();
 builder.Services.AddScoped<ManagerService>(); 
 builder.Services.AddScoped<MachineControlService>();
 builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://192.168.0.122:4840", "Secondary Brewer"));
+builder.Services.AddScoped<ProductionTrackingService>();
 
 
 

@@ -4,7 +4,9 @@
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
 @inject ManagerService ManagerService
+@inject ProductionTrackingService ProductionTracking
 @rendermode InteractiveServer
+
 
 <PageTitle>Manager Dashboard</PageTitle>
 
@@ -40,7 +42,8 @@ else
                 <div class="card text-white bg-warning">
                     <div class="card-body text-center">
                         <h6>Total Production</h6>
-                        <h2>@_machines.Sum(m => m.GetAcceptable())</h2>
+                        <h2>@FormatLiters(_productionStats.TotalLitersProduced)</h2>
+                        <small>@_productionStats.TotalBatchesCompleted batches</small>
                     </div>
                 </div>
             </div>
@@ -74,13 +77,21 @@ else
 </style>
 
 @code {
+    private int _totalComplete = 0;
     private List<MachineControlService> _machines = new();
+    private ProductionStats _productionStats = new();
 
     protected override async Task OnInitializedAsync()
     {
         _machines = await ManagerService.GetAllMachinesAsync();
+        _productionStats = await ProductionTracking.GetProductionStatsAsync();
     }
 
+    private string FormatLiters(int liters)
+    {
+        return liters >= 1000 ? $"{liters / 1000.0:F1} kL" : $"{liters} L";
+    }
+    
     private double GetOverallDefectRate()
     {
         var total = _machines.Sum(m => m.GetAcceptable() + m.GetDefects());
@@ -92,5 +103,12 @@ else
     private int GetMachinesInExecuteState()
     {
         return _machines.Count(m => m.GetStatus() == 6);
+    }
+    
+    private int GetTotalProducts()
+    {
+        var newCompletions = _machines.Count(m => m.GetStatus() == 17);
+        _totalComplete += newCompletions;
+        return _totalComplete;
     }
 }
