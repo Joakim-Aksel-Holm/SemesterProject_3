@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using BeerProduction.Components.Model;
 using BeerProduction.Enums;
+using BeerProduction.Services;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
@@ -96,9 +97,45 @@ public class MachineControlService
         }
     }
 
+    public async Task AutomatedStart()
+    {
+        //Kør imens der er batch i queue
+        BatchQueue _batchQeue = new BatchQueue();
+
+        while (BatchQueue.GetQueue().Count > 0)
+        {
+            Console.WriteLine("Vi er kommet til dequweuueue!!!");
+            var nextBatch = BatchQueue._batchQueue.DequeueBatch();
+            if (nextBatch == null)
+                break; //Stop når der ikke er flere batches
+
+            Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size})");
+
+
+            await AddBatchAsync(nextBatch);
+
+            //Start maskinen
+            await StartMachineAsync();
+
+
+            while (true)
+            {
+                int state = GetStatus();
+                if (state == 11) //11 er completed så stopper maskinen
+                    break;
+
+                await Task.Delay(500);
+            }
+
+            Console.WriteLine($"Batch {nextBatch.Id} completed.");
+        }
+
+        Console.WriteLine("All batches processed. Machine queue is empty.");
+    }
+
+
     public async Task StopMachineAsync()
     {
-
         int statusVal = GetStatus();
 
         if (statusVal == 9)
@@ -125,7 +162,7 @@ public class MachineControlService
         await ResetCommandAsync();
     }
 
-public async Task AddBatchAsync(Batch _batch)
+    public async Task AddBatchAsync(Batch _batch)
     {
         int BatchId = _batch.Id;
         BeerType BeerType = _batch.BeerType;
@@ -133,17 +170,18 @@ public async Task AddBatchAsync(Batch _batch)
         float Speed = _batch.Speed;
 
 
-        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[0].Value", (float)BatchId));
-        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", (float)BeerType));
-        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", (float)Size));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[0].Value", (float)BatchId));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", (float)BeerType));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", (float)Size));
         await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", (float)Speed));
     }
 
-    public async Task QueueBatchMachineAsync(Queue<Batch> _batch)
+    public async Task QueueBatchMachineAsync(PriorityQueue<Batch, int> _batch)
     {
         await AddBatchAsync(_batch.Peek());
         _batch.Dequeue();
     }
-
-
 }

@@ -13,7 +13,7 @@ public class BatchQueue
     // Priority queue (higher number => higher priority)
     // .NET PriorityQueue dequeues the smallest priority first,
     // so we use numeric priorities as-is and reverse in ToOrderedListHighestFirst.
-    private PriorityQueue<Batch, int> _batchQueue = new();
+    public static PriorityQueue<Batch, int> _batchQueue = new();
 
 
     // --------------------------------------------
@@ -119,5 +119,51 @@ public class BatchQueue
         {
             lock (_lock) return _batchQueue.Count;
         }
+    }
+
+
+    public List<Batch> ToOrderedListIDFirst()
+    {
+        lock (_lock)
+        {
+            var drained = new List<(Batch batch, int ID)>();
+
+            // Drain queue (min-priority first)
+            while (_batchQueue.TryDequeue(out var batch, out var priority))
+            {
+                drained.Add((batch, priority));
+            }
+
+            // Rebuild the queue
+            _batchQueue = new PriorityQueue<Batch, int>();
+            foreach (var (b, p) in drained)
+                _batchQueue.Enqueue(b, p);
+
+            // Return list highest-priority first
+            return drained
+                .OrderBy(t => t.ID)
+                .Select(t => t.batch)
+                .ToList();
+        }
+    }
+
+    public void BatchQueuePrint()
+    {
+        lock (_lock)
+        {
+            foreach (var (batch, priority) in _batchQueue.UnorderedItems)
+            {
+                Console.WriteLine($"Batch ID: {batch.Id}, Priority: {priority}");
+                Console.WriteLine("Beer type " + batch.BeerType);
+                Console.WriteLine("Amount of beers " + batch.Size);
+                Console.WriteLine("Machine speed " + batch.Speed);
+                Console.WriteLine();
+            }
+        }
+    }
+
+    public static PriorityQueue<Batch, int> GetQueue()
+    {
+        return _batchQueue;
     }
 }
