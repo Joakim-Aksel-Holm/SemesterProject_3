@@ -1,0 +1,114 @@
+﻿@page "/manager"
+@layout ManagerLayout
+@using BeerProduction.Components.Layout
+@using BeerProduction.Components.Model
+@using BeerProduction.Services
+@inject ManagerService ManagerService
+@inject ProductionTrackingService ProductionTracking
+@rendermode InteractiveServer
+
+
+<PageTitle>Manager Dashboard</PageTitle>
+
+<h3>Manager Dashboard</h3>
+
+@if (_machines == null)
+{
+    <p>Loading machines...</p>
+}
+else
+{
+    <div class="container-fluid">
+        <!-- Quick Stats Summary -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body text-center">
+                        <h6>Online Machines</h6>
+                        <h2>@_machines.Count</h2>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h6>In Production</h6>
+                        <h2>@GetMachinesInExecuteState()</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body text-center">
+                        <h6>Total Production</h6>
+                        <h2>@FormatLiters(_productionStats.TotalLitersProduced)</h2>
+                        <small>@_productionStats.TotalBatchesCompleted batches</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                        <h6>Defect Rate</h6>
+                        <h2>@GetOverallDefectRate()%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Machine Cards -->
+        <div class="machines-grid">
+            @foreach (var machine in _machines)
+            {
+                <MachineCard MachineControlService="@machine" />
+            }
+        </div>
+    </div>
+}
+
+<style>
+    .machines-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+</style>
+
+@code {
+    private int _totalComplete = 0;
+    private List<MachineControlService> _machines = new();
+    private ProductionStats _productionStats = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _machines = await ManagerService.GetAllMachinesAsync();
+        _productionStats = await ProductionTracking.GetProductionStatsAsync();
+    }
+
+    private string FormatLiters(int liters)
+    {
+        return liters >= 1000 ? $"{liters / 1000.0:F1} kL" : $"{liters} L";
+    }
+    
+    private double GetOverallDefectRate()
+    {
+        var total = _machines.Sum(m => m.GetAcceptable() + m.GetDefects());
+        if (total == 0) return 0;
+        return Math.Round((_machines.Sum(m => m.GetDefects()) / (double)total) * 100, 1);
+    }
+    
+    //Method for the In production count, that counts all the machines that are in the machine-state: 6:
+    private int GetMachinesInExecuteState()
+    {
+        return _machines.Count(m => m.GetStatus() == 6);
+    }
+    
+    private int GetTotalProducts()
+    {
+        var newCompletions = _machines.Count(m => m.GetStatus() == 17);
+        _totalComplete += newCompletions;
+        return _totalComplete;
+    }
+}

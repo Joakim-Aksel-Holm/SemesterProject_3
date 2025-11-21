@@ -7,13 +7,15 @@ using Opc.UaFx;
 using Opc.UaFx.Client;
 
 
+// it is working take 1
+//hello
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
 builder.Configuration.AddJsonFile(
     $"appsettings.{builder.Environment.EnvironmentName}.Local.json",
-    optional: true,
-    reloadOnChange: true);
+    optional: true, // OK if the file doesn't exist (e.g., CI/Prod)
+    reloadOnChange: true); // nice for live edits during dev
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -22,19 +24,19 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 
-// Register OPC machine and service
-builder.Services.AddSingleton<MachineControl>(sp =>
-    new MachineControl(1, "opc.tcp://127.0.0.1:4840"));
+builder.Services.AddScoped<ManagerService>(); 
+builder.Services.AddScoped<MachineControlService>();
+builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840", "Secondary Brewer"));
+builder.Services.AddScoped<ProductionTrackingService>();
 
-
-builder.Services.AddSingleton<MachineControlService>(sp =>
-{
-    var machine = sp.GetRequiredService<MachineControl>();
-    return new MachineControlService(machine);
-});
 
 
 var app = builder.Build();
+
+
+// Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
+//app.MapGet("/", ()=> Results.Redirect("/html/manager.html"));
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -45,11 +47,11 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
+
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// Diagnostics endpoint
 app.MapGet("/run-diagnostics", (IConfiguration config) =>
 {
     var log = new StringBuilder();
@@ -64,6 +66,16 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
 
         var controlValue = client.ReadNode("ns=6;s=::Program:Cube.Command.CntrlCmd");
         log.AppendLine("Værdi for control: " + controlValue);
+
+        var commands = new OpcWriteNode[]
+        {
+            new OpcWriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", 300.0f),
+            new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", 2.0f),
+            new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", 20.0f)
+        };
+
+        client.WriteNodes(commands);
+        client.Disconnect();
     }
     catch (OpcException ex)
     {
@@ -74,7 +86,7 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
         log.AppendLine("❌ Unexpected OPC error: " + ex.Message);
     }
 
-    // ---- PostgreSQL ----
+    // ---- PostgresSQL ----
     try
     {
         var cs = config.GetConnectionString("Default")
@@ -84,7 +96,7 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
         conn.Open();
         using var cmd = new NpgsqlCommand("SELECT version();", conn);
         var version = cmd.ExecuteScalar();
-        log.AppendLine($"✅ Connected to PostgreSQL! Version: {version}");
+        log.AppendLine($"✅ Connected to PostgresSQL! Version: {version}");
     }
     catch (Exception ex)
     {
@@ -94,10 +106,11 @@ app.MapGet("/run-diagnostics", (IConfiguration config) =>
     log.AppendLine();
     log.AppendLine("Program finished.");
 
+
     return Results.Text(log.ToString(), "text/plain; charset=utf-8", Encoding.UTF8);
 });
 
-// Simple ping endpoint for DB
+
 app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
 {
     await using var conn = await db.OpenAsync(ct);
@@ -106,5 +119,6 @@ app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
     var result = await cmd.ExecuteScalarAsync(ct);
     return Results.Ok(new { ok = (int)result == 1 });
 });
+
 
 app.Run();
