@@ -1,0 +1,109 @@
+.machine-view {
+    display: flex;
+    width: 100%; 
+    flex-direction: column;
+
+}
+
+.machine-inventory {
+    
+    width: 100%;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: #795548; 
+    padding: 15px;
+
+    border-radius: 25px;
+}
+
+.ordered-queue{
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    overflow-x:auto;
+    
+    list-style-type: none;
+}
+
+.ordered-queue-item{
+    margin: 10px;
+}
+
+
+.machine-meter {
+    flex-grow: 1; /* Vokser og fylder al resterende plads */
+    background-color: #486c79;
+    padding: 15px;
+    margin-top: 5px;
+    border-radius: 25px;
+    
+}
+
+
+.queue-item{
+    
+    flex-direction: column;
+    background-color: darkgray;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 10px;
+    
+    /*Det her gør at der går 0,5 før det fader*/
+    /* ease gør det "naturligt"*/
+    transition: 0.5s ease;
+}
+
+.queue-item:hover {
+    
+    background-color: #0a53be;
+    
+    transform: scale(1.02);
+
+    /*skaber shadow og løfter det op*/
+    
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    
+    /* gør musen klik bar */
+    cursor: pointer;
+    
+    postion: relative; 
+    
+}
+
+
+.queue-item:first-child:hover {   
+    background-color: #ff6b6b;
+    color: white;
+    transform: scale(1.10);
+    
+}
+
+.queue-item:first-child:hover::after{
+    content: "⚠️Up Next!";
+    
+    postion: absolute;
+    top:-35px;
+    left: 0px;
+    
+    background-color: #333;
+    color: white;
+    padding: 10px; 
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s;
+}
+
+.queue-item:nth-child(2):hover{
+    background-color: #ffa500;
+    transform: scale(1.08);
+    
+    
+}
+
+.queue-item:nth-child(3):hover{
+    background-color: #28a745;
+    transform: scale(1.06);
+}
+

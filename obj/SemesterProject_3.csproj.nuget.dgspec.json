@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj": {}
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj": {}
   },
   "projects": {
-    "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj": {
+    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj",
+        "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj",
         "projectName": "SemesterProject_3",
-        "projectPath": "/Users/holm/Documents/SemesterProject_3/SemesterProject_3.csproj",
-        "packagesPath": "/Users/holm/.nuget/packages/",
-        "outputPath": "/Users/holm/Documents/SemesterProject_3/obj/",
+        "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj",
+        "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/holm/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -81,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.205/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

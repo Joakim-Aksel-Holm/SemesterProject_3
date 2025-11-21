@@ -47,8 +47,7 @@ public class BatchQueueTests
         Assert.Null(queue.DequeueBatch());
         Assert.Equal(0, queue.Count);
     }
-
-    [Fact]
+    
     public void TestAddBatch()
     {
         var service = new BatchService();

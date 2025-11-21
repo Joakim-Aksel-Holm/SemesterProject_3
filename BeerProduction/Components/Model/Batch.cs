@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Reflection.PortableExecutable;
 using BeerProduction.Enums;
 
 namespace BeerProduction.Components.Model;
@@ -5,12 +7,22 @@ namespace BeerProduction.Components.Model;
 public class Batch
 {
     public int Id { get; }
+    [Required]
     public BeerType BeerType { get; set; }
+
+    public BatchStatus Status { get; set; } = BatchStatus.Queued;
+    [Required]
+    public int MachineId { get; set; }
     public BatchQuantity Size { get; set; }
     public MachineSpeed Speed { get; set; }
     public BatchPriority Priority { get; set; }
     public MachineState CurrentState { get; set; }
     public DateTime ManufactureDate { get; }
+    
+    public string? Notes { get; set; }
+    
+    // Navigation property:
+    public Machine? Machine { get; set; }
 
 
     // Fixed constructor
