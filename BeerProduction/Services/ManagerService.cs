@@ -14,6 +14,7 @@ public class ManagerService
     {
         _db = db;
     }
+    
     //Manager-specific methods :
     public async Task<List<MachineControlService>> GetAllMachinesAsync()
     {

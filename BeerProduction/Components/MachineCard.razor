@@ -1,5 +1,8 @@
+@using System.Reflection.PortableExecutable
+@using System.Timers
 @using BeerProduction.Services
 @rendermode InteractiveServer
+@implements IDisposable
 
 <div class="card machine-card mb-4">
     <!-- Header -->
@@ -151,29 +154,51 @@
 </div>
 
 @code {
-    [Parameter] public MachineControlService MachineControlService { get; set; } = default!;    
-    private List<VariableOption> availableVariables = new()
-    {
-        new VariableOption { Name = "Amount", DisplayName = "Produce Amount" },
-        new VariableOption { Name = "PPM", DisplayName = "Products/min" },
-        new VariableOption { Name = "Temperature", DisplayName = "Temperature" },
-        new VariableOption { Name = "Humidity", DisplayName = "Humidity" },
-        new VariableOption { Name = "Vibration", DisplayName = "Vibration" },
-        new VariableOption { Name = "Defect", DisplayName = "Defect products" },
-        new VariableOption { Name = "Accepted", DisplayName = "Accepted products" },
-        new VariableOption { Name = "DefectRate", DisplayName = "Defect Rate" },
-        new VariableOption { Name = "BatchProcess", DisplayName = "Batch process" },
-        new VariableOption { Name = "Maintenance", DisplayName = "Maintenance status" },
-        new VariableOption { Name = "CurrentBatch", DisplayName = "Current Batch"}
-    };
+    [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
 
-    private List<VariableOption> selectedVariables = new();
+    private Timer? _refreshTimer;
+    
+    private List<VariableOption> availableVariables =
+    [
+        new() { Name = "Amount", DisplayName = "Produce Amount" },
+        new() { Name = "PPM", DisplayName = "Products/min" },
+        new() { Name = "Temperature", DisplayName = "Temperature" },
+        new() { Name = "Humidity", DisplayName = "Humidity" },
+        new() { Name = "Vibration", DisplayName = "Vibration" },
+        new() { Name = "Defect", DisplayName = "Defect products" },
+        new() { Name = "Accepted", DisplayName = "Accepted products" },
+        new() { Name = "DefectRate", DisplayName = "Defect Rate" },
+        new() { Name = "BatchProcess", DisplayName = "Batch process" },
+        new() { Name = "Maintenance", DisplayName = "Maintenance status" },
+        new() { Name = "CurrentBatch", DisplayName = "Current Batch" }
+    ];
+
+    private List<VariableOption> selectedVariables = [];
 
     protected override void OnInitialized()
     {
         // Start with Temperature and Batch Progress selected
-        selectedVariables.Add(availableVariables[0]); // Temperature
-        selectedVariables.Add(availableVariables[2]); // Batch Progress
+        selectedVariables.Add(availableVariables[0]); // Produce amount
+        selectedVariables.Add(availableVariables[2]); // Temperature
+
+        _refreshTimer = new Timer(200);
+        _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
+        _refreshTimer.AutoReset = true;
+        _refreshTimer.Enabled = true;
+    }
+
+    private async Task OnTimerElapsed()
+    {
+        if (MachineControlService != null)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
     }
 
     private void ToggleVariable(VariableOption variable)
