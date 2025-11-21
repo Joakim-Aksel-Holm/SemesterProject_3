@@ -2,6 +2,7 @@
 @using BeerProduction.Services
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateService AuthenticationStateService
 @rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
@@ -75,7 +76,9 @@
 
                     Console.WriteLine($"Successfully logged in as {username} ({role})");
 
-                    await InvokeAsync(() => NavigationManager.NavigateTo("/Machines", forceLoad: true));
+                    await AuthenticationStateService.LoginAsync(username, role);
+
+                    await InvokeAsync(() => NavigationManager.NavigateTo("/Home", forceLoad: true));
                 }
                 else
                 {

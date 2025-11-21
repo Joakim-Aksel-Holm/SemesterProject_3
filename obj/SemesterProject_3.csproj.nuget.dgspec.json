@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj": {}
+    "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj": {}
   },
   "projects": {
-    "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj": {
+    "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj",
+        "projectUniqueName": "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj",
         "projectName": "SemesterProject_3",
-        "projectPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\SemesterProject_3.csproj",
-        "packagesPath": "C:\\Users\\abode\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\abode\\RiderProjects\\SemesterProject_3\\obj\\",
+        "projectPath": "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/SemesterProject_3.csproj",
+        "packagesPath": "/Users/jwan/.nuget/packages/",
+        "outputPath": "/Users/jwan/Desktop/3.SemProj/SemesterProject_3/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\abode\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/jwan/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -81,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.205/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
