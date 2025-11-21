@@ -1,45 +1,137 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Components.Model
+@using BeerProduction.Enums
 @using BeerProduction.Services
+
 @inject MachineControlService MachineControlService
-@rendermode InteractiveServer   
 
 @page "/MachineControl"
 @layout MainLayout
+@* Rendermode very important, makes buttons clickable:) *@
+@rendermode InteractiveServer
+@* Stylesheet, main one is machinecontrol.css 
+   the other is only navbar and global style *@
 <link rel="stylesheet" href="/css/homeStyle.css">
 <link rel="stylesheet" href="/css/machinecontrol.css">
 <PageTitle>MachineControl</PageTitle>
 
-<div>
-    <h1>Her er dine machine controls</h1>
-    <div class="parent">
-        <div class="div1">
-            <p>her er nogle ting i det ene grid</p>
-            <div class="buttonControl">
-                <button @onclick="startMachine" name="startButton">Start</button>
-                <button @onclick="stopMachine" name="stopButton">Stop</button>
-                <button>Abort</button>
-            </div>
+<h1>Machine control</h1>
 
-        </div>
-        <div class="div2">
-            <p>Her er nogle ting i det andet grid</p>
-            <button>WUuuuCLICK</button>
-        </div>
+<div class="parent">
+    <div class="div1">
+        <button @onclick="startMachine">Start</button>
+    </div>
+    <div class="div2">
+        <button @onclick="stopMachine">Stop</button>
+    </div>
+    <div class="div3">
+        <button @onclick="resetMachine">Reset</button>
+    </div>
+    <div class="div4">
+        <button @onclick="clearMachine">Clear</button>
+    </div>
+    <div class="div5">
+        <button @onclick="abortMachine">Abort</button>
+    </div>
+    <div class="div6">
+        <label for="BeerType">Select a Beer type</label>
+        <select @bind="SelectedBeerType" id="BeerType">
+            <option value="-1" disabled>Select a beer type</option>
+            <option value="0">Pilsner</option>
+            <option value="1">Wheat</option>
+            <option value="2">IPA</option>
+            <option value="3">Stout</option>
+            <option value="4">Ale</option>
+            <option value="5">Alcohol free</option>
+        </select>
+
     </div>
 
+    <div class="priority">
+        <label for="Priority">Select a Beer priority</label>
+        <select @bind="SelectedPriority" id="Priority">
+            <option value="-1" disabled>Select a beer type</option>
+            <option value="0">Low</option>
+            <option value="1">Medium</option>
+            <option value="2">High</option>
+        </select>
+    </div>
+
+    <div class="div7">
+        @* Form for adding batch size and batch speed *@
+        <EditForm Model="@batchForm">
+            <label>
+                Amount:
+                <InputNumber @bind-Value="batchForm.Size"/>
+            </label>
+
+            <label>
+                Speed:
+                <InputNumber @bind-Value="batchForm.Speed"/>
+            </label>
+        </EditForm>
+    </div>
+    <div class="div8">
+        <label for="BatchButton">Add to batch</label>
+        <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
+    </div>
+
+    <div class="div9">
+        <label for="SeePriority">See batch priority</label>
+        <button id="SeePriority" @onclick="SeeBatchPriority">
+            BatchPriority
+        </button>
+    </div>
 </div>
 
-@code
-{
+@code {
 
-    private async Task startMachine()
+    int id = 1;
+
+    // In your component
+    private int SelectedBeerType { get; set; } = -1;
+    private int SelectedPriority { get; set; } = -1;
+
+    private BatchForm batchForm = new();
+
+    @* private BatchService batchService = new(); *@
+
+    private BatchQueue BatchQueue = new();
+
+
+    @* Methods for controlling machine with buttons *@
+    private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
+    private async Task startMachine() => await MachineControlService.AutomatedStart();
+    private async Task stopMachine() => await MachineControlService.StopMachineAsync();
+    private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
+    private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
+
+
+    private void AddBatchButton()
     {
-        //await MachineControlService.StartMachineAsync();
+        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, (BatchPriority)SelectedPriority);
+
+        Console.WriteLine("Batch has been created!!");
+
+        BatchQueue.EnqueueBatch(batch, batch.Priority);
+
+        Console.WriteLine("Batch have been added to queue");
+        BatchQueue.BatchQueuePrint();
+        id++;
     }
 
-    private async Task stopMachine()
+    private void SeeBatchPriority()
     {
-       // await MachineControlService.StopMachineAsync();
+        Console.WriteLine("Batch has been created!!");
+        Console.WriteLine("Batch have been added to queue");
+        foreach (var batches in BatchQueue.ToOrderedListIDFirst())
+        {
+            Console.WriteLine($"Batch ID: {batches.Id}, Priority: {batches.Priority}");
+            Console.WriteLine("Beer type " + batches.BeerType);
+            Console.WriteLine("Amount of beers " + batches.Size);
+            Console.WriteLine("Machine speed " + batches.Speed);
+            Console.WriteLine();
+        }
     }
+
 }
