@@ -1,3 +1,5 @@
+using BeerProduction.Services;
+
 namespace BeerProduction.Tests;
 using Xunit;
 using Opc.Ua;
