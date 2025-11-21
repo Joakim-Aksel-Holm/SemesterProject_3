@@ -38,7 +38,7 @@ public class MachineControlService(MachineControl machineControl)
     }
 
     // Reads name from table
-    public string GetMachineName()
+    public string  GetMachineName()
     {
         return machineControl.MachineName;
     }
