@@ -3,10 +3,7 @@ using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
 
-public class MachineControlService(MachineControl machineControl)
-{
-    public MachineControl MachineControl { get; } = machineControl;
-    public int TotalInProcutionMachines { get; set; } = 0;
+    
 
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
@@ -29,237 +26,286 @@ public class MachineControlService(MachineControl machineControl)
     //todo: Method for Current Batch (ID).
     //todo: Method for Current Batch beer type.
 
-    // Methods
 
-    // Reads the Batch ID value
-    public int GetMachineId()
-    {
-        return machineControl.MachineID;
-    }
 
-    // Reads name from table
-    public string GetMachineName()
-    {
-        return machineControl.MachineName;
-    }
+public class MachineControlService(MachineControl machineControl)
+{
+    public MachineControl MachineControl { get; } = machineControl;
+    public int TotalInProcutionMachines { get; set; } = 0;
 
-    // Reads the ID of the current batch
+    // =========================================================================
+    // SIMPLE PROPERTY METHODS (Fast access - Can be sync or async)
+    // =========================================================================
+
+    /// <summary>
+    /// Gets the machine ID from local property (fast access)
+    /// </summary>
+    public int GetMachineId() => machineControl.MachineID;
+
+    /// <summary>
+    /// Gets the machine name from local property (fast access)  
+    /// </summary>
+    public string GetMachineName() => machineControl.MachineName;
+
+    // =========================================================================
+    // OPC READ METHODS (Fast sensor reads - Keep SYNC)
+    // =========================================================================
+
+    /// <summary>
+    /// Reads the current Batch ID from OPC server (fast read)
+    /// </summary>
     public int GetBatchId()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[0]").As<int>();
     }
 
-    // Reads the Amount of products value
+    /// <summary>
+    /// Reads the product amount from OPC server (fast read)
+    /// </summary>
     public int GetAmount()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[1]").As<int>();
     }
 
-    // Reads the Products per minute value
+    /// <summary>
+    /// Reads the products per minute from OPC server (fast read)
+    /// </summary>
     public int GetPPM()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.MachSpeed").As<int>();
     }
 
-    // Reads the Temperature value
+    /// <summary>
+    /// Reads the temperature sensor from OPC server (fast read)
+    /// </summary>
     public float GetTemperature()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[3]").As<float>();
     }
 
-    // Reads the Humidity value
+    /// <summary>
+    /// Reads the humidity sensor from OPC server (fast read)
+    /// </summary>
     public decimal GetHumidity()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[2]").As<decimal>();
     }
 
-    // Reads the Vibration value
+    /// <summary>
+    /// Reads the vibration sensor from OPC server (fast read)
+    /// </summary>
     public decimal GetVibration()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[4]").As<decimal>();
     }
 
-    // Reads the Defected products value
+    /// <summary>
+    /// Reads the defective products count from OPC server (fast read)
+    /// </summary>
     public int GetDefects()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdDefectiveCount").As<int>();
     }
 
-    //Defect rate method:
-    public double GetDefectRate()
-    {
-        var total = GetProduced();
-        return total > 0 ? (GetDefects() / (double)total) * 100 : 0;
-    }
-    // Method for Prouce Amount:
-
-
-    // Reads the Accepted products value
-    public int GetAcceptable()
-    {
-        return GetProduced() - GetDefects();
-    }
-
+    /// <summary>
+    /// Reads the total produced products count from OPC server (fast read)
+    /// </summary>
     public int GetProduced()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdProcessedCount").As<int>();
     }
 
-    public int GetBatchProcess()
+    /// <summary>
+    /// Reads the current machine status from OPC server (fast read)
+    /// </summary>
+    public int GetStatus()
     {
-        var produced = GetProduced();
-        var amount = GetAmount();
-        return amount > 0 ? (produced / amount) * 100 : 0;
+        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
     }
 
-    public string GetOnline()
-    {
-        var serverStatus = false;
-        if (MachineControl.IsConnected)
-        {
-            serverStatus = true;
-        }
-
-        return serverStatus ? "Online" : "Offline";
-    }
-
-    // Reads the value of current type and converts with enum
+    /// <summary>
+    /// Reads the current beer type from OPC server and converts to enum (fast read)
+    /// </summary>
     public BeerType GetCurrentBatch()
     {
         var current = MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.Parameter[0].Value").As<int>();
-
-        if (Enum.IsDefined(typeof(BeerType), current))
-        {
-            return (BeerType)current;
-        }
-
-        return BeerType.Pilsner;
+        return Enum.IsDefined(typeof(BeerType), current) ? (BeerType)current : BeerType.Pilsner;
     }
 
-    // Reads the Maintenance value
+    /// <summary>
+    /// Reads the maintenance counter from OPC server (fast read)
+    /// </summary>
     public int GetMaintenanceStatus()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
     }
 
+    // =========================================================================
+    // CALCULATION METHODS (Good candidates for ASYNC in web contexts)
+    // =========================================================================
+
+    /// <summary>
+    /// Calculates the defect rate percentage based on produced and defective counts
+    /// </summary>
+    public async Task<double> GetDefectRateAsync()
+    {
+        var total = GetProduced();   // Fast sync read
+        var defects = GetDefects();  // Fast sync read
+        return await Task.FromResult(total > 0 ? (defects / (double)total) * 100 : 0);
+    }
+
+    /// <summary>
+    /// Calculates the number of acceptable products (produced - defects)
+    /// </summary>
+    public async Task<int> GetAcceptableAsync()
+    {
+        var produced = GetProduced(); // Fast sync read
+        var defects = GetDefects();   // Fast sync read  
+        return await Task.FromResult(produced - defects);
+    }
+    /// <summary>
+    /// Calculates the number of acceptable products (sync)
+    /// </summary>
+    /// <returns></returns>
+    public  int GetAcceptable()
+    {
+        var produced = GetProduced(); // Fast sync read
+        var defects = GetDefects();   // Fast sync read  
+        return  (produced - defects);
+    }
+
+    /// <summary>
+    /// Calculates the batch completion percentage (produced / amount * 100)
+    /// </summary>
+    public async Task<int> GetBatchProcessAsync()
+    {
+        var produced = GetProduced(); // Fast sync read
+        var amount = GetAmount();     // Fast sync read
+        return await Task.FromResult(amount > 0 ? (produced / amount) * 100 : 0);
+    }
+
+    /// <summary>
+    /// Checks if the machine is online based on OPC connection status
+    /// </summary>
+    public async Task<string> GetOnlineAsync()
+    {
+        var serverStatus = MachineControl.IsConnected;
+        return await Task.FromResult(serverStatus ? "Online" : "Offline");
+    }
+
+    // =========================================================================
+    // MACHINE CONTROL METHODS (Write commands - Keep SYNC)
+    // =========================================================================
+
+    /// <summary>
+    /// Sets the change request flag to true (triggers command processing)
+    /// </summary>
     public void SetChangeRequestTrue()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", true);
     }
 
-    // Reading the current status.
-    public int GetStatus()
-    {
-        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent")
-            .As<int>();
-        return status;
-    }
-
-    // Basic method to Reset machine by directly writing the Reset command.
+    /// <summary>
+    /// Sends reset command to the machine
+    /// </summary>
     public void ResetCommand()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 1);
         SetChangeRequestTrue();
     }
 
-    // Basic method to start machine by directly writing the start command.
-
+    /// <summary>
+    /// Sends start command to the machine
+    /// </summary>
     public void StartCommand()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 2);
         SetChangeRequestTrue();
     }
 
-    // Basic method to stop machine by directly writing the stop command.
+    /// <summary>
+    /// Sends stop command to the machine
+    /// </summary>
     public void StopCommand()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 3);
         SetChangeRequestTrue();
     }
 
-    // Basic method to Abort machine by directly writing the Abort command.
+    /// <summary>
+    /// Sends abort command to the machine
+    /// </summary>
     public void AbortCommand()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 4);
         SetChangeRequestTrue();
     }
 
-    // Basic method to Clear machine by directly writing the Clear command.
+    /// <summary>
+    /// Sends clear command to the machine
+    /// </summary>
     public void ClearCommand()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 5);
         SetChangeRequestTrue();
     }
 
-    public void StartMachine() //prove of concept refactor
-    {
-        int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+    // =========================================================================
+    // COMPLEX OPERATION METHODS (With delays - Make ASYNC)
+    // =========================================================================
 
-        if (statusVal == 0)
+    /// <summary>
+    /// Smart machine startup sequence with status checking and async delays
+    /// </summary>
+    public async Task StartMachineAsync()
+    {
+        int statusVal = GetStatus(); // Fast sync read
+
+        // States where machine is already running or cannot start
+        if (statusVal == 0 || statusVal == 3 || statusVal == 6 || statusVal == 11)
         {
             return;
         }
-
-        else if (statusVal == 2)
+        // States requiring reset before start
+        else if (statusVal == 2 || statusVal == 5 || statusVal == 17)
         {
             ResetCommand();
-            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
+            await Task.Delay(1000); // Wait for reset to process
             StartCommand();
         }
-        else if (statusVal == 3)
-        {
-            return;
-        }
+        // State where machine can start directly
         else if (statusVal == 4)
         {
             StartCommand();
         }
-        else if (statusVal == 5)
-        {
-            ResetCommand();
-            Thread.Sleep(1000); // wait one second to make sure that the command is recieved. 
-            StartCommand();
-        }
-        else if (statusVal == 6)
-        {
-            return;
-        }
+        // State requiring clear and reset before start
         else if (statusVal == 9)
         {
             ClearCommand();
-            Thread.Sleep(1000);
+            await Task.Delay(1000); // Wait for clear to process
             ResetCommand();
-            Thread.Sleep(1000);
+            await Task.Delay(1000); // Wait for reset to process
             StartCommand();
         }
-        else if (statusVal == 11)
-        {
-            return;
-        }
-        else if (statusVal == 17)
-        {
-            ResetCommand();
-            Thread.Sleep(1000);
-            StartCommand();
-        }
+        // Unknown state - retry after delay
         else
         {
-            Thread.Sleep(2000);
-            StartMachine();
+            await Task.Delay(2000);
+            await StartMachineAsync(); // Recursive retry
         }
     }
 
-    public void StopMachine()
+    /// <summary>
+    /// Stops the machine if it's not already in stopped state
+    /// </summary>
+    public async Task StopMachineAsync()
     {
-        int statusVal = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+        int statusVal = GetStatus(); // Fast sync read
 
-        if (statusVal == 9)
-        {
-            return;
-        }
-        else
+        if (statusVal != 9) // If not already stopped
         {
             StopCommand();
         }
+        // No await needed here since it's a fast operation
     }
 }

@@ -10,8 +10,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">@MachineControlService.GetMachineName()</h5>
             <div class="text-end">
-                <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId().ToString("D5")</div>
-                <h2 class="border-bottom pb-2">@MachineControlService.GetOnline()</h2>
+                <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId()IdAsync().ToString("D5")</div>
+                <h2 class="border-bottom pb-2">@MachineControlService.GetOnlineAsync()</h2>
             </div>
         </div>
     </div>
@@ -97,12 +97,12 @@
                                         }
                                         else if (variable.Name == "Accepted")
                                         {
-                                            <div class="h3 fw-bold text-success">@MachineControlService.GetAcceptable()</div>
+                                            <div class="h3 fw-bold text-success">@MachineControlService.GetAcceptableAsync()</div>
                                             <small class="text-muted">Acceptable Products</small>
                                         }
                                         else if (variable.Name == "DefectRate")
                                         {
-                                            <div class="h3 fw-bold text-danger">@MachineControlService.GetDefectRate().ToString("F1")%</div>
+                                            <div class="h3 fw-bold text-danger">@MachineControlService.GetDefectRateAsync().ToString("F1")%</div>
                                             <small class="text-muted">Defect Rate</small>
                                         }
                                         else if (variable.Name == "BatchProcess")
@@ -116,9 +116,9 @@
                                                 <!-- Progress Bar -->
                                                 <div class="progress" style="height: 25px;">
                                                     <div
-                                                        class="progress-bar @GetProgressBarClass(MachineControlService.GetBatchProcess()) fw-bold d-flex align-items-center justify-content-center"
-                                                        style="width: @MachineControlService.GetBatchProcess()%">
-                                                        @MachineControlService.GetBatchProcess()%
+                                                        class="progress-bar @GetProgressBarClass(MachineControlService.GetBatchProcessAsync()) fw-bold d-flex align-items-center justify-content-center"
+                                                        style="width: @MachineControlService.GetBatchProcessAsync()%">
+                                                        @MachineControlService.GetBatchProcessAsync()%
                                                     </div>
                                                 </div>
 
@@ -157,6 +157,7 @@
     [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
 
     private Timer? _refreshTimer;
+
     
     private List<VariableOption> availableVariables =
     [
@@ -250,7 +251,7 @@
         return $"{machineId}{random.Next(1000, 9999)}";
     }
 
-    private string GetProgressBarClass(int progress)
+    private string GetProgressBarClass(int progress) 
     {
         return progress switch
         {
