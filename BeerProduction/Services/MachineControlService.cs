@@ -105,7 +105,10 @@ public class MachineControlService
         while (BatchQueue.GetQueue().Count > 0)
         {
             Console.WriteLine("Vi er kommet til dequweuueue!!!");
-            var nextBatch = BatchQueue._batchQueue.DequeueBatch();
+            PriorityQueue<Batch,int> batchQueue = BatchQueue._batchQueue;
+
+            Batch nextBatch = batchQueue.Dequeue();
+
             if (nextBatch == null)
                 break; //Stop når der ikke er flere batches
 
@@ -121,7 +124,7 @@ public class MachineControlService
             while (true)
             {
                 int state = GetStatus();
-                if (state == 11) //11 er completed så stopper maskinen
+                if (state == 17) //17 is completed
                     break;
 
                 await Task.Delay(500);
