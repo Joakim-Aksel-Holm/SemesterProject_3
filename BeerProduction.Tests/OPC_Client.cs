@@ -1,8 +1,12 @@
+using BeerProduction.Services;
+
 namespace BeerProduction.Tests;
 using Xunit;
 using Opc.Ua;
 using Opc.UaFx;
 using Opc.UaFx.Client;
+using System.Threading.Tasks;
+
 public class OPC_Client
 { 
     
@@ -12,10 +16,10 @@ public class OPC_Client
 
 
     [Fact]
-    public void StartMachine()
+    public async Task StartMachine()
     {
         // Arrange
-        _testMachineControlService.StopMachine(); // Make sure that machine is stopped
+        await _testMachineControlService.StopMachineAsync(); // Make sure that machine is stopped
         Thread.Sleep(200);
         //add beers
         _testMachine.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value",100f); // add 100 beers
@@ -28,7 +32,7 @@ public class OPC_Client
         Thread.Sleep(200);
         
         // Act
-        _testMachineControlService.StartMachine(); // Start the machine
+        await _testMachineControlService.StartMachineAsync(); // Start the machine
         Thread.Sleep(200);
         status = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
         // Assert that the status of the machine is executing and therefor the current status in 6. 
@@ -36,14 +40,14 @@ public class OPC_Client
     }
     
     [Fact]
-    public void StopMachine()
+    public async Task StopMachine()
     {
         // Arrange
         
         // Add some beer to production
-        _testMachineControlService.StartMachine(); // ensure that the machine is started
+        await _testMachineControlService.StartMachineAsync(); // ensure that the machine is started
         // Act
-        _testMachineControlService.StopMachine();
+        await _testMachineControlService.StopMachineAsync();
         Thread.Sleep(1000);
         status = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
         Thread.Sleep(1000);
@@ -52,13 +56,13 @@ public class OPC_Client
     }
 
     [Fact]
-    public void ChangeRequestTrue()
+    public async Task ChangeRequestTrue()
     {
         // Arrange 
         _testMachine.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", false); // change request to false
         Thread.Sleep(1000);
         // Act 
-        _testMachineControlService.SetChangeRequestTrue();
+        await _testMachineControlService.SetChangeRequestTrueAsync();
         
         // Assert 
         bool testBool = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest").As<bool>();

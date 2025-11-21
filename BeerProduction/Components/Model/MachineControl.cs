@@ -1,26 +1,26 @@
+using System.Reflection.PortableExecutable;
+using Opc.Ua;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
 public class MachineControl
 {
-    public float Temperature { get; private set; }
-    public int BatchId { get; private set; }
-    public int Speed { get; private set; }
-    public bool AcceptedProduct { get; private set; }
-    public int QuantityAcceptedProduct { get; private set; }
-    public int Status { get; private set; }
-
     public string MachineURL { get; }
+
     public int MachineID { get; }
-    public OpcClient Client { get; private set; }
+    
+    public string MachineName { get; }
 
+    public OpcClient Client { get; set; }
+    
     public bool IsConnected => Client?.State == OpcClientState.Connected;
-
-    // Constructor (no auto-connect)
-    public MachineControl(int machineId, string machineURL)
+    
+    //Constructor 
+    public MachineControl(int machineId, string machineURL, string machineName)
     {
         MachineID = machineId;
         MachineURL = machineURL;
+        MachineName = machineName;
         Client = new OpcClient(machineURL);
         TryConnect();
         // Optional: subscribe to the Connected event

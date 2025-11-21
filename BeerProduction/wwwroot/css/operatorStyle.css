@@ -1,0 +1,197 @@
+.machine-view {
+    display: flex;
+    width: 100%; 
+    flex-direction: column;
+
+}
+
+.machine-inventory {
+    
+    width: 100%;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: #795548; 
+    padding: 15px;
+    margin-top: 15px;
+
+    border-radius: 25px;
+}
+
+.Machine-bottom{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    
+}
+.ButtonAlert{
+    display: flex;
+    flex-direction: row-reverse;
+    
+}
+
+.AlertButton{
+    flex:1; 
+    background: #990f02;
+    color:#FAF0E6;
+    font-weight: bold;
+    font-family: sans-serif;
+    Font-size: xx-large;
+    width: 150px;                          
+    height: 10em ;            
+    transition-duration: 0.3s;
+    border-radius: 25px;                   
+    border-style: none;                    
+    margin-top: 5px;        
+    
+}                                          
+
+.AlertButton:active
+{
+    background: green;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.ordered-queue{
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    overflow-x:auto;
+    
+    list-style-type: none;
+}
+
+.ordered-queue-item{
+    margin: 10px;
+}
+
+
+.machine-meter {
+    flex-grow: 1; /* Vokser og fylder al resterende plads */
+    background-color: #486c79;
+    padding: 15px;
+    margin-top: 5px;
+    border-radius: 25px;
+    
+    
+    
+}
+
+.variables ul {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+/* first row of the grid  */
+.variables li:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+.variables li:nth-child(8) { grid-area: 2 / 1 / 3 / 2; }
+.variables li:nth-child(3) { grid-area: 1 / 2 / 2 / 3; }
+.variables li:nth-child(2) { grid-area: 2 / 2 / 3 / 3; }
+
+.variables li:nth-child(7) { grid-area: 2 / 3 / 3 / 4; }
+.variables li:nth-child(6) { grid-area: 1 / 3 / 2 / 4; }
+.variables li:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
+.variables li:nth-child(5) { grid-area: 2 / 4 / 3 / 5; }
+
+
+.variables li{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #FAF0E6;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin: 15px;
+    
+    
+}
+
+.VaribaleLogo{
+    width: 75px;
+    height: 75px;  
+    border-radius: 18.75px;
+}
+
+.variables{
+    
+}
+
+
+.queue-item{
+    
+    flex-direction: column;
+    background-color: #FAF0E6;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 10px;
+    
+    /*Det her gør at der går 0,5 før det fader*/
+    /* ease gør det "naturligt"*/
+    transition: 0.5s ease;
+}
+
+.queue-item:hover {
+    
+    background-color: #0a53be;
+    
+    transform: scale(1.02);
+
+    /*skaber shadow og løfter det op*/
+    
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    
+    /* gør musen klik bar */
+    cursor: pointer;
+    
+    postion: relative; 
+    
+}
+
+
+.queue-item:first-child:hover {   
+    background-color: #ff6b6b;
+    color: white;
+    transform: scale(1.10);
+    
+}
+
+.queue-item:first-child:hover::after{
+    content: "⚠️Up Next!";
+    font-family: sans-serif;
+    
+    postion: absolute;
+    top:-35px;
+    left: 0px;
+    
+    background-color: #333;
+    color: white;
+    padding: 10px; 
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s;
+}
+
+.queue-item:nth-child(2):hover{
+    background-color: #ffa500;
+    transform: scale(1.08);
+    
+    
+}
+
+.queue-item:nth-child(3):hover{
+    background-color: #28a745;
+    transform: scale(1.06);
+}
+
+.ordered-queue{
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+
+

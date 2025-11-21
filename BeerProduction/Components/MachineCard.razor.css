@@ -1,0 +1,176 @@
+.machine-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+}
+
+.machine-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.machine-header h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.machine-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-badge.online {
+    background: #28a745;
+}
+
+.status-badge.offline {
+    background: #dc3545;
+}
+
+.serial-number {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.machine-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.variable-sidebar {
+    border-right: 1px solid #dee2e6;
+    padding: 1rem;
+    background: #f8f9fa;
+    width: 200px;
+    flex-shrink: 0;
+    overflow-y: auto;
+}
+
+.variable-sidebar h6 {
+    margin-bottom: 1rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+.variable-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.variable-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 0.5rem;
+}
+
+.variable-item:hover {
+    background: #e9ecef;
+}
+
+.variable-item.selected {
+    background: #007bff;
+    color: white;
+}
+
+.variable-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.variable-name {
+    font-size: 0.9rem;
+}
+
+.variable-display {
+    padding: 1rem;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.no-variables {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6c757d;
+}
+
+.no-variables i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.variables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.variable-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.variable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.variable-header h6 {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.variable-value .value {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.progress-container {
+    margin-top: 0.5rem;
+}
+
+.progress {
+    height: 20px;
+}
+
+.btn-close {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+}
