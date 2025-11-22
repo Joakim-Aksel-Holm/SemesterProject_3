@@ -1,31 +1,33 @@
 @page "/operator"
 @using BeerProduction.Services
+@using System.Timers
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
+@implements IDisposable
 @rendermode InteractiveServer
 
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 
 
-    <div class="machine-view">
+<div class="machine-view">
     
     <div class="machine-inventory">
         <ol class="ordered-queue">
         
             <li class="queue-item" >
-            <h4 class="BatchId"> BatchId </h4>
-            <p>Status: venter</p> 
+                <h4 class="BatchId"> BatchId </h4>
+                <p>Status: venter</p> 
             </li>
 
 
             <li class="queue-item">
-            <h4 class="BatchId">BatchId</h4>
-            <p>Status: Venter</p>
+                <h4 class="BatchId">BatchId</h4>
+                <p>Status: Venter</p>
             </li>
 
             <li class="queue-item">
-            <h4 class="BatchId">BatchId</h4>
-            <p>Status: Venter</p>
+                <h4 class="BatchId">BatchId</h4>
+                <p>Status: Venter</p>
             </li>
         </ol>
     </div>
@@ -35,50 +37,49 @@
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
                     <span>
-                        Batch Id: 12345
+                        @MachineControlService.GetBatchId()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
                     <span>
-                        Temperature: 38
+                        @MachineControlService.GetTemperature()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
                     <span>
-                        Humidity
+                        @MachineControlService.GetHumidity()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
                     <span>
-
-                        Amount to produce
+                        @MachineControlService.GetAmount()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
                     <span>
-                        Produced
+                        @MachineControlService.GetProduced()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
                     <span>
-                        Acceptable products
+                        @MachineControlService.GetAcceptable()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
                     <span>
-                        Defect products
+                        @MachineControlService.GetDefects()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
                     <span>
-                        Succesrate
+                        @MachineControlService.GetDefectRate()
                     </span>
                 </li>
             </ul>
@@ -98,5 +99,53 @@
 
     </div>
 </div>
+
+@code {
+    [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
+
+    private Timer? _refreshTimer;
+
+    protected override void OnInitialized()
+    {
+        _refreshTimer = new Timer(200);
+        _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
+        _refreshTimer.AutoReset = true;
+        _refreshTimer.Enabled = true;
+    }
+
+    private async Task OnTimerElapsed()
+    {
+        if (MachineControlService != null)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
+    }
+    
+    private string GetTemperatureClass(decimal temperature)
+    {
+        return temperature switch
+        {
+            > 70 => "text-danger",
+            > 60 => "text-warning",
+            _ => "text-success"
+        };
+    }
+
+    private string GetProgressBarClass(int progress)
+    {
+        return progress switch
+        {
+            >= 90 => "bg-success",
+            >= 50 => "bg-primary",
+            _ => "bg-info"
+        };
+    }
+}
 
 

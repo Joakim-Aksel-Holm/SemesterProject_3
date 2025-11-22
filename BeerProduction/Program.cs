@@ -6,8 +6,8 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 using Microsoft.AspNetCore.Components.Authorization;
-using BeerProduction.Services;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 
 // it is working take 1
@@ -24,6 +24,13 @@ builder.Configuration.AddJsonFile(
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) .AddCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.AccessDeniedPath = "/login";
+});
+builder.Services.AddAuthorization();
+
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 
@@ -35,6 +42,7 @@ builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
     provider.GetRequiredService<AuthenticationStateService>());
 builder.Services.AddCascadingAuthenticationState();
+
 
 
 
@@ -55,6 +63,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

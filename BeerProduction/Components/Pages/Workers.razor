@@ -2,44 +2,57 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Components.Model
 @using BeerProduction.Services
+@inject AuthenticationStateService AuthenticationStateService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
 @layout WorkerLayout
 @inject DatabaseConnection Db
 
-<h2>Employees</h2>
+<AuthorizeView Roles="operator,manager,admin">
+    <Authorized>
+        <h2>Employees</h2>
 
-@if (_loading)
-{
-    <p>Loading…</p>
-}
-else if (!string.IsNullOrEmpty(_error))
-{
-    <p style="color:#b00">@_error</p>
-}
-else if (_employees.Count == 0)
-{
-    <p>No employees found.</p>
-}
-else
-{
-    <table class="table" style="width:100%; border-collapse:collapse;">
-        <thead>
-        <tr>
-            <th>ID</th><th>Name</th><th>Role</th><th>Hired</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var e in _employees)
+        @if (_loading)
         {
-            <tr>
-                <td>@e.Id</td>
-                <td>@e.Name</td>
-                <td>@e.Role</td>
-                <td>@e.HiredOn.ToString("yyyy-MM-dd")</td>
-            </tr>
+            <p>Loading…</p>
         }
-        </tbody>
-    </table>
-}
+        else if (!string.IsNullOrEmpty(_error))
+        {
+            <p style="color:#b00">@_error</p>
+        }
+        else if (_employees.Count == 0)
+        {
+            <p>No employees found.</p>
+        }
+        else
+        {
+            <table class="table" style="width:100%; border-collapse:collapse;">
+                <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Role</th><th>Hired</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var e in _employees)
+                {
+                    <tr>
+                        <td>@e.Id</td>
+                        <td>@e.Name</td>
+                        <td>@e.Role</td>
+                        <td>@e.HiredOn.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
 
 @code {
     private bool _loading = true;
@@ -74,5 +87,4 @@ else
             _loading = false;
         }
     }
-
 }

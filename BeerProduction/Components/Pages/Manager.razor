@@ -1,12 +1,13 @@
 ﻿@page "/manager"
 @layout ManagerLayout
 @using BeerProduction.Components.Layout
-@using BeerProduction.Components.Model
 @using BeerProduction.Services
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Manager,Admin")]
+@inject AuthenticationStateService AuthenticationStateService
 @inject ManagerService ManagerService
 @inject ProductionTrackingService ProductionTracking
 @rendermode InteractiveServer
-
 
 <PageTitle>Manager Dashboard</PageTitle>
 
@@ -80,6 +81,14 @@ else
     private int _totalComplete = 0;
     private List<MachineControlService> _machines = new();
     private ProductionStats _productionStats = new();
+    private string? username;
+    private string? role;
+
+    protected override void OnInitialized()
+    {
+        username = AuthenticationStateService.GetUsername();
+        role = AuthenticationStateService.GetRole();
+    }
 
     protected override async Task OnInitializedAsync()
     {
