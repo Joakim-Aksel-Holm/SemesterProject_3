@@ -28,7 +28,7 @@ public class BatchService
     {
         return _batches.ToOrderedListHighestFirst();
     }
-    
+
 
     public int GetBatchCount()
     {
