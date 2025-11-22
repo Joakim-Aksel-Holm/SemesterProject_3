@@ -13,8 +13,7 @@
 <AuthorizeView Roles="operator,manager,admin">
     <Authorized>
         <div class="home-container">
-            <h1>@_role dashboard</h1>
-            <p>Welcome, @_username!</p>
+            <h1>Welcome, @_username (@_role)</h1>
             <div>
                 <p>
                     This system allows you to monitor and manage the beer production process efficiently.
@@ -28,18 +27,6 @@
         }
     </NotAuthorized>
 </AuthorizeView>
-
-
-
-<div class="home-container">
-    <h1>@_role dashboard</h1>
-    <p>Welcome, @_username!</p>
-    <div>
-        <p>
-            This system allows you to monitor and manage the beer production process efficiently.
-        </p>
-    </div>
-</div>
 
 @code {
 

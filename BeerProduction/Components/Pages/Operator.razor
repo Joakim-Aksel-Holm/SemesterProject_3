@@ -1,6 +1,8 @@
 @page "/operator"
 @using BeerProduction.Services
 @using System.Timers
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateService AuthenticationStateService
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
 @implements IDisposable
@@ -8,102 +10,122 @@
 
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 
-
-<div class="machine-view">
+<AuthorizeView Roles="operator,admin">
+    <Authorized>
+        <div class="machine-view">
     
-    <div class="machine-inventory">
-        <ol class="ordered-queue">
-        
-            <li class="queue-item" >
-                <h4 class="BatchId"> BatchId </h4>
-                <p>Status: venter</p> 
-            </li>
+        <div class="machine-inventory">
+            <ol class="ordered-queue">
+            
+                <li class="queue-item" >
+                    <h4 class="BatchId"> BatchId </h4>
+                    <p>Status: venter</p> 
+                </li>
 
 
-            <li class="queue-item">
-                <h4 class="BatchId">BatchId</h4>
-                <p>Status: Venter</p>
-            </li>
+                <li class="queue-item">
+                    <h4 class="BatchId">BatchId</h4>
+                    <p>Status: Venter</p>
+                </li>
 
-            <li class="queue-item">
-                <h4 class="BatchId">BatchId</h4>
-                <p>Status: Venter</p>
-            </li>
-        </ol>
-    </div>
-    <div class="machine-meter">
-        <div class="variables">
-            <ul>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
-                    <span>
-                        @MachineControlService.GetBatchId()
-                    </span>
+                <li class="queue-item">
+                    <h4 class="BatchId">BatchId</h4>
+                    <p>Status: Venter</p>
                 </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
-                    <span>
-                        @MachineControlService.GetTemperature()
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
-                    <span>
-                        @MachineControlService.GetHumidity()
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
-                    <span>
-                        @MachineControlService.GetAmount()
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
-                    <span>
-                        @MachineControlService.GetProduced()
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
-                    <span>
-                        @MachineControlService.GetAcceptable()
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
-                    <span>
-                        @MachineControlService.GetDefects()
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
-                    <span>
-                        @MachineControlService.GetDefectRate()
-                    </span>
-                </li>
-            </ul>
+            </ol>
+        </div>
+        <div class="machine-meter">
+            <div class="variables">
+                <ul>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
+                        <span>
+                            @MachineControlService.GetBatchId()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
+                        <span>
+                            @MachineControlService.GetTemperature()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
+                        <span>
+                            @MachineControlService.GetHumidity()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
+                        <span>
+                            @MachineControlService.GetAmount()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
+                        <span>
+                            @MachineControlService.GetProduced()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
+                        <span>
+                            @MachineControlService.GetAcceptable()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
+                        <span>
+                            @MachineControlService.GetDefects()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
+                        <span>
+                            @MachineControlService.GetDefectRate()
+                        </span>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="Machine-bottom">
+            
+            <div class="ButtonAlert">
+                <button class="AlertButton">
+                    ALERT
+                </button>
+
+            </div>
+            
+            
 
         </div>
     </div>
-    <div class="Machine-bottom">
-        
-        <div class="ButtonAlert">
-            <button class="AlertButton">
-                ALERT
-            </button>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
-        </div>
-        
-        
 
-    </div>
-</div>
 
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
 
     private Timer? _refreshTimer;
+    private string? _username;
+    private string? _role;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(50);
+        
+        _username = AuthenticationStateService.GetUsername();
+        _role = AuthenticationStateService.GetRole();
+    }
 
     protected override void OnInitialized()
     {

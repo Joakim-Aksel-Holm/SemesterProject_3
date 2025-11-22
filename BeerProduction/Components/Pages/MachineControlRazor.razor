@@ -2,6 +2,9 @@
 @using BeerProduction.Components.Model
 @using BeerProduction.Enums
 @using BeerProduction.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateService AuthenticationStateService
+@inject NavigationManager NavigationManager
 
 @inject MachineControlService MachineControlService
 
@@ -15,78 +18,90 @@
 <link rel="stylesheet" href="/css/machinecontrol.css">
 <PageTitle>MachineControl</PageTitle>
 
-<h1>Machine control</h1>
+<AuthorizeView Roles="operator,admin">
+    <Authorized>
+        <h1>Machine control</h1>
 
-<div class="parent">
-    <div class="div1">
-        <button @onclick="startMachine">Start</button>
-    </div>
-    <div class="div2">
-        <button @onclick="stopMachine">Stop</button>
-    </div>
-    <div class="div3">
-        <button @onclick="resetMachine">Reset</button>
-    </div>
-    <div class="div4">
-        <button @onclick="clearMachine">Clear</button>
-    </div>
-    <div class="div5">
-        <button @onclick="abortMachine">Abort</button>
-    </div>
-    <div class="div6">
-        <label for="BeerType">Select a Beer type</label>
-        <select @bind="SelectedBeerType" id="BeerType">
-            <option value="-1" disabled>Select a beer type</option>
-            <option value="0">Pilsner</option>
-            <option value="1">Wheat</option>
-            <option value="2">IPA</option>
-            <option value="3">Stout</option>
-            <option value="4">Ale</option>
-            <option value="5">Alcohol free</option>
-        </select>
+        <div class="parent">
+            <div class="div1">
+                <button @onclick="startMachine">Start</button>
+            </div>
+            <div class="div2">
+                <button @onclick="stopMachine">Stop</button>
+            </div>
+            <div class="div3">
+                <button @onclick="resetMachine">Reset</button>
+            </div>
+            <div class="div4">
+                <button @onclick="clearMachine">Clear</button>
+            </div>
+            <div class="div5">
+                <button @onclick="abortMachine">Abort</button>
+            </div>
+            <div class="div6">
+                <label for="BeerType">Select a Beer type</label>
+                <select @bind="SelectedBeerType" id="BeerType">
+                    <option value="-1" disabled>Select a beer type</option>
+                    <option value="0">Pilsner</option>
+                    <option value="1">Wheat</option>
+                    <option value="2">IPA</option>
+                    <option value="3">Stout</option>
+                    <option value="4">Ale</option>
+                    <option value="5">Alcohol free</option>
+                </select>
 
-    </div>
+            </div>
 
-    <div class="priority">
-        <label for="Priority">Select a Beer priority</label>
-        <select @bind="SelectedPriority" id="Priority">
-            <option value="-1" disabled>Select a beer type</option>
-            <option value="0">Low</option>
-            <option value="1">Medium</option>
-            <option value="2">High</option>
-        </select>
-    </div>
+            <div class="priority">
+                <label for="Priority">Select a Beer priority</label>
+                <select @bind="SelectedPriority" id="Priority">
+                    <option value="-1" disabled>Select a beer type</option>
+                    <option value="0">Low</option>
+                    <option value="1">Medium</option>
+                    <option value="2">High</option>
+                </select>
+            </div>
 
-    <div class="div7">
-        @* Form for adding batch size and batch speed *@
-        <EditForm Model="@batchForm">
-            <label>
-                Amount:
-                <InputNumber @bind-Value="batchForm.Size"/>
-            </label>
+            <div class="div7">
+                @* Form for adding batch size and batch speed *@
+                <EditForm Model="@batchForm">
+                    <label>
+                        Amount:
+                        <InputNumber @bind-Value="batchForm.Size"/>
+                    </label>
 
-            <label>
-                Speed:
-                <InputNumber @bind-Value="batchForm.Speed"/>
-            </label>
-        </EditForm>
-    </div>
-    <div class="div8">
-        <label for="BatchButton">Add to batch</label>
-        <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
-    </div>
+                    <label>
+                        Speed:
+                        <InputNumber @bind-Value="batchForm.Speed"/>
+                    </label>
+                </EditForm>
+            </div>
+            <div class="div8">
+                <label for="BatchButton">Add to batch</label>
+                <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
+            </div>
 
-    <div class="div9">
-        <label for="SeePriority">See batch priority</label>
-        <button id="SeePriority" @onclick="SeeBatchPriority">
-            BatchPriority
-        </button>
-    </div>
-</div>
+            <div class="div9">
+                <label for="SeePriority">See batch priority</label>
+                <button id="SeePriority" @onclick="SeeBatchPriority">
+                    BatchPriority
+                </button>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
-
     int id = 1;
+    private string? _username;
+    private string? _userId;
 
     // In your component
     private int SelectedBeerType { get; set; } = -1;
@@ -97,6 +112,14 @@
     @* private BatchService batchService = new(); *@
 
     private BatchQueue BatchQueue = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(50);
+
+        _username = AuthenticationStateService.GetUsername();
+        _userId = AuthenticationStateService.GetUserId();
+    }
 
 
     @* Methods for controlling machine with buttons *@
@@ -133,5 +156,4 @@
             Console.WriteLine();
         }
     }
-
 }
