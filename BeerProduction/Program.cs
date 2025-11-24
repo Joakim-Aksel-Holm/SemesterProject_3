@@ -26,8 +26,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddTransient<BatchQueue>();
 builder.Services.AddScoped<ManagerService>(); 
-builder.Services.AddScoped<MachineControlService>();
 builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840 ", "Secondary Brewer"));
+builder.Services.AddSingleton<MachineManager>();
 builder.Services.AddScoped<ProductionTrackingService>();
 builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
@@ -40,6 +40,11 @@ builder.Services.AddCascadingAuthenticationState();
 
 
 var app = builder.Build();
+var machineManager = app.Services.GetRequiredService<MachineManager>();
+
+//Add machines
+machineManager.AddMachine(1, "Primary Brewer", "opc.tcp://127.0.0.1:4840");
+machineManager.AddMachine(2, "Secondary Brewer", "opc.tcp://192.168.0.122:4840");
 
 
 // Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
