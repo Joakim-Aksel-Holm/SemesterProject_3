@@ -160,7 +160,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetMaintenanceStatus()
     {
-        var counter = 0; 
+        var counter = SafeRead("ns=6;s=::Program:Maintenance.Counter", 0);
         const int MAINTENANCE_CYCLE = 30000;
         
         var percentage = (counter % MAINTENANCE_CYCLE) / (double)MAINTENANCE_CYCLE * 100;
