@@ -79,7 +79,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetBatchId()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[0].value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[0].Value", -1);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetAmount()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[1].value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[1].Value", -1);
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetPpm()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed.value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed.Value", -1);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public float GetTemperature()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[3].value", -1f);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[3].Value", -1f);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public decimal GetHumidity()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[2].value", -1m);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[2].Value", -1m);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public decimal GetVibration()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[4].value", -1m);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[4].Value", -1m);
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetDefects()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdDefectiveCount.value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdDefectiveCount.Value", -1);
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetProduced()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Admin.ProdProcessedCount").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount.Value", -1);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetStatus()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.StateCurrent.Value", -1);
     }
 
     /// <summary>
@@ -151,7 +151,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public BeerType GetCurrentBatch()
     {
-        var current = SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount", -1);
+        var current = SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount.Value", -1);
         return Enum.IsDefined(typeof(BeerType), current) ? (BeerType)current : BeerType.Pilsner;
     }
 
