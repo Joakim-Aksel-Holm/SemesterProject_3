@@ -107,22 +107,30 @@
                                         else if (variable.Name == "BatchProcess")
                                         {
                                             <div>
-                                                <!-- Batch ID above the progress bar -->
-                                                <div class="small text-muted mb-1">
-                                                    Batch: #@currentBatchId
+                                                <!-- Batch ID and Progress Percentage Above Bar -->
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <div class="small text-muted">Batch: #@currentBatchId</div>
+                                                    <div class="h6 fw-bold text-primary mb-0">@batchProgress% Complete</div>
                                                 </div>
-                                                
-                                                <!-- Progress Bar -->
-                                                <div class="progress" style="height: 25px;">
-                                                    <div class="progress-bar @GetProgressBarClass(batchProgress) fw-bold d-flex align-items-center justify-content-center"
-                                                         style="width: @batchProgress%">
-                                                        @batchProgress%
+        
+                                                <!-- Enhanced Progress Bar with Animation -->
+                                                <div class="progress" style="height: 25px; position: relative;">
+                                                    <div class="progress-bar @GetProgressBarClass(batchProgress) fw-bold d-flex align-items-center justify-content-center progress-bar-striped progress-bar-animated"
+                                                         style="width: @batchProgress%; transition: width 0.5s ease;">
+                                                        @* Show percentage inside bar when there's enough space *@
+                                                        @if (batchProgress > 15)
+                                                        {
+                                                            <span>@batchProgress%</span>
+                                                        }
                                                     </div>
                                                 </div>
-                                                
-                                                <!-- Additional batch info -->
-                                                <div class="small text-muted mt-1">
-                                                    @currentBatchType
+        
+                                                <!-- Countdown Timer and Batch Info -->
+                                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                                    <div class="small text-muted">@currentBatchType</div>
+                                                    <div class="small @GetCountdownColor() fw-bold">
+                                                        @GetCountdownText()
+                                                    </div>
                                                 </div>
                                             </div>
                                         }
@@ -131,7 +139,8 @@
                                             <div>
                                                 <div class="h4 fw-bold @(maintenanceStatus > 80 ? "text-warning" : "text-success")">@maintenanceStatus%</div>
                                                 <div class="progress mt-2" style="height: 10px;">
-                                                    <div class="progress-bar @(maintenanceStatus > 80 ? "bg-warning" : "bg-success")" style="width: @maintenanceStatus%"></div>
+                                                    <div class="progress-bar @(maintenanceStatus > 80 ? "bg-warning" : "bg-success") progress-bar-striped progress-bar-animated" 
+                                                         style="width: @maintenanceStatus%"></div>
                                                 </div>
                                                 <small class="text-muted">Maintenance Status</small>
                                             </div>
@@ -162,6 +171,12 @@
     private string currentBatchId;
     private string currentBatchType = "Loading...";
     private int maintenanceStatus;
+    
+    // Count-down timer for the batch until done:
+    private TimeSpan timeRemaining = TimeSpan.Zero;
+    private DateTime batchStartTime;
+    private bool isBatchRunning = false;
+    private int lastProduced = 0;
 
     private List<VariableOption> _availableVariables =
     [
@@ -199,16 +214,104 @@
     {
         if (MachineControlService != null)
         {
-            // Update all values EXCEPT batchId (keep it stable)
-            onlineStatus = await MachineControlService.GetOnlineAsync();
-            acceptedProducts = await MachineControlService.GetAcceptableAsync();
-            currentBatchType = MachineControlService.GetCurrentBatch().ToString();
-            // maintenanceStatus = MachineControlService.GetMaintenanceStatus();
-            batchProgress = await MachineControlService.GetBatchProcessAsync();
-            defectRate = await MachineControlService.GetDefectRateAsync();
-            
-            await InvokeAsync(StateHasChanged);
+            try
+            {
+                var currentProduced = MachineControlService.GetProduced();
+                var amount = MachineControlService.GetAmount();
+                var ppm = MachineControlService.GetPpm();
+                
+                // Detect batch state changes
+                if (currentProduced > 0 && currentProduced < amount && !isBatchRunning)
+                {
+                    // Batch just started
+                    batchStartTime = DateTime.Now;
+                    isBatchRunning = true;
+                    lastProduced = currentProduced;
+                    Console.WriteLine($"Batch started: {currentProduced}/{amount}");
+                }
+                
+                // Calculate time remaining using simple PPM approach
+                if (isBatchRunning && batchProgress < 100 && ppm > 0)
+                {
+                    var remainingToProduce = amount - currentProduced;
+                    if (remainingToProduce > 0)
+                    {
+                        var minutesRemaining = remainingToProduce / (double)ppm;
+                        timeRemaining = TimeSpan.FromMinutes(minutesRemaining);
+                    }
+                    else
+                    {
+                        timeRemaining = TimeSpan.Zero;
+                    }
+                }
+                
+                // Detect batch completion
+                if (batchProgress >= 100 && isBatchRunning)
+                {
+                    isBatchRunning = false;
+                    timeRemaining = TimeSpan.Zero;
+                    Console.WriteLine("Batch completed!");
+                }
+                
+                // Reset if production stopped
+                if (currentProduced == 0 && isBatchRunning)
+                {
+                    isBatchRunning = false;
+                    timeRemaining = TimeSpan.Zero;
+                }
+
+                // Update all values
+                onlineStatus = await MachineControlService.GetOnlineAsync();
+                acceptedProducts = await MachineControlService.GetAcceptableAsync();
+                currentBatchType = MachineControlService.GetCurrentBatch().ToString();
+                maintenanceStatus = MachineControlService.GetMaintenanceStatus();
+                batchProgress = await MachineControlService.GetBatchProcessAsync();
+                defectRate = await MachineControlService.GetDefectRateAsync();
+                
+                // Debug logging
+                Console.WriteLine($"Batch: {batchProgress}% | Time Left: {timeRemaining:mm\\:ss} | PPM: {ppm}");
+                
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in timer: {ex.Message}");
+            }
         }
+    }
+
+    private string GetCountdownText()
+    {
+        if (batchProgress >= 100)
+            return "✅ Completed";
+        
+        if (!isBatchRunning || timeRemaining.TotalSeconds <= 0)
+            return "⏸️ Not running";
+        
+        if (timeRemaining.TotalHours >= 1)
+            return $"🕐 {timeRemaining:h\\:mm\\:ss}";
+        
+        if (timeRemaining.TotalMinutes >= 1)
+            return $"🕐 {timeRemaining:mm\\:ss}";
+        
+        return $"🕐 {timeRemaining:ss}s";
+    }
+
+    private string GetCountdownColor()
+    {
+        if (batchProgress >= 100)
+            return "text-success";
+        
+        if (!isBatchRunning)
+            return "text-muted";
+        
+        if (timeRemaining.TotalMinutes < 5)
+            return "text-warning";
+        
+        if (timeRemaining.TotalMinutes < 1)
+            return "text-danger";
+        
+        return "text-info";
     }
 
     public void Dispose()
