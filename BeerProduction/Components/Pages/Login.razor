@@ -79,7 +79,7 @@
 
 					await AuthenticationStateService.LoginAsync(userId, username, role);
 
-                    Task.Delay(100);
+                    await Task.Delay(100);
 
                     NavigationManager.NavigateTo("/");
                 }
