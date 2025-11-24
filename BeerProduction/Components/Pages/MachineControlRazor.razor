@@ -19,7 +19,7 @@
 <PageTitle>MachineControl</PageTitle>
 
 <AuthorizeView Roles="operator,admin">
-    <Authorized>
+    <Authorized Context="auth">
         <h1>Machine control</h1>
 
         <div class="parent">
@@ -97,7 +97,6 @@
 </AuthorizeView>
 
 
-
 @code {
     int id = 1;
     private string? _username;
@@ -112,7 +111,7 @@
     @* private BatchService batchService = new(); *@
 
     private BatchQueue BatchQueue = new();
-    
+
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(50);
@@ -156,4 +155,5 @@
             Console.WriteLine();
         }
     }
+
 }
