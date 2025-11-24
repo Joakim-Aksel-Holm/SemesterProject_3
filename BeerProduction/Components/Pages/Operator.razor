@@ -3,31 +3,32 @@
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject MachineControlService Machine
 @using System.Timers
-@implements IDisposable
+
 
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 
 
-    <div class="machine-view">
+<div class="machine-view">
     
     <div class="machine-inventory">
         <ol class="ordered-queue">
         
             <li class="queue-item" >
-            <h4 class="BatchId"> BatchId </h4>
-            <p>Status: venter</p> 
+                <h4 class="BatchId"> BatchId </h4>
+                <p>Status: venter</p> 
             </li>
 
 
             <li class="queue-item">
-            <h4 class="BatchId">BatchId</h4>
-            <p>Status: Venter</p>
+                <h4 class="BatchId">BatchId</h4>
+                <p>Status: Venter</p>
             </li>
 
             <li class="queue-item">
-            <h4 class="BatchId">BatchId</h4>
-            <p>Status: Venter</p>
+                <h4 class="BatchId">BatchId</h4>
+                <p>Status: Venter</p>
             </li>
         </ol>
     </div>
@@ -37,57 +38,49 @@
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
                     <span>
-                        @MachineControlService.GetBatchId()
+                        @Machine.Batch
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
                     <span>
-                        @MachineControlService.GetTemperature()
-                        
-                        Temperature: 38
+                        @Machine.Temperature
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
                     <span>
-                        @MachineControlService.GetHumidity()
-                        Humidity
+                        @Machine.Humidity
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
                     <span>
-                        @MachineControlService.GetAmount()
-                        Amount to produce
+                        @Machine.AmountToProduce
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
                     <span>
-                        @MachineControlService.GetProduced()
-                        Produced
+                        @Machine.Produced
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
                     <span>
-                        @MachineControlService.GetAcceptable()
-                        Acceptable products
+                        @Machine.AcceptableProducts
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
                     <span>
-                        @MachineControlService.GetDefects()
-                        Defect products
+                        @Machine.DefectProducts
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
                     <span>
-                        @MachineControlService
-                        Succesrate
+                        @Machine.SuccesRate
                     </span>
                 </li>
             </ul>
@@ -109,8 +102,6 @@
 </div>
 
 @code {
-    [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
-
     private Timer? _refreshTimer;
     
     protected override void OnInitialized()
@@ -122,9 +113,11 @@
         _refreshTimer.AutoReset = true;
         _refreshTimer.Enabled = true;
     }
-
+    
     private async Task OnTimerElapsed()
     {
+        Machine.ReadAllVariables();
+        Console.WriteLine(Machine.AmountToProduce);
         await InvokeAsync(StateHasChanged);
     }
 
@@ -133,5 +126,9 @@
         _refreshTimer.Stop();
         _refreshTimer.Dispose();
     }
+   
+
+
+
 
 }
