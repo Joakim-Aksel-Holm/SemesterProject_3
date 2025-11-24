@@ -6,32 +6,34 @@
 @inject AuthenticationStateService AuthenticationStateService
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
-@implements IDisposable
 @rendermode InteractiveServer
 
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 
-<AuthorizeView Roles="operator,admin">
-    <Authorized>
-        <div class="machine-view">
-    
-        <div class="machine-inventory">
-            <ol class="ordered-queue">
-            
-                <li class="queue-item" >
-                    <h4 class="BatchId"> BatchId </h4>
-                    <p>Status: venter</p> 
+@if (_loading)
+{
+    <div class="loading-box">
+        <label><img alt="" src=""/>@_loadingMessage</label>
+    </div>
+}
+@if (!_loading)
+{
+    <div class="machine-view">
+    <div class="machine-inventory">
+
+    </div>
+    <div class="machine-meter">
+        <div class="variables">
+            <ul>
+                <li>
+                    <label>
+                        <img class="variable-img" alt="" src=""/>Batch ID: @_machineService?.GetBatchId()
+                    </label>
                 </li>
-
-
-                <li class="queue-item">
-                    <h4 class="BatchId">BatchId</h4>
-                    <p>Status: Venter</p>
-                </li>
-
-                <li class="queue-item">
-                    <h4 class="BatchId">BatchId</h4>
-                    <p>Status: Venter</p>
+                <li>
+                    <label>
+                        <img class="variable-img" alt="" src=""/>Amount to produce: @_machineService?.GetAmount()
+                    </label>
                 </li>
             </ol>
         </div>
@@ -62,39 +64,53 @@
                             @MachineControlService.GetHumidity()
                         </span>
                     </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
-                        <span>
-                            @MachineControlService.GetAmount()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
-                        <span>
-                            @MachineControlService.GetProduced()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
-                        <span>
-                            @MachineControlService.GetAcceptable()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
-                        <span>
-                            @MachineControlService.GetDefects()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
-                        <span>
-                            @MachineControlService.GetDefectRate()
-                        </span>
-                    </li>
-                </ul>
+                <li>
+                    <label>
+                        <img class="variable-img" alt="" src=""/>PPM: @_machineService?.GetPpm()
+                    </label>
+                </li>
 
-            </div>
+                @if (_temperatureCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Temperature: @_machineService?.GetTemperature()
+                        </label>
+                    </li>
+                }
+                @if (_humidityCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Humidity: @_machineService?.GetHumidity()
+                        </label>
+                    </li>
+                }
+                @if (_vibrationCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Vibration: @_machineService?.GetVibration()
+                        </label>
+                    </li>
+                }
+                @if (_defectsCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Defect products: @_machineService?.GetDefects()
+                        </label>
+                    </li>
+                }
+                @if (_acceptableCheck)
+                {
+                    <li>
+                        <label>
+                            <img class="variable-img" alt="" src=""/>Acceptable products: @_machineService?.GetAcceptableAsync()
+                        </label>
+                    </li>
+                }
+            </ul>
         </div>
         <div class="Machine-bottom">
             
@@ -104,18 +120,25 @@
                 </button>
 
             </div>
+        <div class="machine-settings">
+            <label><InputCheckbox @bind-Value="_temperatureCheck"/> Temperature</label><br/>
+            <label><InputCheckbox @bind-Value="_humidityCheck"/> Humidity</label><br/>
+            <label><InputCheckbox @bind-Value="_vibrationCheck"/> Vibration</label><br/>
+            <label><InputCheckbox @bind-Value="_defectsCheck"/> Defect products</label><br/>
+            <label><InputCheckbox @bind-Value="_acceptableCheck"/> Acceptable products</label><br/>
         </div>
         }
     </div>
-    </Authorized>
-    <NotAuthorized>
-        @{
-            NavigationManager.NavigateTo("/login");
-        }
-    </NotAuthorized>
-</AuthorizeView>
+    <div class="machine-maintenance">
 
+    </div>
+</div>
+}
 
+@if (_error is not null)
+{
+    <div class="error_message">@_error</div>
+}
 
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
@@ -177,39 +200,60 @@
         
     }
 
-    private async Task OnTimerElapsed()
-    {
-        if (MachineControlService != null)
+        var loadingTask = LoadingAnimation();
+        
+        try
         {
+            await using var conn = await Db.OpenAsync();   // pooled under the hood
+            await using var cmd  = conn.CreateCommand();
+
+            cmd.CommandText = @"SELECT m.url, m.id, m.name 
+                                FROM public.user_table u
+                                JOIN public.machine_table m ON u.id = m.id
+            ";
+            var token = "test";
+            cmd.Parameters.AddWithValue("@token", token);
+            
+            await using var rdr = await cmd.ExecuteReaderAsync();
+
+            if (await rdr.ReadAsync())
+            {
+                _machineId = rdr.GetInt32(rdr.GetOrdinal("machineId"));
+                _machineURL = rdr.GetString(rdr.GetOrdinal("machineURL"));
+                _machineName = rdr.GetString(rdr.GetOrdinal("machineName"));
+                
+                _machine = new MachineControl(_machineId, _machineURL, _machineName);
+                _machineService = new MachineControlService(_machine);
+            }
+            else
+            {
+                _error = "No machines found.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = "Database error: " + ex.Message;
+        }
+        finally
+        {
+            _loading = false;
             await InvokeAsync(StateHasChanged);
         }
+
+        await loadingTask;
     }
 
-    public void Dispose()
+    private async Task LoadingAnimation()
     {
-        _refreshTimer?.Stop();
-        _refreshTimer?.Dispose();
-    }
-    
-    private string GetTemperatureClass(decimal temperature)
-    {
-        return temperature switch
+        while (_loading)
         {
-            > 70 => "text-danger",
-            > 60 => "text-warning",
-            _ => "text-success"
-        };
-    }
-
-    private string GetProgressBarClass(int progress)
-    {
-        return progress switch
-        {
-            >= 90 => "bg-success",
-            >= 50 => "bg-primary",
-            _ => "bg-info"
-        };
+            _loadingMessage = "Loading";
+            for (int i = 0; i < 3 && _loading; i++)
+            {
+                await Task.Delay(250);
+                _loadingMessage += ".";
+                await InvokeAsync(StateHasChanged);
+            }
+        }
     }
 }
-
-

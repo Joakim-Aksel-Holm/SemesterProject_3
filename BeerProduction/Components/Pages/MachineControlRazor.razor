@@ -18,7 +18,7 @@
 <PageTitle>MachineControl</PageTitle>
 
 <AuthorizeView Roles="operator,admin">
-    <Authorized Context="mcContext">
+    <Authorized Context="auth">
         <h1>Machine control</h1>
 
         <div class="parent">
@@ -96,7 +96,6 @@
 </AuthorizeView>
 
 
-
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
     
@@ -113,7 +112,7 @@
     @* private BatchService batchService = new(); *@
 
     private BatchQueue BatchQueue = new();
-    
+
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(50);
@@ -192,4 +191,5 @@
             Console.WriteLine();
         }
     }
+
 }
