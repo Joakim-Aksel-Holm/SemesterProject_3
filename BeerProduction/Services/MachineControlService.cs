@@ -158,14 +158,14 @@ public class MachineControlService(MachineControl machineControl)
     /// <summary>
     /// Reads the maintenance counter from OPC server (fast read)
     /// </summary>
-    /*(UNDER DEVELOPMENT)public int GetMaintenanceStatus()
+    public int GetMaintenanceStatus()
     {
         var counter = 0; 
-        const int MAINTENANCE_CYCLE = 10000;
+        const int MAINTENANCE_CYCLE = 30000;
         
         var percentage = (counter % MAINTENANCE_CYCLE) / (double)MAINTENANCE_CYCLE * 100;
         return (int)Math.Round(percentage);
-    } */ 
+    } 
 
     // =========================================================================
     // CALCULATION METHODS (Good candidates for ASYNC in web contexts)
@@ -208,7 +208,7 @@ public class MachineControlService(MachineControl machineControl)
     {
         var produced = GetProduced(); // Fast sync read
         var amount = GetAmount();     // Fast sync read
-        return await Task.FromResult(amount > 0 ? (produced / amount) * 100 : 0);
+        return await Task.FromResult(amount > 0 ? (int)((produced / (double)amount) * 100) : 0);    
     }
 
     /// <summary>

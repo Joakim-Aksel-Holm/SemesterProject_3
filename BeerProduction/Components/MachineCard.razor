@@ -199,16 +199,29 @@
     {
         if (MachineControlService != null)
         {
-            // Update all values EXCEPT batchId (keep it stable)
-            onlineStatus = await MachineControlService.GetOnlineAsync();
-            acceptedProducts = await MachineControlService.GetAcceptableAsync();
-            currentBatchType = MachineControlService.GetCurrentBatch().ToString();
-            // maintenanceStatus = MachineControlService.GetMaintenanceStatus();
-            batchProgress = await MachineControlService.GetBatchProcessAsync();
-            defectRate = await MachineControlService.GetDefectRateAsync();
+            try
+            {
+                // Update all values EXCEPT batchId (keep it stable)
+                onlineStatus = await MachineControlService.GetOnlineAsync();
+                acceptedProducts = await MachineControlService.GetAcceptableAsync();
+                currentBatchType = MachineControlService.GetCurrentBatch().ToString();
+                maintenanceStatus = MachineControlService.GetMaintenanceStatus();
+                batchProgress = await MachineControlService.GetBatchProcessAsync();
+                defectRate = await MachineControlService.GetDefectRateAsync();
+                // Debug logging (remove in production)
+                Console.WriteLine($"Batch Progress: {batchProgress}% (Produced: {MachineControlService.GetProduced()}, Amount: {MachineControlService.GetAmount()})");
+                Console.WriteLine($"Maintenance: {maintenanceStatus}%");
             
-            await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in timer: {ex.Message}");
+            }
+            
         }
+        
     }
 
     public void Dispose()
