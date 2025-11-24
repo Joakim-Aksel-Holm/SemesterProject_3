@@ -13,7 +13,7 @@
 
 <AuthorizeView Roles="manager,admin">
     <Authorized>
-        @if (!_machines.All(m => m.IsConnected()))
+        @if (!_isLoaded)
         {
             <p>Connecting to machines...</p>
         }
@@ -34,7 +34,7 @@
                             <div class="card text-white bg-primary">
                                 <div class="card-body text-center">
                                     <h6>Online Machines</h6>
-                                    <h2>@_machines.Count</h2>
+                                    <h2>@_machines.Count(m => m.IsConnected())</h2>
                                 </div>
                             </div>
                         </div>
@@ -93,14 +93,17 @@
 </style>
 
 @code {
-    private int _totalComplete = 0;
+    private int _totalComplete;
     private List<MachineControlService> _machines = new();
+    private bool _isLoaded;
     private ProductionStats _productionStats = new();
 
     protected override async Task OnInitializedAsync()
     {
         _machines = await ManagerService.GetAllMachinesAsync();
         _productionStats = await ProductionTracking.GetProductionStatsAsync();
+
+        _isLoaded = true;
     }
 
     private string FormatLiters(int liters)

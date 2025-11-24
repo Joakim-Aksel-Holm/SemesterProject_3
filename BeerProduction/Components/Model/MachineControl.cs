@@ -11,7 +11,7 @@ public class MachineControl
     
     public string MachineName { get; }
 
-    public OpcClient Client { get; set; }
+    public OpcClient Client { get; }
     
     public bool IsConnected => Client?.State == OpcClientState.Connected;
     
@@ -22,7 +22,6 @@ public class MachineControl
         MachineURL = machineURL;
         MachineName = machineName;
         Client = new OpcClient(machineURL);
-        TryConnect();
         // Optional: subscribe to the Connected event
         Client.Connected += (s, e) =>
         {
@@ -30,20 +29,27 @@ public class MachineControl
         };
     }
 
-    public void TryConnect()
+    public async Task TryConnectAsync(int maxTries = 3, int delay = 1000)
     {
-        try
+        if (IsConnected) return;
+
+        for (int attempt = 1; attempt <= maxTries; attempt++)
         {
-            if (Client.State != OpcClientState.Connected)
+            try
             {
-                Console.WriteLine($"🔌 Attempting connection to {MachineURL} ...");
-                Client.Connect();
+                Console.WriteLine($"Attempt {attempt}/{maxTries} connecting to {MachineName} ({MachineURL})");
+                
+                await Task.Run(() => Client.Connect());
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Attempt {attempt} failed for {MachineName} connection failed: {ex.Message}");
+            
+                if (attempt < maxTries) await Task.Delay(delay);
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"⚠️ Machine {MachineID} connection failed: {ex.Message}");
-        }
+        Console.WriteLine($"Failed to connect to {MachineName} after {maxTries} attempts");
     }
 
     public void Disconnect()

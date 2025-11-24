@@ -33,6 +33,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
+builder.Services.AddSingleton<ManagerService>();
 
 builder.Services.AddScoped<ManagerService>(); 
 builder.Services.AddScoped<MachineControlService>();
