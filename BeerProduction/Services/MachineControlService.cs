@@ -156,7 +156,7 @@ public class MachineControlService(MachineControl machineControl)
     public int GetMaintenanceStatus()
     {
         var counter = MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
-        const int MAINTENANCE_CYCLE = 10000;
+        const int MAINTENANCE_CYCLE = 30000;
         
         var percentage = (counter % MAINTENANCE_CYCLE) / (double)MAINTENANCE_CYCLE * 100;
         return (int)Math.Round(percentage);

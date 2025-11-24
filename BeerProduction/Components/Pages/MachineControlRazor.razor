@@ -23,19 +23,19 @@
 
         <div class="parent">
             <div class="div1">
-                <button @onclick="StartMachine">Start</button>
+               @*<button @onclick="StartMachine">Start</button>*@ 
             </div>
             <div class="div2">
                 <button @onclick="StopMachine">Stop</button>
             </div>
             <div class="div3">
-                <button @onclick="ResetMachine">Reset</button>
+                @*<button @onclick="ResetMachine">Reset</button>*@
             </div>
             <div class="div4">
-                <button @onclick="ClearMachine">Clear</button>
+                @*<button @onclick="ClearMachine">Clear</button>*@
             </div>
             <div class="div5">
-                <button @onclick="AbortMachine">Abort</button>
+                @*<button @onclick="AbortMachine">Abort</button>*@
             </div>
             <div class="div6">
                 <label for="BeerType">Select a Beer type</label>
@@ -158,11 +158,11 @@
     }
 
     @* Methods for controlling machine with buttons *@
-    private async Task AbortMachine() => await MachineControlService.AbortCommandAsync();
-    private async Task StartMachine() => await MachineControlService.AutomatedStart();
+    //private async Task AbortMachine() => await MachineControlService.AbortCommandAsync();
+    //private async Task StartMachine() => await MachineControlService.AutomatedStart();
     private async Task StopMachine() => await MachineControlService.StopMachineAsync();
-    private async Task ResetMachine() => await MachineControlService.ResetCommandAsync();
-    private async Task ClearMachine() => await MachineControlService.ClearCommandAsync();
+    //private async Task ResetMachine() => await MachineControlService.ResetCommandAsync();
+    //private async Task ClearMachine() => await MachineControlService.ClearCommandAsync();
 
 
     private void AddBatchButton()
