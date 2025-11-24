@@ -124,7 +124,7 @@
     {
         Console.WriteLine("Batch has been created!!");
         Console.WriteLine("Batch have been added to queue");
-        foreach (var batches in BatchQueue.ToOrderedListIDFirst())
+        foreach (var batches in BatchQueue.ToOrderedListHighestFirst())
         {
             Console.WriteLine($"Batch ID: {batches.Id}, Priority: {batches.Priority}");
             Console.WriteLine("Beer type " + batches.BeerType);

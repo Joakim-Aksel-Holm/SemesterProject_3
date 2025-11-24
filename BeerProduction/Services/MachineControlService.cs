@@ -8,9 +8,16 @@ using BeerProduction.Services;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 
-public class MachineControlService(MachineControl machineControl)
+public class MachineControlService
 {
-    public MachineControl MachineControl { get; } = machineControl;
+    public MachineControl MachineControl { get; }
+    private readonly BatchQueue _batchQueue;
+
+    public MachineControlService(MachineControl machineControl, BatchQueue batchQueue)
+    {
+        MachineControl = machineControl;
+        _batchQueue = batchQueue;
+    }
     public int TotalInProcutionMachines { get; set; } = 0;
 
     //todo list:
@@ -39,13 +46,13 @@ public class MachineControlService(MachineControl machineControl)
     // Reads the Batch ID value
     public int GetMachineId()
     {
-        return machineControl.MachineID;
+        return MachineControl.MachineID;
     }
 
     // Reads name from table
     public string GetMachineName()
     {
-        return machineControl.MachineName;
+        return MachineControl.MachineName;
     }
 
     // Reads the ID of the current batch
@@ -230,28 +237,29 @@ public class MachineControlService(MachineControl machineControl)
 
     public async Task AutomatedStart()
     {
-        while (BatchQueue.GetQueue().Count > 0)
+        while (_batchQueue.Count > 0)
         {
             Console.WriteLine("Vi er kommet til dequweuueue!!!");
-            PriorityQueue<Batch,int> batchQueue = BatchQueue._batchQueue;
-
-            Batch nextBatch = batchQueue.Dequeue();
-
+             
+            Batch nextBatch =_batchQueue.DequeueBatch();
+            
             if (nextBatch == null)
                 break; //Stop når der ikke er flere batches
 
             Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size})");
 
 
+            await AddBatchAsync(nextBatch);
+
             //Start maskinen
             await StartMachineAsync();
+
 
             while (true)
             {
                 int state = GetStatus();
                 if (state == 17) //17 is completed
                     break;
-
                 await Task.Delay(500);
             }
 

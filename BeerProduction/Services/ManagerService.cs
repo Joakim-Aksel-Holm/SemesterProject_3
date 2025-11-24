@@ -10,6 +10,7 @@ public class ManagerService
 {
     private DatabaseConnection _db;
 
+    public BatchQueue batchQueue;
     public ManagerService(DatabaseConnection db)
     {
         _db = db;
@@ -38,7 +39,7 @@ public class ManagerService
             var machineName = reader.GetString(2);
             
             var machine = new MachineControl(machineId, machineUrl, machineName);
-            var machineService = new MachineControlService(machine);
+            var machineService = new MachineControlService(machine, batchQueue);
 
             machines.Add(machineService);
         }

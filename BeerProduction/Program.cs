@@ -6,7 +6,6 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 using Microsoft.AspNetCore.Components.Authorization;
-using BeerProduction.Services;
 
 
 
@@ -25,16 +24,17 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<DatabaseConnection>();
-builder.Services.AddSingleton<BatchQueue>();
-
+builder.Services.AddTransient<BatchQueue>();
 builder.Services.AddScoped<ManagerService>(); 
 builder.Services.AddScoped<MachineControlService>();
-builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840", "Secondary Brewer"));
+builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840 ", "Secondary Brewer"));
 builder.Services.AddScoped<ProductionTrackingService>();
 builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
     provider.GetRequiredService<AuthenticationStateService>());
 builder.Services.AddCascadingAuthenticationState();
+
+
 
 
 

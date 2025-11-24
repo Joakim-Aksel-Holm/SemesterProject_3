@@ -5,15 +5,13 @@ namespace BeerProduction.Services;
 
 public class BatchQueue
 {
-    private static readonly BatchQueue _instance = new BatchQueue();
-    public static BatchQueue Instance => _instance;
+    private PriorityQueue<Batch,int> _batchQueue = new();
 
     private readonly object _lock = new();
 
     // Priority queue (higher number => higher priority)
     // .NET PriorityQueue dequeues the smallest priority first,
     // so we use numeric priorities as-is and reverse in ToOrderedListHighestFirst.
-    public static PriorityQueue<Batch, int> _batchQueue = new();
 
 
     // --------------------------------------------
@@ -62,22 +60,47 @@ public class BatchQueue
         {
             var drained = new List<(Batch batch, int priority)>();
 
-            // Drain queue (min-priority first)
+            // Drain queue
             while (_batchQueue.TryDequeue(out var batch, out var priority))
             {
                 drained.Add((batch, priority));
             }
 
-            // Rebuild the queue
+            // Rebuild queue
             _batchQueue = new PriorityQueue<Batch, int>();
             foreach (var (b, p) in drained)
                 _batchQueue.Enqueue(b, p);
 
-            // Return list highest-priority first
+            // Sort: priority first, then ID
             return drained
                 .OrderBy(t => t.priority)
+                .ThenBy(t => t.batch.Id)
                 .Select(t => t.batch)
                 .ToList();
+        }
+    }
+    public PriorityQueue<Batch, int> ToOrderedQueueHighestFirst()
+    {
+        lock (_lock)
+        {
+            var items = _batchQueue
+                .UnorderedItems
+                .Select(x => (x.Element, x.Priority))
+                .ToList();
+
+            var ordered = items
+                .OrderBy(x => x.Priority)
+                .ThenBy(x => x.Element.Id)
+                .ToList();
+
+            var result = new PriorityQueue<Batch, int>();
+
+            foreach (var (b, priority) in ordered)
+            {
+                result.Enqueue(b, priority);
+            }
+
+            return result;
         }
     }
 
@@ -162,7 +185,7 @@ public class BatchQueue
         }
     }
 
-    public static PriorityQueue<Batch, int> GetQueue()
+    public PriorityQueue<Batch, int> GetQueue()
     {
         return _batchQueue;
     }
