@@ -28,10 +28,9 @@ public class MachineControl
         {
             Console.WriteLine($"✅ Machine {MachineID} connected.");
         };
-        
     }
 
-    public bool TryConnect()
+    public void TryConnect()
     {
         try
         {
@@ -40,12 +39,10 @@ public class MachineControl
                 Console.WriteLine($"🔌 Attempting connection to {MachineURL} ...");
                 Client.Connect();
             }
-            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"⚠️ Machine {MachineID} connection failed: {ex.Message}");
-            return false;
         }
     }
 
