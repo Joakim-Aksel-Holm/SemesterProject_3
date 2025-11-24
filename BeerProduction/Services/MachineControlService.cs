@@ -1,4 +1,3 @@
-using System.Reflection.PortableExecutable;
 using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
@@ -70,7 +69,7 @@ public class MachineControlService(MachineControl machineControl)
     /// <summary>
     /// Reads the products per minute from OPC server (fast read)
     /// </summary>
-    public int GetPPM()
+    public int GetPpm()
     {
         return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.MachSpeed").As<int>();
     }
@@ -137,7 +136,11 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetMaintenanceStatus()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
+        var counter = MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
+        const int MAINTENANCE_CYCLE = 10000;
+        
+        var percentage = (counter % MAINTENANCE_CYCLE) / (double)MAINTENANCE_CYCLE * 100;
+        return (int)Math.Round(percentage);
     }
 
     // =========================================================================

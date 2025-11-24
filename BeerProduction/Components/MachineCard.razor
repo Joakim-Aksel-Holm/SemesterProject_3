@@ -1,4 +1,3 @@
-@using System.Reflection.PortableExecutable
 @using System.Timers
 @using BeerProduction.Services
 @rendermode InteractiveServer
@@ -10,8 +9,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">@MachineControlService.GetMachineName()</h5>
             <div class="text-end">
-                <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId()IdAsync().ToString("D5")</div>
-                <h2 class="border-bottom pb-2">@MachineControlService.GetOnlineAsync()</h2>
+                <div class="small mt-1">Serial: MCH-@MachineControlService.GetMachineId().ToString("D5")</div>
+                <h2 class="border-bottom pb-2">@onlineStatus</h2>
             </div>
         </div>
     </div>
@@ -22,7 +21,7 @@
             <div class="col-md-4 border-end">
                 <h6 class="border-bottom pb-2">Variables</h6>
                 <div class="d-grid gap-2">
-                    @foreach (var variable in availableVariables)
+                    @foreach (var variable in _availableVariables)
                     {
                         <button
                             class="btn btn-sm @(selectedVariables.Contains(variable) ? "btn-primary" : "btn-outline-primary") text-start"
@@ -75,11 +74,11 @@
                                         }
                                         else if (variable.Name == "PPM")
                                         {
-                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPPM()<small class="h6">/min</small></div>
+                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPpm()<small class="h6">/min</small></div>
                                         }
                                         else if (variable.Name == "Temperature")
                                         {
-                                            <div class="h4 fw-bold text-success">@MachineControlService.GetTemperature()°C</div>
+                                            <div class="h4 fw-bold @GetTemperatureClass((decimal)MachineControlService.GetTemperature())">@MachineControlService.GetTemperature()°C</div>
                                         }
                                         else if (variable.Name == "Humidity")
                                         {
@@ -97,12 +96,12 @@
                                         }
                                         else if (variable.Name == "Accepted")
                                         {
-                                            <div class="h3 fw-bold text-success">@MachineControlService.GetAcceptableAsync()</div>
-                                            <small class="text-muted">Acceptable Products</small>
+                                            <div class="h3 fw-bold text-success">@acceptedProducts</div>
+                                            <small class="text-muted">Accepted Products</small>
                                         }
                                         else if (variable.Name == "DefectRate")
                                         {
-                                            <div class="h3 fw-bold text-danger">@MachineControlService.GetDefectRateAsync().ToString("F1")%</div>
+                                            <div class="h3 fw-bold text-danger">@defectRate.ToString("F1")%</div>
                                             <small class="text-muted">Defect Rate</small>
                                         }
                                         else if (variable.Name == "BatchProcess")
@@ -110,37 +109,36 @@
                                             <div>
                                                 <!-- Batch ID above the progress bar -->
                                                 <div class="small text-muted mb-1">
-                                                    Batch: #@GetBatchId(MachineControlService.GetBatchId())
+                                                    Batch: #@currentBatchId
                                                 </div>
-
+                                                
                                                 <!-- Progress Bar -->
                                                 <div class="progress" style="height: 25px;">
-                                                    <div
-                                                        class="progress-bar @GetProgressBarClass(MachineControlService.GetBatchProcessAsync()) fw-bold d-flex align-items-center justify-content-center"
-                                                        style="width: @MachineControlService.GetBatchProcessAsync()%">
-                                                        @MachineControlService.GetBatchProcessAsync()%
+                                                    <div class="progress-bar @GetProgressBarClass(batchProgress) fw-bold d-flex align-items-center justify-content-center"
+                                                         style="width: @batchProgress%">
+                                                        @batchProgress%
                                                     </div>
                                                 </div>
-
+                                                
                                                 <!-- Additional batch info -->
                                                 <div class="small text-muted mt-1">
-                                                    @MachineControlService.GetCurrentBatch()
+                                                    @currentBatchType
                                                 </div>
                                             </div>
                                         }
                                         else if (variable.Name == "Maintenance")
                                         {
                                             <div>
-                                                <div class="h4 fw-bold text-warning">@MachineControlService.GetMaintenanceStatus()%</div>
+                                                <div class="h4 fw-bold @(maintenanceStatus > 80 ? "text-warning" : "text-success")">@maintenanceStatus%</div>
                                                 <div class="progress mt-2" style="height: 10px;">
-                                                    <div class="progress-bar bg-warning" style="width: @MachineControlService.GetMaintenanceStatus()%"></div>
+                                                    <div class="progress-bar @(maintenanceStatus > 80 ? "bg-warning" : "bg-success")" style="width: @maintenanceStatus%"></div>
                                                 </div>
                                                 <small class="text-muted">Maintenance Status</small>
                                             </div>
                                         }
                                         else if (variable.Name == "CurrentBatch")
                                         {
-                                            <span class="badge bg-secondary fs-6">@MachineControlService.GetCurrentBatch()</span>
+                                            <span class="badge bg-secondary fs-6">@currentBatchType</span>
                                         }
                                     </div>
                                 </div>
@@ -155,11 +153,17 @@
 
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
-
-    private Timer? _refreshTimer;
-
     
-    private List<VariableOption> availableVariables =
+    private Timer? _refreshTimer;
+    private int batchProgress;
+    private double defectRate;
+    private string onlineStatus = "Loading...";
+    private int acceptedProducts;
+    private string currentBatchId;
+    private string currentBatchType = "Loading...";
+    private int maintenanceStatus;
+
+    private List<VariableOption> _availableVariables =
     [
         new() { Name = "Amount", DisplayName = "Produce Amount" },
         new() { Name = "PPM", DisplayName = "Products/min" },
@@ -179,8 +183,11 @@
     protected override void OnInitialized()
     {
         // Start with Temperature and Batch Progress selected
-        selectedVariables.Add(availableVariables[0]); // Produce amount
-        selectedVariables.Add(availableVariables[2]); // Temperature
+        selectedVariables.Add(_availableVariables[0]); // Produce amount
+        selectedVariables.Add(_availableVariables[2]); // Temperature
+
+        // Generate batch ID only ONCE here
+        currentBatchId = GetBatchId(MachineControlService.GetMachineId());
 
         _refreshTimer = new Timer(200);
         _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
@@ -192,6 +199,14 @@
     {
         if (MachineControlService != null)
         {
+            // Update all values EXCEPT batchId (keep it stable)
+            onlineStatus = await MachineControlService.GetOnlineAsync();
+            acceptedProducts = await MachineControlService.GetAcceptableAsync();
+            currentBatchType = MachineControlService.GetCurrentBatch().ToString();
+            maintenanceStatus = MachineControlService.GetMaintenanceStatus();
+            batchProgress = await MachineControlService.GetBatchProcessAsync();
+            defectRate = await MachineControlService.GetDefectRateAsync();
+            
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -204,35 +219,27 @@
 
     private void ToggleVariable(VariableOption variable)
     {
-        Console.WriteLine($"Toggling variable: {variable.DisplayName}");
         if (selectedVariables.Contains(variable))
         {
             selectedVariables.Remove(variable);
-            Console.WriteLine($"Removed {variable.DisplayName}");
         }
         else
         {
             selectedVariables.Add(variable);
-            Console.WriteLine($"Added {variable.DisplayName}");
         }
         StateHasChanged();
-        Console.WriteLine($"Selected variables count: {selectedVariables.Count}");
     }
 
     private void RemoveVariable(VariableOption variable)
     {
-        Console.WriteLine($"Removing variable: {variable.DisplayName}");
         selectedVariables.Remove(variable);
         StateHasChanged();
-        Console.WriteLine($"Selected variables count: {selectedVariables.Count}");
     }
 
     private void SelectAllVariables()
     {
-        Console.WriteLine("Selecting all variables");
-        selectedVariables = new List<VariableOption>(availableVariables);
+        selectedVariables = new List<VariableOption>(_availableVariables);
         StateHasChanged();
-        Console.WriteLine($"Selected variables count: {selectedVariables.Count}");
     }
 
     private string GetTemperatureClass(decimal temperature)
@@ -266,7 +273,6 @@
         public string Name { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
 
-        // Important: Override Equals and GetHashCode for proper comparison
         public override bool Equals(object obj)
         {
             return obj is VariableOption option && Name == option.Name;
