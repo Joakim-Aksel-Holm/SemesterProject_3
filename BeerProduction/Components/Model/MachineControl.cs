@@ -22,6 +22,7 @@ public class MachineControl
         MachineURL = machineURL;
         MachineName = machineName;
         Client = new OpcClient(machineURL);
+        //Tries to connect in constructor to avoid multiple connections
         TryConnect();
         // Optional: subscribe to the Connected event
         Client.Connected += (s, e) =>

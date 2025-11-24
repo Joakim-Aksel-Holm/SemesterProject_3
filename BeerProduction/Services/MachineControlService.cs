@@ -230,9 +230,6 @@ public class MachineControlService(MachineControl machineControl)
 
     public async Task AutomatedStart()
     {
-        //Kør imens der er batch i queue
-        BatchQueue _batchQeue = new BatchQueue();
-
         while (BatchQueue.GetQueue().Count > 0)
         {
             Console.WriteLine("Vi er kommet til dequweuueue!!!");
@@ -246,11 +243,8 @@ public class MachineControlService(MachineControl machineControl)
             Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size})");
 
 
-            await AddBatchAsync(nextBatch);
-
             //Start maskinen
             await StartMachineAsync();
-
 
             while (true)
             {
