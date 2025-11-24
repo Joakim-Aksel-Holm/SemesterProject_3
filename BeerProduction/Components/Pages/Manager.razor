@@ -3,7 +3,6 @@
 @using BeerProduction.Components.Layout
 @using BeerProduction.Services
 @using System.Timers
-@inject AuthenticationStateService AuthenticationStateService
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject ManagerService ManagerService
@@ -15,7 +14,7 @@
 
 <AuthorizeView Roles="manager,admin">
     <Authorized>
-        @if (!_machines.All(m => m.IsConnected()))
+        @if (!_isLoaded)
         {
             <div class="alert alert-warning">
                 <i class="bi bi-exclamation-triangle me-2"></i>
@@ -166,6 +165,8 @@
     private ProductionStats _productionStats = new();
     private Timer? _refreshTimer;
 
+    private bool _isLoaded;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
@@ -174,6 +175,8 @@
         _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
         _refreshTimer.AutoReset = true;
         _refreshTimer.Enabled = true;
+
+        _isLoaded = true;
     }
 
     private async Task OnTimerElapsed()
