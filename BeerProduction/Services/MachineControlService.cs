@@ -236,7 +236,6 @@ public class MachineControlService
         while (BatchQueue.Count > 0)
         {
             Console.WriteLine("Vi er kommet til dequweuueue!!!");
-             
             Batch nextBatch = BatchQueue.DequeueBatch();
             
             if (nextBatch == null)
