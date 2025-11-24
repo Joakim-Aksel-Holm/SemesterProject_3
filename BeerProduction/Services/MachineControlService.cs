@@ -95,7 +95,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetPpm()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed.Value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed", -1);
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetDefects()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdDefectiveCount.Value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdDefectiveCount", -1);
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetProduced()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount.Value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount", -1);
     }
 
     /// <summary>
@@ -194,11 +194,11 @@ public class MachineControlService(MachineControl machineControl)
     /// Calculates the number of acceptable products (sync)
     /// </summary>
     /// <returns></returns>
-    public  int GetAcceptable()
+    public int GetAcceptable()
     {
-        var produced = GetProduced(); // Fast sync read
-        var defects = GetDefects();   // Fast sync read  
-        return  (produced - defects);
+        var produced = GetProduced();
+        var defects = GetDefects();
+        return SafeRead("ns=6;s=::Program:Product.good.Value" ,-1);
     }
 
     /// <summary>
