@@ -11,7 +11,6 @@ using Opc.UaFx.Client;
 public class MachineControlService(MachineControl machineControl)
 {
     public MachineControl MachineControl { get; } = machineControl;
-    public int TotalInProcutionMachines { get; set; } = 0;
 
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
@@ -35,7 +34,28 @@ public class MachineControlService(MachineControl machineControl)
     //todo: Method for Current Batch beer type.
 
     // Methods
+    private T? SafeRead<T>(string nodeId, T? fallback = default)
+    {
+        if (!MachineControl.IsConnected)
+        {
+            return fallback;
+        }
 
+        try
+        {
+            return MachineControl.Client.ReadNode(nodeId).As<T>();
+        }
+        catch
+        {
+            return fallback;
+        }
+    }
+
+    public bool IsConnected()
+    {
+        return MachineControl.IsConnected;
+    }
+    
     // Reads the Batch ID value
     public int GetMachineId()
     {
@@ -51,43 +71,43 @@ public class MachineControlService(MachineControl machineControl)
     // Reads the ID of the current batch
     public int GetBatchId()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[0]").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[0]", -1);
     }
 
     // Reads the Amount of products value
     public int GetAmount()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[1]").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[1]", -1);
     }
 
     // Reads the Products per minute value
     public int GetPPM()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.MachSpeed").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed", -1);
     }
 
     // Reads the Temperature value
     public float GetTemperature()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[3]").As<float>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[3]", -1f);
     }
 
     // Reads the Humidity value
     public decimal GetHumidity()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[2]").As<decimal>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[2]", -1m);
     }
 
     // Reads the Vibration value
     public decimal GetVibration()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[4]").As<decimal>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[4]", -1m);
     }
 
     // Reads the Defected products value
     public int GetDefects()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdDefectiveCount").As<int>();
+        return SafeRead("ns=6;s=::Program:Admin.ProdDefectiveCount", -1);
     }
 
     //Defect rate method:
@@ -107,7 +127,7 @@ public class MachineControlService(MachineControl machineControl)
 
     public int GetProduced()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdProcessedCount").As<int>();
+        return SafeRead("ns=6;s=::Program:Admin.ProdProcessedCount", -1);
     }
 
     public int GetBatchProcess()
@@ -131,7 +151,8 @@ public class MachineControlService(MachineControl machineControl)
     // Reads the value of current type and converts with enum
     public BeerType GetCurrentBatch()
     {
-        var current = MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.Parameter[0].Value").As<int>();
+        
+        var current = SafeRead("ns=6;s=::Program:Admin.Parameter[0].Value", -1);
 
         if (Enum.IsDefined(typeof(BeerType), current))
         {
@@ -144,7 +165,7 @@ public class MachineControlService(MachineControl machineControl)
     // Reads the Maintenance value
     public int GetMaintenanceStatus()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
+        return SafeRead("ns=6;s=::Program:Maintenance.Counter", -1);
     }
 
     public async Task SetChangeRequestTrueAsync()
@@ -156,7 +177,7 @@ public class MachineControlService(MachineControl machineControl)
     // Reading the current status.
     public int GetStatus()
     {
-        int status = MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
+        int status = SafeRead("ns=6;s=::Program:Cube.Status.StateCurrent", -1);;
         return status;
     }
 

@@ -1,6 +1,7 @@
 @page "/operator"
 @using BeerProduction.Services
 @using System.Timers
+@using BeerProduction.Components.Model
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateService AuthenticationStateService
 @inject DatabaseConnection Db
@@ -34,7 +35,13 @@
                 </li>
             </ol>
         </div>
-        <div class="machine-meter">
+        @if (MachineControlService == null)
+        {
+            <p>Loading machine...</p>
+        }
+        else
+        {
+            <div class="machine-meter">
             <div class="variables">
                 <ul>
                     <li>
@@ -98,6 +105,7 @@
 
             </div>
         </div>
+        }
     </div>
     </Authorized>
     <NotAuthorized>
@@ -110,20 +118,22 @@
 
 
 @code {
-    [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
+    [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
 
     private Timer? _refreshTimer;
     private string? _userId;
-    private int _machineId;
-    private string _machineUrl;
-    private string _machineName;
-    private MachineControl _machineControl;
+    private MachineControl? _machineControl;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(50);
         
         _userId = AuthenticationStateService.GetUserId();
+
+        if (string.IsNullOrEmpty(_userId) || !int.TryParse(_userId, out var userIdInt))
+        {
+            return;
+        }
 
         try
         {
@@ -132,27 +142,24 @@
 
             cmd.CommandText = @"SELECT u.user_id, m.id, m.url, m.name
                                 FROM public.user_machine u 
-                                JOIN public.machine_table m ON u.machine_id = m.id AND u.user_id = @userId
+                                JOIN public.machine_table m ON u.machine_id = m.id
                                 WHERE u.user_id = @userId";
 
-            cmd.Parameters.AddWithValue("@userId", _userId);
+            cmd.Parameters.AddWithValue("@userId", userIdInt);
 
             await using var rdr = await cmd.ExecuteReaderAsync();
 
             if (await rdr.ReadAsync())
             {
                 var machineId = rdr.GetInt32(rdr.GetOrdinal("id"));
-                var machineUrl = rdr.GetInt32(rdr.GetOrdinal("url")).ToString();
-                var machineName = rdr.GetInt32(rdr.GetOrdinal("name")).ToString();
-
+                var machineUrl = rdr.GetString(rdr.GetOrdinal("url"));
+                var machineName = rdr.GetString(rdr.GetOrdinal("name"));
 
                 Console.WriteLine($"Connection test result: {rdr}");
 
-                _machineControl = new(machineId, machineUrl, machineName);
+                _machineControl = new MachineControl(machineId, machineUrl, machineName);
 
-                Task.Delay(100);
-
-                NavigationManager.NavigateTo("/");
+                MachineControlService = new MachineControlService(_machineControl);
             }
         }
         catch (Exception e)

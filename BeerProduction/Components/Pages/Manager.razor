@@ -13,61 +13,67 @@
 
 <AuthorizeView Roles="manager,admin">
     <Authorized>
-        <h3>Manager Dashboard</h3>
-
-        @if (_machines == null)
+        @if (!_machines.All(m => m.IsConnected()))
         {
-            <p>Loading machines...</p>
+            <p>Connecting to machines...</p>
         }
         else
         {
-            <div class="container-fluid">
-                <!-- Quick Stats Summary -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="card text-white bg-primary">
-                            <div class="card-body text-center">
-                                <h6>Online Machines</h6>
-                                <h2>@_machines.Count</h2>
-                        
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-success">
-                            <div class="card-body text-center">
-                                <h6>In Production</h6>
-                                <h2>@GetMachinesInExecuteState()</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-warning">
-                            <div class="card-body text-center">
-                                <h6>Total Production</h6>
-                                <h2>@FormatLiters(_productionStats.TotalLitersProduced)</h2>
-                                <small>@_productionStats.TotalBatchesCompleted batches</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-info">
-                            <div class="card-body text-center">
-                                <h6>Defect Rate</h6>
-                                <h2>@GetOverallDefectRate()%</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <h3>Manager Dashboard</h3>
 
-                <!-- Interactive Machine Cards -->
-                <div class="machines-grid">
-                    @foreach (var machine in _machines)
-                    {
-                        <MachineCard MachineControlService="@machine" />
-                    }
+            @if (_machines == null)
+            {
+                <p>Loading machines...</p>
+            }
+            else
+            {
+                <div class="container-fluid">
+                    <!-- Quick Stats Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body text-center">
+                                    <h6>Online Machines</h6>
+                                    <h2>@_machines.Count</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success">
+                                <div class="card-body text-center">
+                                    <h6>In Production</h6>
+                                    <h2>@GetMachinesInExecuteState()</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body text-center">
+                                    <h6>Total Production</h6>
+                                    <h2>@FormatLiters(_productionStats.TotalLitersProduced)</h2>
+                                    <small>@_productionStats.TotalBatchesCompleted batches</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info">
+                                <div class="card-body text-center">
+                                    <h6>Defect Rate</h6>
+                                    <h2>@GetOverallDefectRate()%</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Machine Cards -->
+                    <div class="machines-grid">
+                        @foreach (var machine in _machines)
+                        {
+                            <MachineCard MachineControlService="@machine"/>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
         }
     </Authorized>
     <NotAuthorized>
