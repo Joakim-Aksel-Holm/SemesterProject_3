@@ -1,12 +1,5 @@
-using System.Reflection.PortableExecutable;
-using BeerProduction.Enums;
 namespace BeerProduction.Services;
-using System.Threading.Tasks;
-using BeerProduction.Components.Model;
-using BeerProduction.Enums;
-using BeerProduction.Services;
-using Opc.UaFx;
-using Opc.UaFx.Client;
+
 public class MachineManager
 {
     private readonly Dictionary<int, MachineControlService> _machines = new();

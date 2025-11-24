@@ -111,12 +111,8 @@
     {
         
         Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, (BatchPriority)SelectedPriority);
-
-        Console.WriteLine("Batch has been created!!");
-
-        BatchQueue.EnqueueBatch(batch, batch.Priority);
-
-        Console.WriteLine("Batch have been added to queue");
+        MachineControlService.BatchQueue.EnqueueBatch(batch);
+        MachineControlService.BatchQueue.BatchQueuePrint();
         BatchQueue.BatchQueuePrint();
         id++;
     }

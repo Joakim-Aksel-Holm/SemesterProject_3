@@ -1,22 +1,18 @@
-using System.Reflection.PortableExecutable;
-using BeerProduction.Enums;
 namespace BeerProduction.Services;
 using System.Threading.Tasks;
 using BeerProduction.Components.Model;
 using BeerProduction.Enums;
-using BeerProduction.Services;
-using Opc.UaFx;
-using Opc.UaFx.Client;
+
 
 public class MachineControlService
 {
     public MachineControl MachineControl { get; }
-    private readonly BatchQueue _batchQueue;
+    public BatchQueue BatchQueue {get;set;}
 
     public MachineControlService(MachineControl machineControl, BatchQueue batchQueue)
     {
         MachineControl = machineControl;
-        _batchQueue = batchQueue;
+        BatchQueue = batchQueue;
     }
     public int TotalInProcutionMachines { get; set; } = 0;
 
@@ -237,11 +233,11 @@ public class MachineControlService
 
     public async Task AutomatedStart()
     {
-        while (_batchQueue.Count > 0)
+        while (BatchQueue.Count > 0)
         {
             Console.WriteLine("Vi er kommet til dequweuueue!!!");
              
-            Batch nextBatch =_batchQueue.DequeueBatch();
+            Batch nextBatch = BatchQueue.DequeueBatch();
             
             if (nextBatch == null)
                 break; //Stop når der ikke er flere batches
