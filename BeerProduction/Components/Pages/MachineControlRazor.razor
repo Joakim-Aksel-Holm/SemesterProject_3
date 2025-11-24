@@ -18,24 +18,29 @@
 <h1>Machine control</h1>
 
 <div class="parent">
-    <div class="div1">
-        <button @onclick="startMachine">Start</button>
+    <div class="child1">
+        <div class="div1">
+            <button class="startButton" @onclick="startMachine">Start</button>
+        </div>
+        <div class="div2">
+            <button class="stopButton" @onclick="stopMachine">Stop</button>
+        </div>
+        <div class="div3">
+            <button class="ResetButton" @onclick="resetMachine">Reset</button>
+        </div>
+        <div class="div4">
+            <button class="ClearButton" @onclick="clearMachine">Clear</button>
+        </div>
+        <div class="div5">
+            <button class="abortButton" @onclick="abortMachine">Abort</button>
+        </div>
+    
     </div>
-    <div class="div2">
-        <button @onclick="stopMachine">Stop</button>
-    </div>
-    <div class="div3">
-        <button @onclick="resetMachine">Reset</button>
-    </div>
-    <div class="div4">
-        <button @onclick="clearMachine">Clear</button>
-    </div>
-    <div class="div5">
-        <button @onclick="abortMachine">Abort</button>
-    </div>
+    
+    <div class="child2" >
     <div class="div6">
         <label for="BeerType">Select a Beer type</label>
-        <select @bind="SelectedBeerType" id="BeerType">
+        <select class="pulldown1" @bind="SelectedBeerType" id="BeerType">
             <option value="-1" disabled>Select a beer type</option>
             <option value="0">Pilsner</option>
             <option value="1">Wheat</option>
@@ -49,8 +54,8 @@
 
     <div class="priority">
         <label for="Priority">Select a Beer priority</label>
-        <select @bind="SelectedPriority" id="Priority">
-            <option value="-1" disabled>Select a beer type</option>
+        <select class="pulldown1" @bind="SelectedPriority" id="Priority">
+            <option value="-1" disabled>Select a priority type</option>
             <option value="0">Low</option>
             <option value="1">Medium</option>
             <option value="2">High</option>
@@ -62,25 +67,26 @@
         <EditForm Model="@batchForm">
             <label>
                 Amount:
-                <InputNumber @bind-Value="batchForm.Size"/>
+                <InputNumber class="kasser" @bind-Value="batchForm.Size"/>
             </label>
 
             <label>
                 Speed:
-                <InputNumber @bind-Value="batchForm.Speed"/>
+                <InputNumber class="kasser" @bind-Value="batchForm.Speed"/>
             </label>
         </EditForm>
     </div>
     <div class="div8">
         <label for="BatchButton">Add to batch</label>
-        <button id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
+        <button class="AddBatch" id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
     </div>
 
     <div class="div9">
         <label for="SeePriority">See batch priority</label>
-        <button id="SeePriority" @onclick="SeeBatchPriority">
-            BatchPriority
+        <button class="BatchPriority" id="SeePriority" @onclick="SeeBatchPriority">
+            Batch Priority
         </button>
+    </div>
     </div>
 </div>
 
