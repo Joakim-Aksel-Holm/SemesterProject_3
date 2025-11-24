@@ -203,7 +203,7 @@
             onlineStatus = await MachineControlService.GetOnlineAsync();
             acceptedProducts = await MachineControlService.GetAcceptableAsync();
             currentBatchType = MachineControlService.GetCurrentBatch().ToString();
-            maintenanceStatus = MachineControlService.GetMaintenanceStatus();
+            // maintenanceStatus = MachineControlService.GetMaintenanceStatus();
             batchProgress = await MachineControlService.GetBatchProcessAsync();
             defectRate = await MachineControlService.GetDefectRateAsync();
             

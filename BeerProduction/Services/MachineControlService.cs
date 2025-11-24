@@ -25,8 +25,10 @@ namespace BeerProduction.Services;
     
 public class MachineControlService(MachineControl machineControl)
 {
+    /// <summary>
+    /// Initializes a new instance of the MachineControl class.
+    /// </summary>
     public MachineControl MachineControl { get; } = machineControl;
-    public int TotalInProcutionMachines { get; set; } = 0;
 
     // =========================================================================
     // SIMPLE PROPERTY METHODS (Fast access - Can be sync or async)
@@ -48,6 +50,9 @@ public class MachineControlService(MachineControl machineControl)
     // OPC SAFE READ METHODS (Safe reads - Can be sync or async)
     // =========================================================================
     
+    /// <summary>
+    /// Returns the value of the specified node if the connection is active, otherwise returns the fallback value
+    /// </summary>
     private T? SafeRead<T>(string nodeId, T? fallback = default)
     {
         if (!MachineControl.IsConnected)
@@ -74,7 +79,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetBatchId()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[0]", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[0].value", -1);
     }
 
     /// <summary>
@@ -82,7 +87,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetAmount()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[1]", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[1].value", -1);
     }
 
     /// <summary>
@@ -90,7 +95,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetPpm()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed.value", -1);
     }
 
     /// <summary>
@@ -98,7 +103,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public float GetTemperature()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[3]", -1f);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[3].value", -1f);
     }
 
     /// <summary>
@@ -106,7 +111,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public decimal GetHumidity()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[2]", -1m);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[2].value", -1m);
     }
 
     /// <summary>
@@ -114,7 +119,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public decimal GetVibration()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[4]", -1m);
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[4].value", -1m);
     }
 
     /// <summary>
@@ -122,7 +127,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetDefects()
     {
-        return SafeRead("ns=6;s=::Program:Admin.ProdDefectiveCount", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Admin.ProdDefectiveCount.value", -1);
     }
 
     /// <summary>
@@ -130,7 +135,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetProduced()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdProcessedCount").As<int>();
+        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Admin.ProdProcessedCount").As<int>();
     }
 
     /// <summary>
@@ -146,21 +151,21 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public BeerType GetCurrentBatch()
     {
-        var current = SafeRead("ns=6;s=::Program:Admin.ProdProcessedCount", -1);
+        var current = SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount", -1);
         return Enum.IsDefined(typeof(BeerType), current) ? (BeerType)current : BeerType.Pilsner;
     }
 
     /// <summary>
     /// Reads the maintenance counter from OPC server (fast read)
     /// </summary>
-    public int GetMaintenanceStatus()
+    /*(UNDER DEVELOPMENT)public int GetMaintenanceStatus()
     {
-        var counter = MachineControl.Client.ReadNode("ns=6;s=::Program:Maintenance.Counter").As<int>();
+        var counter = 0; 
         const int MAINTENANCE_CYCLE = 10000;
         
         var percentage = (counter % MAINTENANCE_CYCLE) / (double)MAINTENANCE_CYCLE * 100;
         return (int)Math.Round(percentage);
-    }
+    } */ 
 
     // =========================================================================
     // CALCULATION METHODS (Good candidates for ASYNC in web contexts)
