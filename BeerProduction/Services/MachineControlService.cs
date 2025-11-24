@@ -2,7 +2,9 @@ using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
 
-    
+public class MachineControlService(MachineControl machineControl)
+{
+    public MachineControl MachineControl { get; } = machineControl;
 
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
@@ -25,7 +27,34 @@ namespace BeerProduction.Services;
     //todo: Method for Current Batch (ID).
     //todo: Method for Current Batch beer type.
 
+    // Methods
+    private T? SafeRead<T>(string nodeId, T? fallback = default)
+    {
+        if (!MachineControl.IsConnected)
+        {
+            return fallback;
+        }
 
+        try
+        {
+            return MachineControl.Client.ReadNode(nodeId).As<T>();
+        }
+        catch
+        {
+            return fallback;
+        }
+    }
+
+    public bool IsConnected()
+    {
+        return MachineControl.IsConnected;
+    }
+    
+    // Reads the Batch ID value
+    public int GetMachineId()
+    {
+        return machineControl.MachineID;
+    }
 
 public class MachineControlService(MachineControl machineControl)
 {
@@ -55,7 +84,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetBatchId()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[0]").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[0]", -1);
     }
 
     /// <summary>
@@ -63,7 +92,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetAmount()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[1]").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[1]", -1);
     }
 
     /// <summary>
@@ -71,7 +100,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetPpm()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.MachSpeed").As<int>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.MachSpeed", -1);
     }
 
     /// <summary>
@@ -79,7 +108,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public float GetTemperature()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[3]").As<float>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[3]", -1f);
     }
 
     /// <summary>
@@ -87,7 +116,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public decimal GetHumidity()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[2]").As<decimal>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[2]", -1m);
     }
 
     /// <summary>
@@ -95,7 +124,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public decimal GetVibration()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Cube.Status.Parameter[4]").As<decimal>();
+        return SafeRead("ns=6;s=::Program:Cube.Status.Parameter[4]", -1m);
     }
 
     /// <summary>
@@ -103,7 +132,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public int GetDefects()
     {
-        return MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.ProdDefectiveCount").As<int>();
+        return SafeRead("ns=6;s=::Program:Admin.ProdDefectiveCount", -1);
     }
 
     /// <summary>
@@ -127,7 +156,7 @@ public class MachineControlService(MachineControl machineControl)
     /// </summary>
     public BeerType GetCurrentBatch()
     {
-        var current = MachineControl.Client.ReadNode("ns=6;s=::Program:Admin.Parameter[0].Value").As<int>();
+        var current = SafeRead("ns=6;s=::Program:Admin.ProdProcessedCount", -1);
         return Enum.IsDefined(typeof(BeerType), current) ? (BeerType)current : BeerType.Pilsner;
     }
 
