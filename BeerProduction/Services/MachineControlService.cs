@@ -2,10 +2,6 @@ using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
 
-public class MachineControlService(MachineControl machineControl)
-{
-    public MachineControl MachineControl { get; } = machineControl;
-
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
     //todo: In Production (running) machines. "Done"
@@ -26,36 +22,7 @@ public class MachineControlService(MachineControl machineControl)
     //todo: Method forMaintenance status progression rate.
     //todo: Method for Current Batch (ID).
     //todo: Method for Current Batch beer type.
-
-    // Methods
-    private T? SafeRead<T>(string nodeId, T? fallback = default)
-    {
-        if (!MachineControl.IsConnected)
-        {
-            return fallback;
-        }
-
-        try
-        {
-            return MachineControl.Client.ReadNode(nodeId).As<T>();
-        }
-        catch
-        {
-            return fallback;
-        }
-    }
-
-    public bool IsConnected()
-    {
-        return MachineControl.IsConnected;
-    }
     
-    // Reads the Batch ID value
-    public int GetMachineId()
-    {
-        return machineControl.MachineID;
-    }
-
 public class MachineControlService(MachineControl machineControl)
 {
     public MachineControl MachineControl { get; } = machineControl;
@@ -74,7 +41,30 @@ public class MachineControlService(MachineControl machineControl)
     /// Gets the machine name from local property (fast access)  
     /// </summary>
     public string GetMachineName() => machineControl.MachineName;
+    
+    public bool IsConnected() => machineControl.IsConnected;
 
+    // =========================================================================
+    // OPC SAFE READ METHODS (Safe reads - Can be sync or async)
+    // =========================================================================
+    
+    private T? SafeRead<T>(string nodeId, T? fallback = default)
+    {
+        if (!MachineControl.IsConnected)
+        {
+            return fallback;
+        }
+
+        try
+        {
+            return MachineControl.Client.ReadNode(nodeId).As<T>();
+        }
+        catch
+        {
+            return fallback;
+        }
+    }
+    
     // =========================================================================
     // OPC READ METHODS (Fast sensor reads - Keep SYNC)
     // =========================================================================
