@@ -38,49 +38,49 @@
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
                     <span>
-                        @Machine.Batch
+                        @Machine.GetBatchId()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
                     <span>
-                        @Machine.Temperature
+                        @Machine.GetTemperature()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
                     <span>
-                        @Machine.Humidity
+                        @Machine.GetHumidity()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
                     <span>
-                        @Machine.AmountToProduce
+                        @Machine.GetAmount()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
                     <span>
-                        @Machine.Produced
+                        @Machine.GetProduced()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
                     <span>
-                        @Machine.AcceptableProducts
+                        @Machine.GetAcceptable()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
                     <span>
-                        @Machine.DefectProducts
+                        @Machine.GetDefects()
                     </span>
                 </li>
                 <li>
                     <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
                     <span>
-                        @Machine.SuccesRate
+                        @Machine.LiveSuccesRate()
                     </span>
                 </li>
             </ul>
@@ -108,7 +108,7 @@
     {
         // Start with Temperature and Batch Progress selected
         
-        _refreshTimer = new Timer(200);
+        _refreshTimer = new Timer(1000);
         _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
         _refreshTimer.AutoReset = true;
         _refreshTimer.Enabled = true;
@@ -116,9 +116,16 @@
     
     private async Task OnTimerElapsed()
     {
-        Machine.ReadAllVariables();
-        Console.WriteLine(Machine.AmountToProduce);
-        await InvokeAsync(StateHasChanged);
+        try
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error in operator timer: {e.Message}");
+       
+        }
+       
     }
 
     public void Dispose()

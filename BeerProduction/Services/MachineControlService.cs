@@ -10,36 +10,9 @@ using Opc.UaFx.Client;
 
 public class MachineControlService(MachineControl machineControl)
 {
-    public int Batch{ get; set; }
-    public float Temperature { get; set; }
-    public decimal Humidity { get; set; }
-    public int AmountToProduce { get; set; }
-    public int Produced { get; set; }
+   public int Produced { get; set; }
     public int AcceptableProducts { get; set; }
-    public int DefectProducts { get; set; }
     public int SuccesRate { get; set; }
-    
-    public void ReadAllVariables() // method for loading all our varibles in a single method. 
-    {
-        Console.WriteLine("🔥 ReadAllVariables CALLED!");
-        Batch = GetBatchId();
-        Console.WriteLine($"There are {Batch} batches");
-        Temperature = GetTemperature();
-        Console.WriteLine($"The temperature is {Temperature}");
-        Humidity = GetHumidity();
-        Console.WriteLine($"The humidity is {Humidity}");
-        AmountToProduce = GetAmount();
-        Console.WriteLine($"The amount to produce is {AmountToProduce}");
-        Produced = GetProduced();
-        Console.WriteLine($"The produced is {Produced}");
-        AcceptableProducts = GetAcceptable();
-        Console.WriteLine($"The acceptable produced is {AcceptableProducts}");
-        DefectProducts = GetDefects();
-        Console.WriteLine($"The defect produced is {DefectProducts}");
-        SuccesRate = LiveSuccesRate();
-        Console.WriteLine($"The success rate is {SuccesRate}");
-
-    }
     public MachineControl MachineControl { get; } = machineControl;
     public int TotalInProcutionMachines { get; set; } = 0;
     
@@ -67,6 +40,8 @@ public class MachineControlService(MachineControl machineControl)
     // Methods
     public int LiveSuccesRate() //method to find succes rate. 
     {
+        Produced = GetProduced();
+        AcceptableProducts = GetAcceptable();
         try
         {
             SuccesRate = (AcceptableProducts * 100) / Produced;
