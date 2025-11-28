@@ -22,6 +22,40 @@ public class MachineControl
         MachineURL = machineURL;
         MachineName = machineName;
         Client = new OpcClient(machineURL);
-        Client.Connect();
+        //Tries to connect in constructor to avoid multiple connections
+        TryConnect();
+        // Optional: subscribe to the Connected event
+        Client.Connected += (s, e) =>
+        {
+            Console.WriteLine($"✅ Machine {MachineID} connected.");
+        };
+        
+    }
+
+    public bool TryConnect()
+    {
+        try
+        {
+            if (Client.State != OpcClientState.Connected)
+            {
+                Console.WriteLine($"🔌 Attempting connection to {MachineURL} ...");
+                Client.Connect();
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Machine {MachineID} connection failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    public void Disconnect()
+    {
+        if (Client?.State == OpcClientState.Connected)
+        {
+            Client.Disconnect();
+            Console.WriteLine($"🔌 Machine {MachineID} disconnected.");
+        }
     }
 }
