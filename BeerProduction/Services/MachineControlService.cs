@@ -241,8 +241,7 @@ public class MachineControlService
             if (nextBatch == null)
                 break; //Stop når der ikke er flere batches
 
-            Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size})");
-
+          Console.WriteLine($"[ID: {nextBatch.Id}] - Priority: {nextBatch.Priority} | Type: {nextBatch.BeerType} | Amount: {nextBatch.Size}");
 
             await AddBatchAsync(nextBatch);
 
