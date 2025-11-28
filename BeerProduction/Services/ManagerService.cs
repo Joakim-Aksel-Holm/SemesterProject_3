@@ -12,6 +12,7 @@ public class ManagerService
     private List<MachineControlService> _cachedMachines = new();
     private readonly object _lock = new();
 
+    public BatchQueue batchQueue;
     public ManagerService(DatabaseConnection db)
     {
         _db = db;

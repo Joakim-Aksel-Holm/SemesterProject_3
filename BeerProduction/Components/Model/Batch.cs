@@ -22,6 +22,7 @@ public class Batch
 
 
     // Fixed constructor
+    //Priority default is low
     public Batch(int id, BeerType beerType, int size, float speed,
         BatchPriority priority = BatchPriority.Low)
     {

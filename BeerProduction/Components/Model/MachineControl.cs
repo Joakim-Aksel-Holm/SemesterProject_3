@@ -2,6 +2,7 @@ using System.Reflection.PortableExecutable;
 using Opc.Ua;
 using Opc.UaFx;
 using Opc.UaFx.Client;
+using BeerProduction.Components.Model;
 
 public class MachineControl
 {
@@ -14,7 +15,6 @@ public class MachineControl
     public OpcClient Client { get; }
     
     public bool IsConnected => Client?.State == OpcClientState.Connected;
-    
     //Constructor 
     public MachineControl(int machineId, string machineURL, string machineName)
     {

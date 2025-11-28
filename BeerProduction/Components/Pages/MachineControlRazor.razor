@@ -95,6 +95,8 @@
     </NotAuthorized>
 </AuthorizeView>
 
+@code {
+    int id = 1;
 
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
@@ -106,11 +108,16 @@
     // In your component
     private int SelectedBeerType { get; set; } = -1;
     private int SelectedPriority { get; set; } = -1;
-
     private BatchForm batchForm = new();
 
-    @* private BatchService batchService = new(); *@
+    // REMOVE THIS LINE:
+    // private BatchQueue BatchQueue = new();
 
+    private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
+    private async Task startMachine() => await MachineControlService.AutomatedStart();
+    private async Task stopMachine() => await MachineControlService.StopMachineAsync();
+    private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
+    private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
     private BatchQueue BatchQueue = new();
 
     protected override async Task OnInitializedAsync()
@@ -164,14 +171,20 @@
     //private async Task ResetMachine() => await MachineControlService.ResetCommandAsync();
     //private async Task ClearMachine() => await MachineControlService.ClearCommandAsync();
 
-
     private void AddBatchButton()
     {
+        // 1. Get the priority from the dropdown
+        var priorityEnum = (BatchPriority)SelectedPriority;
         Batch batch = new Batch(_id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, (BatchPriority)SelectedPriority);
 
-        Console.WriteLine("Batch has been created!!");
+        // 2. Create the batch object
+        // We use priorityEnum here so the object knows its own priority
+        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
 
-        BatchQueue.EnqueueBatch(batch, batch.Priority);
+        // 3. THIS IS THE CRITICAL CHANGE
+        // You must pass 'priorityEnum' as the second argument.
+        // If you don't, the Queue defaults it to 'Low', and your sorting won't work.
+        MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
 
         Console.WriteLine("Batch have been added to queue");
         BatchQueue.BatchQueuePrint();
@@ -180,16 +193,9 @@
 
     private void SeeBatchPriority()
     {
-        Console.WriteLine("Batch has been created!!");
-        Console.WriteLine("Batch have been added to queue");
-        foreach (var batches in BatchQueue.ToOrderedListIDFirst())
-        {
-            Console.WriteLine($"Batch ID: {batches.Id}, Priority: {batches.Priority}");
-            Console.WriteLine("Beer type " + batches.BeerType);
-            Console.WriteLine("Amount of beers " + batches.Size);
-            Console.WriteLine("Machine speed " + batches.Speed);
-            Console.WriteLine();
-        }
+        Console.WriteLine("All batches in queue\n");
+        // Use MachineControlService.BatchQueue instead
+        MachineControlService.BatchQueue.BatchQueuePrint();
     }
 
 }

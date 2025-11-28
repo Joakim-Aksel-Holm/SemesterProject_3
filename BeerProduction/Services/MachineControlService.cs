@@ -1,6 +1,20 @@
+namespace BeerProduction.Services;
+using System.Threading.Tasks;
+using BeerProduction.Components.Model;
 using BeerProduction.Enums;
 
-namespace BeerProduction.Services;
+
+public class MachineControlService
+{
+    public MachineControl MachineControl { get; }
+    public BatchQueue BatchQueue {get;set;}
+
+    public MachineControlService(MachineControl machineControl, BatchQueue batchQueue)
+    {
+        MachineControl = machineControl;
+        BatchQueue = batchQueue;
+    }
+    public int TotalInProcutionMachines { get; set; } = 0;
 
     //todo list:
     //todo: Online machines method. "missing refining front-end . Call to front-end team"
@@ -34,10 +48,11 @@ public class MachineControlService(MachineControl machineControl)
     // SIMPLE PROPERTY METHODS (Fast access - Can be sync or async)
     // =========================================================================
 
-    /// <summary>
-    /// Gets the machine ID from local property (fast access)
-    /// </summary>
-    public int GetMachineId() => machineControl.MachineID;
+    // Reads the Batch ID value
+    public int GetMachineId()
+    {
+        return MachineControl.MachineID;
+    }
 
     /// <summary>
     /// Gets the machine name from local property (fast access)  
@@ -325,14 +340,86 @@ public class MachineControlService(MachineControl machineControl)
     /// <summary>
     /// Stops the machine if it's not already in stopped state
     /// </summary>
+    public async Task AutomatedStart()
+    {
+        while (BatchQueue.Count > 0)
+        {
+            Console.WriteLine("Starting batch queue");
+            Batch nextBatch = BatchQueue.DequeueBatch();
+            
+            if (nextBatch == null)
+                break; //Stop når der ikke er flere batches
+
+          Console.WriteLine($"[ID: {nextBatch.Id}] - Priority: {nextBatch.Priority} | Type: {nextBatch.BeerType} | Amount: {nextBatch.Size}");
+
+            await AddBatchAsync(nextBatch);
+
+            //Start maskinen
+            await StartMachineAsync();
+
+
+            while (true)
+            {
+                int state = GetStatus();
+                if (state == 17) //17 is completed
+                    break;
+                await Task.Delay(500);
+            }
+
+            Console.WriteLine($"Batch {nextBatch.Id} completed.");
+        }
+
+        Console.WriteLine("All batches processed. Machine queue is empty.");
+    }
+
+
     public async Task StopMachineAsync()
     {
-        int statusVal = GetStatus(); // Fast sync read
+        int statusVal = GetStatus();
 
-        if (statusVal != 9) // If not already stopped
-        {
-            StopCommand();
-        }
-        // No await needed here since it's a fast operation
+        if (statusVal == 9)
+            return;
+
+        await StopCommandAsync();
     }
+    public async Task AbortMachineAsync()
+    {
+        Console.WriteLine("Aborting machine...");
+        await AbortCommandAsync();
+    }
+
+    public async Task ClearMachineAsync()
+    {
+        Console.WriteLine("Clearing machine...");
+        await ClearCommandAsync();
+    }
+
+    public async Task ResetMachineAsync()
+    {
+        Console.WriteLine("Resetting machine...");
+        await ResetCommandAsync();
+    }
+
+    public async Task AddBatchAsync(Batch _batch)
+    {
+        int BatchId = _batch.Id;
+        BeerType BeerType = _batch.BeerType;
+        int Size = _batch.Size;
+        float Speed = _batch.Speed;
+
+
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[0].Value", (float)BatchId));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", (float)BeerType));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", (float)Size));
+        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", (float)Speed));
+    }
+
+    // public async Task QueueBatchMachineAsync(PriorityQueue<Batch, int> _batch)
+    // {
+    //     await AddBatchAsync(_batch.Peek());
+    //     _batch.Dequeue();
+    // }
 }
