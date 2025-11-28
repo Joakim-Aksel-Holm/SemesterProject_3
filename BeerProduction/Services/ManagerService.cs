@@ -5,10 +5,12 @@ using Npgsql;
 
 namespace BeerProduction.Services;
 
-[Authorize(Roles = "Manager")]
 public class ManagerService
 {
     private DatabaseConnection _db;
+    private bool _machinesInitilized = false;
+    private List<MachineControlService> _cachedMachines = new();
+    private readonly object _lock = new();
 
     public BatchQueue batchQueue;
     public ManagerService(DatabaseConnection db)
@@ -21,7 +23,11 @@ public class ManagerService
     {
         //Sql queries specific to manager dashboard
 
-        var machines = new List<MachineControlService>();
+        if (_machinesInitilized) return _cachedMachines;
+        
+        lock (_lock) if (_machinesInitilized) return _cachedMachines;
+        
+        var machines = new List<MachineControl>();
             
         await using var conn = await _db.OpenAsync();   // pooled under the hood
         await using var cmd  = conn.CreateCommand();
@@ -32,19 +38,23 @@ public class ManagerService
         
         await using var reader = await cmd.ExecuteReaderAsync();
 
-        if (await reader.ReadAsync())
+        while (await reader.ReadAsync())
         {
-            var machineId = reader.GetInt32(0);
-            var machineUrl = reader.GetString(1);
-            var machineName = reader.GetString(2);
-            
-            var machine = new MachineControl(machineId, machineUrl, machineName);
-            var machineService = new MachineControlService(machine, batchQueue);
-
-            machines.Add(machineService);
+            machines.Add(new MachineControl(
+                reader.GetInt32(0),
+                reader.GetString(1), 
+                reader.GetString(2)
+            ));
         }
 
-        return machines;
+        var connectionTasks = machines.Select(m => m.TryConnectAsync()).ToList();
+        await Task.WhenAll(connectionTasks);
+        
+        _cachedMachines = machines.Select(m => new MachineControlService(m)).ToList();
+        
+        _machinesInitilized = true;
+        
+        return _cachedMachines;
     }
     public async Task<int> GetTotalCompletedBatchesAsync()
     {

@@ -1,102 +1,212 @@
 @page "/operator"
 @using BeerProduction.Services
+@using System.Timers
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateService AuthenticationStateService
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
+@implements IDisposable
 @rendermode InteractiveServer
 
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 
-
-    <div class="machine-view">
+<AuthorizeView Roles="operator,admin">
+    <Authorized>
+        <div class="machine-view">
     
-    <div class="machine-inventory">
-        <ol class="ordered-queue">
-        
-            <li class="queue-item" >
-            <h4 class="BatchId"> BatchId </h4>
-            <p>Status: venter</p> 
-            </li>
+        <div class="machine-inventory">
+            <ol class="ordered-queue">
+            
+                <li class="queue-item" >
+                    <h4 class="BatchId"> BatchId </h4>
+                    <p>Status: venter</p> 
+                </li>
 
 
-            <li class="queue-item">
-            <h4 class="BatchId">BatchId</h4>
-            <p>Status: Venter</p>
-            </li>
+                <li class="queue-item">
+                    <h4 class="BatchId">BatchId</h4>
+                    <p>Status: Venter</p>
+                </li>
 
-            <li class="queue-item">
-            <h4 class="BatchId">BatchId</h4>
-            <p>Status: Venter</p>
-            </li>
-        </ol>
-    </div>
-    <div class="machine-meter">
-        <div class="variables">
-            <ul>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
-                    <span>
-                        Batch Id: 12345
-                    </span>
+                <li class="queue-item">
+                    <h4 class="BatchId">BatchId</h4>
+                    <p>Status: Venter</p>
                 </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
-                    <span>
-                        Temperature: 38
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
-                    <span>
-                        Humidity
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
-                    <span>
-
-                        Amount to produce
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
-                    <span>
-                        Produced
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
-                    <span>
-                        Acceptable products
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
-                    <span>
-                        Defect products
-                    </span>
-                </li>
-                <li>
-                    <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
-                    <span>
-                        Succesrate
-                    </span>
-                </li>
-            </ul>
-
+            </ol>
         </div>
-    </div>
-    <div class="Machine-bottom">
-        
-        <div class="ButtonAlert">
-            <button class="AlertButton">
-                ALERT
-            </button>
+        @if (MachineControlService == null)
+        {
+            <p>Loading machine...</p>
+        }
+        else
+        {
+            <div class="machine-meter">
+            <div class="variables">
+                <ul>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch" > 
+                        <span>
+                            @MachineControlService.GetBatchId()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature" > 
+                        <span>
+                            @MachineControlService.GetTemperature()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity"> 
+                        <span>
+                            @MachineControlService.GetHumidity()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
+                        <span>
+                            @MachineControlService.GetAmount()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced" > 
+                        <span>
+                            @MachineControlService.GetProduced()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products" > 
+                        <span>
+                            @MachineControlService.GetAcceptable()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products"> 
+                        <span>
+                            @MachineControlService.GetDefects()
+                        </span>
+                    </li>
+                    <li>
+                        <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate"> 
+                        <span>
+                            @MachineControlService.GetDefectRateAsync()
+                        </span>
+                    </li>
+                </ul>
 
+            </div>
         </div>
-        
-        
+        <div class="Machine-bottom">
+            
+            <div class="ButtonAlert">
+                <button class="AlertButton">
+                    ALERT
+                </button>
 
+            </div>
+        </div>
+        }
     </div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
 
+
+@code {
+    [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
+
+    private Timer? _refreshTimer;
+    private string? _userId;
+    private MachineControl? _machineControl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(50);
+        
+        _userId = AuthenticationStateService.GetUserId();
+
+        if (string.IsNullOrEmpty(_userId) || !int.TryParse(_userId, out var userIdInt))
+        {
+            return;
+        }
+
+        try
+        {
+            await using var conn = await Db.OpenAsync(); // pooled under the hood
+            await using var cmd = conn.CreateCommand();
+
+            cmd.CommandText = @"SELECT u.user_id, m.id, m.url, m.name
+                                FROM public.user_machine u 
+                                JOIN public.machine_table m ON u.machine_id = m.id
+                                WHERE u.user_id = @userId";
+
+            cmd.Parameters.AddWithValue("@userId", userIdInt);
+
+            await using var rdr = await cmd.ExecuteReaderAsync();
+
+            if (await rdr.ReadAsync())
+            {
+                var machineId = rdr.GetInt32(rdr.GetOrdinal("id"));
+                var machineUrl = rdr.GetString(rdr.GetOrdinal("url"));
+                var machineName = rdr.GetString(rdr.GetOrdinal("name"));
+
+                Console.WriteLine($"Connection test result: {rdr}");
+
+                _machineControl = new MachineControl(machineId, machineUrl, machineName);
+
+                MachineControlService = new MachineControlService(_machineControl);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"error: {e}");
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _refreshTimer = new Timer(200);
+        _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
+        _refreshTimer.AutoReset = true;
+        _refreshTimer.Enabled = true;
+        
+    }
+
+    private async Task OnTimerElapsed()
+    {
+        if (MachineControlService != null)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
+    }
+    
+    private string GetTemperatureClass(decimal temperature)
+    {
+        return temperature switch
+        {
+            > 70 => "text-danger",
+            > 60 => "text-warning",
+            _ => "text-success"
+        };
+    }
+
+    private string GetProgressBarClass(int progress)
+    {
+        return progress switch
+        {
+            >= 90 => "bg-success",
+            >= 50 => "bg-primary",
+            _ => "bg-info"
+        };
+    }
+}

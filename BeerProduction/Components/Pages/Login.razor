@@ -55,30 +55,33 @@
 
                 var user = LoginModel.Username.Trim();
                 var pass = LoginModel.Password.Trim();
+                
 
-                cmd.CommandText = @"SELECT u.username, r.role_name 
+                cmd.CommandText = @"SELECT u.user_id, u.username, r.role_name
                                 FROM public.user_table u 
                                 JOIN public.roles r ON u.role_id = r.role_id 
                                 WHERE TRIM(u.username) = @user AND TRIM(u.password) = @pass;";
-
+                
                 cmd.Parameters.AddWithValue("@user", user);
                 cmd.Parameters.AddWithValue("@pass", pass);
-                Console.WriteLine($"DEBUG: Username='{user}', Password='{pass}'");
 
                 await using var rdr = await cmd.ExecuteReaderAsync();
 
                 if (await rdr.ReadAsync())
                 {
+                    var userId = rdr.GetInt32(rdr.GetOrdinal("user_id")).ToString();
                     var username = rdr.GetString(rdr.GetOrdinal("username"));
                     var role = rdr.GetString(rdr.GetOrdinal("role_name"));
-
+                    
                     Console.WriteLine($"Connection test result: {rdr}");
 
-                    Console.WriteLine($"Successfully logged in as {username} ({role})");
+                    Console.WriteLine($"Successfully logged in as {username} ({role}) with ID={userId}");
 
-                    await AuthenticationStateService.LoginAsync(username, role);
+					await AuthenticationStateService.LoginAsync(userId, username, role);
 
-                    await InvokeAsync(() => NavigationManager.NavigateTo("/Home", forceLoad: true));
+                    await Task.Delay(100);
+
+                    NavigationManager.NavigateTo("/");
                 }
                 else
                 {

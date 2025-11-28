@@ -6,11 +6,9 @@ using Npgsql;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 
-
-// it is working take 1
-//hello
 var builder = WebApplication.CreateBuilder(args);
 
 // 🔽 Add this block so each dev's Local file is loaded (last wins)
@@ -23,18 +21,28 @@ builder.Configuration.AddJsonFile(
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddSingleton<DatabaseConnection>();
-builder.Services.AddTransient<BatchQueue>();
-builder.Services.AddScoped<ManagerService>(); 
-builder.Services.AddScoped<MachineControlService>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) .AddCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.AccessDeniedPath = "/login";
+});
+builder.Services.AddAuthorization();
 
-builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840 ", "Secondary Brewer"));
+builder.Services.AddSingleton<DatabaseConnection>();
+
 builder.Services.AddSingleton<MachineManager>();
-builder.Services.AddScoped<ProductionTrackingService>();
-builder.Services.AddScoped<AuthenticationStateService>();   
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
-    provider.GetRequiredService<AuthenticationStateService>());
+builder.Services.AddScoped<ProductionTrackingService>();   
+builder.Services.AddSingleton<BatchQueue>();
+builder.Services.AddSingleton<ManagerService>();
+
+builder.Services.AddScoped<MachineControlService>();
+builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840", "Secondary Brewer"));
+builder.Services.AddScoped<AuthenticationStateService>();
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthenticationStateService>());
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddSingleton<DatabaseConnection>();
+builder.Services.AddScoped<BatchAnalysisService>();
+
 
 
 
@@ -62,6 +70,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
