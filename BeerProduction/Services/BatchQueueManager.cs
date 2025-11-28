@@ -18,6 +18,7 @@ namespace BeerProduction.Services
 
             // If equal priority, lowest ID first
             return x.Id.CompareTo(y.Id);
+            
         }
     }
 
@@ -38,6 +39,7 @@ namespace BeerProduction.Services
         {
             lock (_lock)
             {
+                
                 var key = new BatchPriorityKey((int)priority, batch.Id);
                 _batchQueue.Enqueue(batch, key);
             }
@@ -72,31 +74,31 @@ namespace BeerProduction.Services
         // --------------------------------------------
         // Return ordered list of batches (highest priority first)
         // --------------------------------------------
-        public List<Batch> ToOrderedListHighestFirst()
-        {
-            lock (_lock)
-            {
-                var drained = new List<(Batch batch, BatchPriorityKey priority)>();
+        // public List<Batch> ToOrderedListHighestFirst()
+        // {
+        //     lock (_lock)
+        //     {
+        //         var drained = new List<(Batch batch, BatchPriorityKey priority)>();
 
-                // Drain queue
-                while (_batchQueue.TryDequeue(out var batch, out var priority))
-                {
-                    drained.Add((batch, priority));
-                }
+        //         // Drain queue
+        //         while (_batchQueue.TryDequeue(out var batch, out var priority))
+        //         {
+        //             drained.Add((batch, priority));
+        //         }
 
-                // Rebuild queue with same comparer
-                _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
-                foreach (var (b, p) in drained)
-                    _batchQueue.Enqueue(b, p);
+        //         // Rebuild queue with same comparer
+        //         _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
+        //         foreach (var (b, p) in drained)
+        //             _batchQueue.Enqueue(b, p);
 
-                // Sort: priority descending (highest first), then ID ascending
-                return drained
-                    .OrderByDescending(t => t.priority.Priority)
-                    .ThenBy(t => t.priority.Id)
-                    .Select(t => t.batch)
-                    .ToList();
-            }
-        }
+        //         // Sort: priority descending (highest first), then ID ascending
+        //         return drained
+        //             .OrderByDescending(t => t.priority.Priority)
+        //             .ThenBy(t => t.priority.Id)
+        //             .Select(t => t.batch)
+        //             .ToList();
+        //     }
+        // }
 
         // Return a new PriorityQueue ordered highest-first (note: PriorityQueue itself uses comparer)
         public PriorityQueue<Batch, BatchPriorityKey> ToOrderedQueueHighestFirst()
@@ -123,33 +125,33 @@ namespace BeerProduction.Services
         // --------------------------------------------
         // Remove a specific batch by ID
         // --------------------------------------------
-        public bool RemoveBatch(int id)
-        {
-            lock (_lock)
-            {
-                var temp = new List<(Batch batch, BatchPriorityKey priority)>();
-                bool removed = false;
+        // public bool RemoveBatch(int id)
+        // {
+        //     lock (_lock)
+        //     {
+        //         var temp = new List<(Batch batch, BatchPriorityKey priority)>();
+        //         bool removed = false;
 
-                // Drain queue and skip the batch with the matching id
-                while (_batchQueue.TryDequeue(out var batch, out var priority))
-                {
-                    if (!removed && batch.Id == id)
-                    {
-                        removed = true;
-                        continue;
-                    }
+        //         // Drain queue and skip the batch with the matching id
+        //         while (_batchQueue.TryDequeue(out var batch, out var priority))
+        //         {
+        //             if (!removed && batch.Id == id)
+        //             {
+        //                 removed = true;
+        //                 continue;
+        //             }
 
-                    temp.Add((batch, priority));
-                }
+        //             temp.Add((batch, priority));
+        //         }
 
-                // Rebuild queue from remaining items
-                _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
-                foreach (var (b, p) in temp)
-                    _batchQueue.Enqueue(b, p);
+        //         // Rebuild queue from remaining items
+        //         _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
+        //         foreach (var (b, p) in temp)
+        //             _batchQueue.Enqueue(b, p);
 
-                return removed;
-            }
-        }
+        //         return removed;
+        //     }
+        // }
 
         // Optional: Count of batches
         public int Count
@@ -160,38 +162,39 @@ namespace BeerProduction.Services
             }
         }
 
-        public List<Batch> ToOrderedListIDFirst()
-        {
-            lock (_lock)
-            {
-                var drained = new List<(Batch batch, BatchPriorityKey Key)>();
+        // public List<Batch> ToOrderedListIDFirst()
+        // {
+        //     lock (_lock)
+        //     {
+        //         var drained = new List<(Batch batch, BatchPriorityKey Key)>();
 
-                // Drain queue
-                while (_batchQueue.TryDequeue(out var batch, out var key))
-                {
-                    drained.Add((batch, key));
-                }
+        //         // Drain queue
+        //         while (_batchQueue.TryDequeue(out var batch, out var key))
+        //         {
+        //             drained.Add((batch, key));
+        //         }
 
-                // Rebuild the queue
-                _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
-                foreach (var (b, p) in drained)
-                    _batchQueue.Enqueue(b, p);
+        //         // Rebuild the queue
+        //         _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
+        //         foreach (var (b, p) in drained)
+        //             _batchQueue.Enqueue(b, p);
 
-                // Return list ordered by ID ascending
-                return drained
-                    .OrderBy(t => t.Key.Id)
-                    .Select(t => t.batch)
-                    .ToList();
-            }
-        }
+        //         // Return list ordered by ID ascending
+        //         return drained
+        //             .OrderBy(t => t.Key.Id)
+        //             .Select(t => t.batch)
+        //             .ToList();
+        //     }
+        // }
 
         public void BatchQueuePrint()
         {
             lock (_lock)
             {
-                foreach (var (batch, priority) in _batchQueue.UnorderedItems)
+                foreach (var (batch, _) in _batchQueue.UnorderedItems)
                 {
-                    Console.WriteLine($"Batch ID: {batch.Id}, Priority: {priority.Priority}");
+                    Console.WriteLine("Added batch:");
+                    Console.WriteLine($"Batch ID: {batch.Id}, Priority: {batch.Priority}");
                     Console.WriteLine("Beer type " + batch.BeerType);
                     Console.WriteLine("Amount of beers " + batch.Size);
                     Console.WriteLine("Machine speed " + batch.Speed);
@@ -200,9 +203,9 @@ namespace BeerProduction.Services
             }
         }
 
-        public PriorityQueue<Batch, BatchPriorityKey> GetQueue()
-        {
-            return _batchQueue;
-        }
+        // public PriorityQueue<Batch, BatchPriorityKey> GetQueue()
+        // {
+        //     return _batchQueue;
+        // }
     }
 }

@@ -309,9 +309,9 @@ public class MachineControlService
         await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", (float)Speed));
     }
 
-    public async Task QueueBatchMachineAsync(PriorityQueue<Batch, int> _batch)
-    {
-        await AddBatchAsync(_batch.Peek());
-        _batch.Dequeue();
-    }
+    // public async Task QueueBatchMachineAsync(PriorityQueue<Batch, int> _batch)
+    // {
+    //     await AddBatchAsync(_batch.Peek());
+    //     _batch.Dequeue();
+    // }
 }
