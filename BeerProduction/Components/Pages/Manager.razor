@@ -6,7 +6,6 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject ManagerService ManagerService
-@inject ProductionTrackingService ProductionTracking
 @implements IDisposable
 @rendermode InteractiveServer
 
@@ -162,7 +161,6 @@
 
 @code {
     private List<MachineControlService> _machines = new();
-    private ProductionStats _productionStats = new();
     private Timer? _refreshTimer;
 
     private bool _isLoaded;
@@ -185,7 +183,6 @@
         {
             try
             {
-                _productionStats = await ProductionTracking.GetProductionStatsAsync();
                 await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
@@ -198,7 +195,6 @@
     private async Task LoadData()
     {
         _machines = await ManagerService.GetAllMachinesAsync();
-        _productionStats = await ProductionTracking.GetProductionStatsAsync();
         StateHasChanged();
     }
 
