@@ -85,43 +85,33 @@
 </div>
 
 @code {
-
     int id = 1;
-
-    // In your component
     private int SelectedBeerType { get; set; } = -1;
     private int SelectedPriority { get; set; } = -1;
-
     private BatchForm batchForm = new();
 
-    @* private BatchService batchService = new(); *@
+    // REMOVE THIS LINE:
+    // private BatchQueue BatchQueue = new();
 
-    private BatchQueue BatchQueue = new();
-
-
-    @* Methods for controlling machine with buttons *@
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
     private async Task startMachine() => await MachineControlService.AutomatedStart();
     private async Task stopMachine() => await MachineControlService.StopMachineAsync();
     private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
     private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
 
-
     private void AddBatchButton()
     {
-        
         Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, (BatchPriority)SelectedPriority);
         MachineControlService.BatchQueue.EnqueueBatch(batch);
         MachineControlService.BatchQueue.BatchQueuePrint();
-        BatchQueue.BatchQueuePrint();
         id++;
     }
 
     private void SeeBatchPriority()
     {
-        Console.WriteLine("Batch has been created!!");
-        Console.WriteLine("Batch have been added to queue");
-        foreach (var batches in BatchQueue.ToOrderedListHighestFirst())
+        Console.WriteLine("All batches in queue\n");
+        // Use MachineControlService.BatchQueue instead
+        foreach (var batches in MachineControlService.BatchQueue.ToOrderedListHighestFirst())
         {
             Console.WriteLine($"Batch ID: {batches.Id}, Priority: {batches.Priority}");
             Console.WriteLine("Beer type " + batches.BeerType);
@@ -130,5 +120,4 @@
             Console.WriteLine();
         }
     }
-
 }
