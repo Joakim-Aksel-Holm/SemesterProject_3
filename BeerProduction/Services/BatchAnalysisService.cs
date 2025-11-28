@@ -24,36 +24,55 @@ public class BatchAnalysisService
     {
         _dbConnection = dbConnection;
     }
-    
+
     public async Task LogBatchDataAsync(MachineControlService machineControlService)
     {
-        var record = new BatchAnalysisRecord
+        try
         {
-            Timestamp = DateTime.Now,
-            MachineId = machineControlService.GetMachineId(),
-            BatchId = machineControlService.GetBatchId(),
-            BeerType = machineControlService.GetCurrentBatch().ToString(),
-            ProducedAmount = machineControlService.GetProduced(),
-            DefectCount = machineControlService.GetDefects(),
-            DefectRate = await machineControlService.GetDefectRateAsync(),
-            MachineSpeed = machineControlService.GetPpm()
-        };
-        await using var conn = await _dbConnection.OpenAsync();
-        const string sql = @"
+
+            // DEBUG: 
+            Console.WriteLine("=== BATCH ANALYSIS DEBUG ===");
+            Console.WriteLine($"MachineId: {machineControlService.GetMachineId()}");
+            Console.WriteLine($"BatchId: {machineControlService.GetBatchId()}");
+            Console.WriteLine($"Produced: {machineControlService.GetProduced()}");
+            Console.WriteLine($"Defects: {machineControlService.GetDefects()}");
+            Console.WriteLine($"PPM: {machineControlService.GetPpm()}");
+            Console.WriteLine($"BeerType: {machineControlService.GetCurrentBatch()}");
+            Console.WriteLine("============================");
+
+            var record = new BatchAnalysisRecord
+            {
+                Timestamp = DateTime.Now,
+                MachineId = machineControlService.GetMachineId(),
+                BatchId = machineControlService.GetBatchId(),
+                BeerType = machineControlService.GetCurrentBatch().ToString(),
+                ProducedAmount = machineControlService.GetProduced(),
+                DefectCount = machineControlService.GetDefects(),
+                DefectRate = await machineControlService.GetDefectRateAsync(),
+                MachineSpeed = machineControlService.GetPpm()
+            };
+            await using var conn = await _dbConnection.OpenAsync();
+            const string sql = @"
             INSERT INTO batch_analysis (timestamp, machine_id, batch_id, beer_type, produced_amount, defect_count, defect_rate, machine_speed)
             VALUES (@timestamp, @machineId, @batchId, @beerType, @producedAmount, @defectCount, @defectRate, @machineSpeed)";
-        
-        await using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("timestamp", record.Timestamp);
-        cmd.Parameters.AddWithValue("machineId", record.MachineId);
-        cmd.Parameters.AddWithValue("batchId", record.BatchId);
-        cmd.Parameters.AddWithValue("beerType", record.BeerType);
-        cmd.Parameters.AddWithValue("producedAmount", record.ProducedAmount);
-        cmd.Parameters.AddWithValue("defectCount", record.DefectCount);
-        cmd.Parameters.AddWithValue("defectRate", record.DefectRate);
-        cmd.Parameters.AddWithValue("machineSpeed", record.MachineSpeed);
-        
-        await cmd.ExecuteNonQueryAsync();
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("timestamp", record.Timestamp);
+            cmd.Parameters.AddWithValue("machineId", record.MachineId);
+            cmd.Parameters.AddWithValue("batchId", record.BatchId);
+            cmd.Parameters.AddWithValue("beerType", record.BeerType);
+            cmd.Parameters.AddWithValue("producedAmount", record.ProducedAmount);
+            cmd.Parameters.AddWithValue("defectCount", record.DefectCount);
+            cmd.Parameters.AddWithValue("defectRate", record.DefectRate);
+            cmd.Parameters.AddWithValue("machineSpeed", record.MachineSpeed);
+
+            await cmd.ExecuteNonQueryAsync();
+            Console.WriteLine("Data logged successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"error logging batch data: {ex.Message}");
+        }
     }
 
     public async Task<List<BatchAnalysisRecord>> GetBatchDataAsync(
