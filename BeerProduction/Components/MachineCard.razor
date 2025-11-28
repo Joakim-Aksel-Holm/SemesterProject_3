@@ -2,6 +2,7 @@
 @using BeerProduction.Services
 @rendermode InteractiveServer
 @implements IDisposable
+@inject BatchAnalysisService BatchAnalysisService
 
 <div class="card machine-card mb-4">
     <!-- Header -->
@@ -267,6 +268,13 @@
                 maintenanceStatus = MachineControlService.GetMaintenanceStatus();
                 batchProgress = await MachineControlService.GetBatchProcessAsync();
                 defectRate = await MachineControlService.GetDefectRateAsync();
+                
+                // Only log if machine is producing (not all zeros) and log every 30 sec.
+
+                if (currentProduced > 0 && amount > 0 && DateTime.Now.Second % 30 == 0)
+                {
+                    await BatchAnalysisService.LogBatchDataAsync(MachineControlService);
+                }
                 
                 // Debug logging
                 Console.WriteLine($"Batch: {batchProgress}% | Time Left: {timeRemaining:mm\\:ss} | PPM: {ppm}");
