@@ -78,9 +78,9 @@
 
     <div class="div9">
         <label for="SeePriority">See batch priority</label>
-        @* <button id="SeePriority" @onclick="SeeBatchPriority">
+        <button id="SeePriority" @onclick="SeeBatchPriority">
             BatchPriority
-        </button> *@
+        </button>
     </div>
 </div>
 
@@ -99,36 +99,28 @@
     private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
     private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
 
- private void AddBatchButton()
- {
-     // 1. Get the priority from the dropdown
-     var priorityEnum = (BatchPriority)SelectedPriority;
+    private void AddBatchButton()
+    {
+        // 1. Get the priority from the dropdown
+        var priorityEnum = (BatchPriority)SelectedPriority;
 
-     // 2. Create the batch object
-     // We use priorityEnum here so the object knows its own priority
-     Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
+        // 2. Create the batch object
+        // We use priorityEnum here so the object knows its own priority
+        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
 
-     // 3. THIS IS THE CRITICAL CHANGE
-     // You must pass 'priorityEnum' as the second argument.
-     // If you don't, the Queue defaults it to 'Low', and your sorting won't work.
-     MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
+        // 3. THIS IS THE CRITICAL CHANGE
+        // You must pass 'priorityEnum' as the second argument.
+        // If you don't, the Queue defaults it to 'Low', and your sorting won't work.
+        MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
 
-     // 4. Debug print and increment ID
-     MachineControlService.BatchQueue.BatchQueuePrint();
-     id++;
- }
+        id++;
+    }
 
-    @* private void SeeBatchPriority()
+    private void SeeBatchPriority()
     {
         Console.WriteLine("All batches in queue\n");
         // Use MachineControlService.BatchQueue instead
-        foreach (var batches in MachineControlService.BatchQueue.GetAllBatches())
-        {
-            Console.WriteLine($"Batch ID: {batches.Id}, Priority: {batches.Priority}");
-            Console.WriteLine("Beer type " + batches.BeerType);
-            Console.WriteLine("Amount of beers " + batches.Size);
-            Console.WriteLine("Machine speed " + batches.Speed);
-            Console.WriteLine();
-        }
-    } *@
+        MachineControlService.BatchQueue.BatchQueuePrint();
+    }
+
 }
