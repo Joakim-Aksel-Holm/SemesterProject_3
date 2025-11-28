@@ -1,30 +1,35 @@
-    using BeerProduction.Components.Model;
-    using BeerProduction.Enums;
-    using System.Collections.Generic;
+using BeerProduction.Components.Model;
+using BeerProduction.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-    namespace BeerProduction.Services;
+namespace BeerProduction.Services
+{
+    // Top-level key - Used for Comparer
+    public readonly record struct BatchPriorityKey(int Priority, int Id);
+    public class BatchPriorityComparer : IComparer<BatchPriorityKey>
+    {
+        public int Compare(BatchPriorityKey x, BatchPriorityKey y)
+        {
+            // Higher priority first
+            int cmp = y.Priority.CompareTo(x.Priority);
+            if (cmp != 0) return cmp;
+
+            // If equal priority, lowest ID first
+            return x.Id.CompareTo(y.Id);
+        }
+    }
 
     public class BatchQueue
     {
-// Use BatchPriorityKey as the priority key type
-    public readonly PriorityQueue<Batch, BatchPriorityKey> _batchQueue;
-
-    // Define the record struct for the compound key
-    public readonly record struct BatchPriorityKey(int Priority, int Id);
-
-    public BatchQueue()
-    {
-      
-    // Explicitly specify the generic types in the constructor call
-    _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
-
-
+        private readonly PriorityQueue<Batch, BatchPriorityKey> _batchQueue;
         private readonly object _lock = new();
 
-        // Priority queue (higher number => higher priority)
-        // .NET PriorityQueue dequeues the smallest priority first,
-        // so we use numeric priorities as-is and reverse in ToOrderedListHighestFirst.
-
+        public BatchQueue()
+        {
+            _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
+        }
 
         // --------------------------------------------
         // Enqueue a batch with optional priority
@@ -33,7 +38,8 @@
         {
             lock (_lock)
             {
-                _batchQueue.Enqueue(batch, (int)priority);
+                var key = new BatchPriorityKey((int)priority, batch.Id);
+                _batchQueue.Enqueue(batch, key);
             }
         }
 
@@ -53,7 +59,7 @@
         // --------------------------------------------
         // Return all batches in unordered form (heap order)
         // --------------------------------------------
-        public List<(Batch Batch, int Priority)> GetAllBatches()
+        public List<(Batch Batch, BatchPriorityKey Priority)> GetAllBatches()
         {
             lock (_lock)
             {
@@ -66,55 +72,53 @@
         // --------------------------------------------
         // Return ordered list of batches (highest priority first)
         // --------------------------------------------
-       public List<Batch> ToOrderedListHighestFirst()
-{
-    lock (_lock)
-    {
-        var drained = new List<(Batch batch, int priority)>();
-
-        // Drain queue
-        while (_batchQueue.TryDequeue(out var batch, out var priority))
+        public List<Batch> ToOrderedListHighestFirst()
         {
-            drained.Add((batch, priority));
-        }
-
-        // Rebuild queue
-        _batchQueue = new PriorityQueue<Batch, int>();
-        foreach (var (b, p) in drained)
-            _batchQueue.Enqueue(b, p);
-
-        // Sort: HIGHEST priority first (descending), then ID (ascending)
-        return drained
-            .OrderByDescending(t => t.priority)  // Changed from OrderBy
-            .ThenBy(t => t.batch.Id)
-            .Select(t => t.batch)
-            .ToList();
-    }
-}
-    public PriorityQueue<Batch, int> ToOrderedQueueHighestFirst()
-    {
-        lock (_lock)
-        {
-            var items = _batchQueue.UnorderedItems
-                .Select(x => (x.Element, x.Priority))
-                .ToList();
-
-            var ordered = items
-                .OrderByDescending(x => x.Priority)
-                .ThenBy(x => x.Element.Id)
-                .ToList();
-
-            var result = new PriorityQueue<Batch, int>();
-
-            foreach (var (b, priority) in ordered)
+            lock (_lock)
             {
-                result.Enqueue(b, priority);
+                var drained = new List<(Batch batch, BatchPriorityKey priority)>();
+
+                // Drain queue
+                while (_batchQueue.TryDequeue(out var batch, out var priority))
+                {
+                    drained.Add((batch, priority));
+                }
+
+                // Rebuild queue with same comparer
+                _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
+                foreach (var (b, p) in drained)
+                    _batchQueue.Enqueue(b, p);
+
+                // Sort: priority descending (highest first), then ID ascending
+                return drained
+                    .OrderByDescending(t => t.priority.Priority)
+                    .ThenBy(t => t.priority.Id)
+                    .Select(t => t.batch)
+                    .ToList();
             }
-
-            return result;
         }
-    }
 
+        // Return a new PriorityQueue ordered highest-first (note: PriorityQueue itself uses comparer)
+        public PriorityQueue<Batch, BatchPriorityKey> ToOrderedQueueHighestFirst()
+        {
+            lock (_lock)
+            {
+                var items = _batchQueue.UnorderedItems
+                    .Select(x => (batch: x.Element, priority: x.Priority))
+                    .OrderByDescending(x => x.priority.Priority)
+                    .ThenBy(x => x.priority.Id)
+                    .ToList();
+
+                var result = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
+
+                foreach (var item in items)
+                {
+                    result.Enqueue(item.batch, item.priority);
+                }
+
+                return result;
+            }
+        }
 
         // --------------------------------------------
         // Remove a specific batch by ID
@@ -123,7 +127,7 @@
         {
             lock (_lock)
             {
-                var temp = new List<(Batch batch, int priority)>();
+                var temp = new List<(Batch batch, BatchPriorityKey priority)>();
                 bool removed = false;
 
                 // Drain queue and skip the batch with the matching id
@@ -139,7 +143,7 @@
                 }
 
                 // Rebuild queue from remaining items
-                _batchQueue = new PriorityQueue<Batch, int>();
+                _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
                 foreach (var (b, p) in temp)
                     _batchQueue.Enqueue(b, p);
 
@@ -156,27 +160,26 @@
             }
         }
 
-
         public List<Batch> ToOrderedListIDFirst()
         {
             lock (_lock)
             {
-                var drained = new List<(Batch batch, int ID)>();
+                var drained = new List<(Batch batch, BatchPriorityKey Key)>();
 
-                // Drain queue (min-priority first)
-                while (_batchQueue.TryDequeue(out var batch, out var priority))
+                // Drain queue
+                while (_batchQueue.TryDequeue(out var batch, out var key))
                 {
-                    drained.Add((batch, priority));
+                    drained.Add((batch, key));
                 }
 
                 // Rebuild the queue
-                _batchQueue = new PriorityQueue<Batch, int>();
+                _batchQueue = new PriorityQueue<Batch, BatchPriorityKey>(new BatchPriorityComparer());
                 foreach (var (b, p) in drained)
                     _batchQueue.Enqueue(b, p);
 
-                // Return list highest-priority first
+                // Return list ordered by ID ascending
                 return drained
-                    .OrderBy(t => t.ID)
+                    .OrderBy(t => t.Key.Id)
                     .Select(t => t.batch)
                     .ToList();
             }
@@ -186,9 +189,9 @@
         {
             lock (_lock)
             {
-                foreach (var (batch, _) in _batchQueue.UnorderedItems)
+                foreach (var (batch, priority) in _batchQueue.UnorderedItems)
                 {
-                    Console.WriteLine($"Batch ID: {batch.Id}, Priority: {batch.Priority}");
+                    Console.WriteLine($"Batch ID: {batch.Id}, Priority: {priority.Priority}");
                     Console.WriteLine("Beer type " + batch.BeerType);
                     Console.WriteLine("Amount of beers " + batch.Size);
                     Console.WriteLine("Machine speed " + batch.Speed);
@@ -197,8 +200,9 @@
             }
         }
 
-        public PriorityQueue<Batch, int> GetQueue()
+        public PriorityQueue<Batch, BatchPriorityKey> GetQueue()
         {
             return _batchQueue;
         }
     }
+}

@@ -1,18 +1,16 @@
-using BeerProduction.Enums;
-using BeerProduction.Services; // Ensure this is correct based on BatchPriorityKey definition
-
+/*using BeerProduction.Components.Model;
+namespace BeerProduction.Services;
 
 public class BatchPriorityComparer : IComparer<BatchPriorityKey>
 {
     public int Compare(BatchPriorityKey x, BatchPriorityKey y)
     {
-        int priorityComparison = y.Priority.CompareTo(x.Priority);
+        // Higher priority first
+        int cmp = y.Priority.CompareTo(x.Priority);
+        if (cmp != 0) return cmp;
 
-        if (priorityComparison != 0)
-        {
-            return priorityComparison;
-        }
-
+        // If equal priority, lowest ID first
         return x.Id.CompareTo(y.Id);
     }
 }
+*/
