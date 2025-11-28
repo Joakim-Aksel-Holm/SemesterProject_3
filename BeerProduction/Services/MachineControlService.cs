@@ -62,7 +62,14 @@ public class MachineControlService(MachineControl machineControl)
     // Methods
     public int LiveSuccesRate() //method to find succes rate. 
     {
-        SuccesRate = (AcceptableProducts * 100) / Produced;
+        try
+        {
+            SuccesRate = (AcceptableProducts * 100) / Produced;
+        }
+        catch (DivideByZeroException ex)
+        {
+            Console.WriteLine(ex);
+        }
         return SuccesRate;
     }
 
