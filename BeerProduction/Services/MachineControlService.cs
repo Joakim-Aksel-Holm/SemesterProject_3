@@ -86,7 +86,7 @@ public class MachineControlService(MachineControl machineControl)
     }
 
     /// <summary>
-    /// Reads the products per minute from OPC server (fast read)
+    /// Reads the speed of the machine, which is measured by products per minute from OPC server (fast read)
     /// </summary>
     public int GetPpm()
     {
@@ -167,7 +167,7 @@ public class MachineControlService(MachineControl machineControl)
     // =========================================================================
 
     /// <summary>
-    /// Calculates the defect rate percentage based on produced and defective counts
+    /// Calculates the defect rate percentage based on produced and defective counts, which is read from the OPC-Client
     /// </summary>
     public async Task<double> GetDefectRateAsync()
     {
