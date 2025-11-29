@@ -1,22 +1,50 @@
+@using BeerProduction.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateService AuthenticationStateService
 
 <link rel="stylesheet" href="css/Navbar.css"/>
 <div class="top-row px-4; link">
-
-    <li class="c-dropdown">
-        <NavLink class="nav-link" href="/workers">
-            Employees
-        </NavLink>
-        <div class="c-dropdown-menu" role="menu">
-            <NavLink class="nav-link" href="/workers">
-                Analyzer
+    <AuthorizeView Roles="admin, manager">
+        <Authorized>
+            <NavLink class="nav-link" href="/m-overview">
+                Machines
             </NavLink>
-            <NavLink class="nav-link" href="/workers">
-                Operators
+            <NavLink class="nav-link" href="/w-overview">
+                Employees
             </NavLink>
-        </div>
-    </li>
-    <NavLink class="nav-link" href="/login">
-        Login
-    </NavLink>
-
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="admin, operator">
+        <Authorized>
+            <NavLink class="nav-link" href="/machine-control">
+                Machine Control
+            </NavLink>
+            <NavLink class="nav-link" href="/o-overview">
+                Overview
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
+    
+    <AuthorizeView>
+        <Authorized>
+            <NavLink class="nav-link" href="/">
+                Home
+            </NavLink>
+            <a class="nav-link" @onclick="Logout">
+                Logout
+            </a>
+        </Authorized>
+        <NotAuthorized>
+            <NavLink class="nav-link" href="/login">
+                Login
+            </NavLink>
+        </NotAuthorized>
+    </AuthorizeView>
 </div>
+
+@code {
+    private async Task Logout()
+    {
+        await AuthenticationStateService.LogoutAsync();
+    }
+}

@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\Functionality.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\Functionality(1).js" />
   </ItemGroup>
 
 </Project>
