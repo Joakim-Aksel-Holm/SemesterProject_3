@@ -1,20 +1,8 @@
-﻿@using Microsoft.AspNetCore.Components
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.AspNetCore.Components.Routing
-
-@code
-{
-
-    void CollapseNav()
-    => JS.InvokeVoidAsync("document.querySelector('.navbar-toggler')?.click()");
-
-    [Inject] IJSRuntime JS { get; set; } = default!;
-}
-
+﻿<link rel="Stylesheet" href="css/navMenuExtra.css"/>
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">BeerProduction</a>
+        <a class="navbar-brand" href="">Ølgiganten</a>
     </div>
 </div>
 
@@ -23,41 +11,50 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Login">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home (Native)
             </NavLink>
         </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Machines">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Machines
-            </NavLink>
+        
+        <div class="nav-item px-3 category-splitter">
+            <h3>Manager view:</h3>
         </div>
-
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Workers">
+            <NavLink class="nav-link" href="/w-overview">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Workers
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/MachineControl">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Machine control
+            <NavLink class="nav-link" href="/m-overview">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manager
             </NavLink>
         </div>
-
+        
+        <div class="nav-item px-3 category-splitter">
+            <h3>Operator view:</h3>
+        </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Operator">
+            <NavLink class="nav-link" href="/o-overview">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Operator
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/manager">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Manager
+            <NavLink class="nav-link" href="/machine-control">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Machine control
+            </NavLink>
+        </div>
+        
+        <div class="nav-item px-3 category-splitter">
+            <h3>Authentication:</h3>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/login">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/logout">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
             </NavLink>
         </div>
     </nav>

@@ -1,18 +1,15 @@
 ﻿@page "/"
-@using BeerProduction.Components.Layout
 @using BeerProduction.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateService AuthenticationStateService
 @inject NavigationManager NavigationManager
-@layout MainLayout
-<link rel="stylesheet" href="/css/homeStyle.css">
 
 <PageTitle>Home</PageTitle>
 
-<AuthorizeView Roles="operator,manager,admin">
+<AuthorizeView>
     <Authorized>
         <div class="home-container">
-            <h1>Welcome, @_username (@_role)</h1>
+            <h2>Welcome, @_username (@_role)</h2>
             <div>
                 <p>
                     This system allows you to monitor and manage the beer production process efficiently.
