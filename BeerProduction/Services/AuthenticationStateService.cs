@@ -23,7 +23,6 @@ namespace BeerProduction.Services
 
             _currentUser = new ClaimsPrincipal(identity);
             
-            
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             
             return Task.CompletedTask;
@@ -32,6 +31,7 @@ namespace BeerProduction.Services
         public Task LogoutAsync()
         {
             _currentUser = new ClaimsPrincipal(new ClaimsIdentity());
+            
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             
             return Task.CompletedTask;

@@ -1,0 +1,18 @@
+@page "/logout"
+@using BeerProduction.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateService AuthenticationStateService
+
+<PageTitle>Login</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <p>Logging out...@(_ = AuthenticationStateService.LogoutAsync())</p>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
