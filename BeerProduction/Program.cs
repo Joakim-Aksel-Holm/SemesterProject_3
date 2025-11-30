@@ -1,4 +1,3 @@
-using System.Reflection.PortableExecutable;
 using System.Text;
 using BeerProduction.Components;
 using BeerProduction.Services;
@@ -31,7 +30,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 builder.Services.AddSingleton<ManagerService>();
-
 builder.Services.AddScoped<ManagerService>(); 
 builder.Services.AddScoped<MachineControlService>();
 builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840", "Secondary Brewer"));

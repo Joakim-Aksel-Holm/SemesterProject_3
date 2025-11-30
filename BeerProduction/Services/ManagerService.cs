@@ -1,14 +1,9 @@
-﻿using System.Data;
-using BeerProduction.Components.Model;
-using Microsoft.AspNetCore.Authorization;
-using Npgsql;
-
-namespace BeerProduction.Services;
+﻿namespace BeerProduction.Services;
 
 public class ManagerService
 {
     private DatabaseConnection _db;
-    private bool _machinesInitilized = false;
+    private bool _machinesInitilized;
     private List<MachineControlService> _cachedMachines = new();
     private readonly object _lock = new();
 
