@@ -1,6 +1,3 @@
-using System.Reflection.PortableExecutable;
-using Opc.Ua;
-using Opc.UaFx;
 using Opc.UaFx.Client;
 
 public class MachineControl
@@ -29,7 +26,7 @@ public class MachineControl
         };
     }
 
-    public async Task TryConnectAsync(int maxTries = 3, int delay = 1000)
+    public async Task TryConnectAsync(int maxTries = 1, int delay = 50)
     {
         if (IsConnected) return;
 
