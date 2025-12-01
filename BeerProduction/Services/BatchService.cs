@@ -1,4 +1,4 @@
-using BeerProduction.Components.Model;
+/*using BeerProduction.Components.Model;
 using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
@@ -34,4 +34,4 @@ public class BatchService
     {
         return _batches.GetAllBatches().Count;
     }
-}
+}*/
