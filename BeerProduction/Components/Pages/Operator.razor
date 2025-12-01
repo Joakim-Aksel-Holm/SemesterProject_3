@@ -2,6 +2,7 @@
 @using BeerProduction.Services
 @using System.Timers
 @using Microsoft.AspNetCore.Components.Authorization
+@using Npgsql
 @inject AuthenticationStateService AuthenticationStateService
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
@@ -98,7 +99,7 @@
         <div class="Machine-bottom">
             
             <div class="ButtonAlert">
-                <button class="AlertButton" @onclick="">
+                <button class="AlertButton" @onclick="AlertBusiness">
                     ALERT
                 </button>
 
@@ -174,6 +175,31 @@
         _refreshTimer.AutoReset = true;
         _refreshTimer.Enabled = true;
         
+    }
+    
+    
+
+    private async Task AlertBusiness()
+    {
+        if (_userId != null)
+        {
+            var userId = int.Parse(_userId);
+            var timeStamp = DateTime.Now;
+        
+            await using var conn = await Db.OpenAsync();
+            const string sql = @"
+            INSERT INTO alert_table (user_id, call_time)
+            VALUES (@user_id, @call_time);";
+
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("user_id", userId);
+            cmd.Parameters.AddWithValue("call_time", timeStamp);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        Console.WriteLine("Data logged successfully!");
+
     }
 
     private async Task OnTimerElapsed()
