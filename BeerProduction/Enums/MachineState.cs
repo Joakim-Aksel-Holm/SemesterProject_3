@@ -2,6 +2,7 @@ namespace BeerProduction.Enums;
 
 public enum MachineState
 {
+    // Machine states
     Deactivated = 0,
     Clearing = 1,
     Stopped = 2,
