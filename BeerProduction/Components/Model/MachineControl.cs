@@ -12,7 +12,9 @@ public class MachineControl
     
     public bool IsConnected => Client?.State == OpcClientState.Connected;
     
-    //Constructor 
+    /// <summary>
+    /// Constructor for a machine
+    /// </summary>
     public MachineControl(int machineId, string machineURL, string machineName)
     {
         MachineID = machineId;
@@ -26,7 +28,10 @@ public class MachineControl
         };
     }
 
-    public async Task TryConnectAsync(int maxTries = 1, int delay = 50)
+    /// <summary>
+    /// Tries to connect to machine, retrying up to maxTries times with delay between attempts
+    /// </summary>
+    public async Task TryConnectAsync(int maxTries = 2, int delay = 50)
     {
         if (IsConnected) return;
 
@@ -49,6 +54,9 @@ public class MachineControl
         Console.WriteLine($"Failed to connect to {MachineName} after {maxTries} attempts");
     }
 
+    /// <summary>
+    /// Disconnects from the machine
+    /// </summary>
     public void Disconnect()
     {
         if (Client?.State == OpcClientState.Connected)

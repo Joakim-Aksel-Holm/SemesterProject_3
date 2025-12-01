@@ -5,9 +5,9 @@ namespace BeerProduction.Components.Model;
 
 public class BatchForm
 {
-
-    //Attributes for Forms
-
+    /// <summary>
+    /// Attributes for batch form
+    /// </summary>
     [Required(ErrorMessage = "Amount is required")]
     public int Size { get; set; }
 

@@ -21,8 +21,10 @@ public class Batch
     public Machine? Machine { get; set; }
 
 
-    // Fixed constructor
-    //Priority default is low
+    /// <summary>
+    /// Constructore for a batch
+    /// </summary>
+    // Priority default is low
     public Batch(int id, BeerType beerType, int size, float speed,
         BatchPriority priority = BatchPriority.Low)
     {

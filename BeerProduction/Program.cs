@@ -1,9 +1,5 @@
-using System.Text;
 using BeerProduction.Components;
 using BeerProduction.Services;
-using Npgsql;
-using Opc.UaFx;
-using Opc.UaFx.Client;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -26,26 +22,22 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.AccessDeniedPath = "/login";
 });
 builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddSingleton<BatchQueue>();
 builder.Services.AddSingleton<ManagerService>();
+builder.Services.AddSingleton<DatabaseConnection>();
+
 builder.Services.AddScoped<ManagerService>(); 
 builder.Services.AddScoped<MachineControlService>();
-builder.Services.AddScoped(provider => new MachineControl(2, "opc.tcp://127.0.0.1:4840", "Secondary Brewer"));
+builder.Services.AddScoped(provider => new MachineControl(0, null, null));
 builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthenticationStateService>());
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddSingleton<DatabaseConnection>();
 builder.Services.AddScoped<BatchAnalysisService>();
 
 
-
-
-
-
 var app = builder.Build();
-
 
 // Todo: shortcut the path: this could be a nice feature to figure out later on in the process.
 //app.MapGet("/", ()=> Results.Redirect("/html/manager.html"));
@@ -66,74 +58,6 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-app.MapGet("/run-diagnostics", (IConfiguration config) =>
-{
-    var log = new StringBuilder();
-
-    // ---- OPC UA ----
-    try
-    {
-        using var client = new OpcClient("opc.tcp://127.0.0.1:4840");
-        log.AppendLine("🔌 Attempting to connect to OPC UA server...");
-        client.Connect();
-        log.AppendLine("✅ Connected successfully!");
-
-        var controlValue = client.ReadNode("ns=6;s=::Program:Cube.Command.CntrlCmd");
-        log.AppendLine("Værdi for control: " + controlValue);
-
-        var commands = new OpcWriteNode[]
-        {
-            new OpcWriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", 300.0f),
-            new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", 2.0f),
-            new OpcWriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", 20.0f)
-        };
-
-        client.WriteNodes(commands);
-        client.Disconnect();
-    }
-    catch (OpcException ex)
-    {
-        log.AppendLine("⚠️ Could not connect to OPC UA server: " + ex.Message);
-    }
-    catch (Exception ex)
-    {
-        log.AppendLine("❌ Unexpected OPC error: " + ex.Message);
-    }
-
-    // ---- PostgresSQL ----
-    try
-    {
-        var cs = config.GetConnectionString("Default")
-                 ?? throw new InvalidOperationException("Missing ConnectionStrings:Default");
-
-        using var conn = new NpgsqlConnection(cs);
-        conn.Open();
-        using var cmd = new NpgsqlCommand("SELECT version();", conn);
-        var version = cmd.ExecuteScalar();
-        log.AppendLine($"✅ Connected to PostgresSQL! Version: {version}");
-    }
-    catch (Exception ex)
-    {
-        log.AppendLine("⚠️ Database connection failed: " + ex.Message);
-    }
-
-    log.AppendLine();
-    log.AppendLine("Program finished.");
-
-
-    return Results.Text(log.ToString(), "text/plain; charset=utf-8", Encoding.UTF8);
-});
-
-
-app.MapGet("/api/pingdb", async (DatabaseConnection db, CancellationToken ct) =>
-{
-    await using var conn = await db.OpenAsync(ct);
-    await using var cmd = conn.CreateCommand();
-    cmd.CommandText = "SELECT 1";
-    var result = await cmd.ExecuteScalarAsync(ct);
-    return Results.Ok(new { ok = (int)result == 1 });
-});
 
 
 app.Run();
