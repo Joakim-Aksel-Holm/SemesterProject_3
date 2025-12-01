@@ -137,6 +137,24 @@ public class MachineControlService(MachineControl machineControl)
     {
         return SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount", -1);
     }
+    
+    /// <summary>
+    /// Calculates the succes rate of the machine.
+    /// </summary>
+    public int LiveSuccesRate() //method to find succes rate. 
+    {
+        var produced = GetProduced();
+        var acceptableProducts = GetAcceptable();
+        try
+        {
+            return (acceptableProducts * 100) / produced;
+        }
+        catch (DivideByZeroException ex)
+        {
+            Console.WriteLine(ex);
+        }
+        return -1;
+    }
 
     /// <summary>
     /// Reads the current machine status from OPC server (fast read)
