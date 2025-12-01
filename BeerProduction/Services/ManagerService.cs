@@ -79,4 +79,15 @@ public class ManagerService
         var result = await cmd.ExecuteScalarAsync();
         return Convert.ToInt32(result);
     }
+
+    public async Task AlertRead()
+    {
+        await using var conn = await _db.OpenAsync();
+        await using var cmd = conn.CreateCommand();
+    
+        cmd.CommandText = "SELECT FROM alert_table(alert_id, user_id, call_time)";
+        var result = await cmd.ExecuteScalarAsync();
+        
+    } 
+    
 }

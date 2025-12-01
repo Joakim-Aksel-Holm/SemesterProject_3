@@ -65,3 +65,24 @@
     color:red;
     margin:.5rem 0;
 }
+
+
+ .machines-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+     gap: 1.5rem;
+     margin-top: 1rem;
+ }
+
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}

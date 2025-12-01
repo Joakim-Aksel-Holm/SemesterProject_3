@@ -1,11 +1,15 @@
 ﻿@page "/m-overview"
 @using BeerProduction.Services
 @using System.Timers
+@using BeerProduction.Components.Model
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject ManagerService ManagerService
 @implements IDisposable
 @rendermode InteractiveServer
+@inject Alert Alert
+@inject DatabaseConnection Db
+<link rel="stylesheet" href="css/manageStyle.css"/>
 
 <PageTitle>Manager Dashboard</PageTitle>
 
@@ -76,10 +80,6 @@
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                        Operator x needs help 
-                    </div>
 
                     <!-- Additional Stats Row -->
                     <div class="row mb-4">
@@ -129,6 +129,32 @@
                         }
                     </div>
                 </div>
+                <div>
+                    @if (_alerts.Count == 0)
+                    {
+                    <p>No alerts found.</p>
+                    }
+                    else
+                    {
+                    <table class="table" style="width:100%; border-collapse:collapse;">
+                        <thead>
+                        <tr>
+                            <th>ID</th><th>Name</th><th>Role</th><th>Hired</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var e in _alerts)
+                        {
+                            <tr>
+                                <td>@e.Id</td>
+                                <td>@e.UserId</td>
+                                <td>@e.Calltime.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                    }
+                </div>
             }
         }
     </Authorized>
@@ -139,27 +165,6 @@
     </NotAuthorized>
 </AuthorizeView>
 
-<style>
-    .machines-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1rem;
-    }
-    
-    .bg-purple {
-        background-color: #6f42c1 !important;
-    }
-    
-    .card {
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: box-shadow 0.15s ease-in-out;
-    }
-    
-    .card:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    }
-</style>
 
 @code {
     private List<MachineControlService> _machines = new();
@@ -167,8 +172,11 @@
 
     private bool _isLoaded;
 
+    private List<Alert> _alerts = new();
+
     protected override async Task OnInitializedAsync()
     {
+        
         await LoadData();
         
         _refreshTimer = new Timer(1000);
@@ -177,6 +185,27 @@
         _refreshTimer.Enabled = true;
 
         _isLoaded = true;
+        
+        try
+        {
+            await using var conn = await Db.OpenAsync(); // pooled under the hood
+            await using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT id, user_id, calltime FROM public.alert_table ORDER BY id;";
+            await using var rdr = await cmd.ExecuteReaderAsync();
+
+            while (await rdr.ReadAsync())
+            {
+                _alerts.Add(new Alert(
+                    rdr.GetInt32(0),
+                    rdr.GetInt32(1),
+                    rdr.GetDateTime(2)
+                ));
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex}");
+        }
     }
 
     private async Task OnTimerElapsed()
@@ -307,4 +336,5 @@
         _refreshTimer?.Stop();
         _refreshTimer?.Dispose();
     }
+    
 }
