@@ -13,6 +13,9 @@ public class ManagerService
     }
     
     //Manager-specific methods :
+    /// <summary>
+    /// Returns all machines in the database
+    /// </summary>
     public async Task<List<MachineControlService>> GetAllMachinesAsync()
     {
         //Sql queries specific to manager dashboard
@@ -50,6 +53,10 @@ public class ManagerService
         
         return _cachedMachines;
     }
+    
+    /// <summary>
+    /// Returns the total number of completed batches
+    /// </summary>
     public async Task<int> GetTotalCompletedBatchesAsync()
     {
         await using var conn = await _db.OpenAsync();
@@ -60,6 +67,9 @@ public class ManagerService
         return Convert.ToInt32(result);
     }
 
+    /// <summary>
+    /// Returns the total amount of produced beer litres
+    /// </summary>
     public async Task<int> GetTotalProductionLitresAsync()
     {
         await using var conn = await _db.OpenAsync();

@@ -15,10 +15,14 @@ public class BatchQueue
     // so we use numeric priorities as-is and reverse in ToOrderedListHighestFirst.
     public static PriorityQueue<Batch, int> _batchQueue = new();
 
-
-    // --------------------------------------------
-    // Enqueue a batch with optional priority
-    // --------------------------------------------
+    
+    // =========================================================================
+    // Methods for the batch queue
+    // =========================================================================
+    
+    /// <summary>
+    /// Enqueue a batch with optional priority 
+    /// </summary>
     public void EnqueueBatch(Batch batch, BatchPriority priority = BatchPriority.Low)
     {
         lock (_lock)
@@ -26,10 +30,10 @@ public class BatchQueue
             _batchQueue.Enqueue(batch, -(int)priority);
         }
     }
-
-    // --------------------------------------------
-    // Dequeue the next batch (returns null if empty)
-    // --------------------------------------------
+    
+    /// <summary>
+    /// Dequeue the next batch (returns null if empty)
+    /// </summary>
     public Batch DequeueBatch()
     {
         lock (_lock)
@@ -39,10 +43,10 @@ public class BatchQueue
             return null;
         }
     }
-
-    // --------------------------------------------
-    // Return all batches in unordered form (heap order)
-    // --------------------------------------------
+    
+    /// <summary>
+    /// Return all batches in unordered form (heap order)
+    /// </summary>
     public List<(Batch Batch, int Priority)> GetAllBatches()
     {
         lock (_lock)
@@ -52,10 +56,10 @@ public class BatchQueue
                 .ToList();
         }
     }
-
-    // --------------------------------------------
-    // Return ordered list of batches (highest priority first)
-    // --------------------------------------------
+    
+    /// <summary>
+    /// Return ordered list of batches (highest priority first)
+    /// </summary>
     public List<Batch> ToOrderedListHighestFirst()
     {
         lock (_lock)
@@ -80,10 +84,10 @@ public class BatchQueue
                 .ToList();
         }
     }
-
-    // --------------------------------------------
-    // Remove a specific batch by ID
-    // --------------------------------------------
+    
+    /// <summary>
+    /// Remove a specific batch by ID
+    /// </summary>
     public bool RemoveBatch(int id)
     {
         lock (_lock)
@@ -121,7 +125,9 @@ public class BatchQueue
         }
     }
 
-
+    /// <summary>
+    /// Returns the list of batches ordered by ID
+    /// </summary>
     public List<Batch> ToOrderedListIDFirst()
     {
         lock (_lock)
@@ -147,6 +153,9 @@ public class BatchQueue
         }
     }
 
+    /// <summary>
+    /// Prints the batch queue
+    /// </summary>
     public void BatchQueuePrint()
     {
         lock (_lock)
@@ -162,6 +171,9 @@ public class BatchQueue
         }
     }
 
+    /// <summary>
+    /// Returns the queue
+    /// </summary>
     public static PriorityQueue<Batch, int> GetQueue()
     {
         return _batchQueue;

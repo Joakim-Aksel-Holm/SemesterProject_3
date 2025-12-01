@@ -19,12 +19,19 @@ public class BatchAnalysisRecord
 public class BatchAnalysisService
 {
     private readonly DatabaseConnection _dbConnection;
-
+    
     public BatchAnalysisService(DatabaseConnection dbConnection)
     {
         _dbConnection = dbConnection;
     }
-
+    
+    // =========================================================================
+    // Logging methods (async)
+    // =========================================================================
+    
+    /// <summary>
+    /// Logs the current batch data to the database
+    /// </summary>
     public async Task LogBatchDataAsync(MachineControlService machineControlService)
     {
         try
@@ -74,7 +81,10 @@ public class BatchAnalysisService
             Console.WriteLine($"error logging batch data: {ex.Message}");
         }
     }
-
+    
+    /// <summary>
+    /// Retrieves batch data from the database
+    /// </summary>
     public async Task<List<BatchAnalysisRecord>> GetBatchDataAsync(
         DateTime startDate,
         DateTime endDate,
@@ -122,6 +132,9 @@ public class BatchAnalysisService
         return results;
     }
     
+    /// <summary>
+    /// Exports batch data to a CSV file
+    /// </summary>
     public async Task<string> ExportToCsvAsync(DateTime startDate, DateTime endDate, int? machineId = null)
     {
         var data = await GetBatchDataAsync(startDate, endDate, machineId);
