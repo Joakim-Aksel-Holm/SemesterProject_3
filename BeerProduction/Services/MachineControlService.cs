@@ -1,34 +1,15 @@
+using BeerProduction.Components.Model;
 using BeerProduction.Enums;
 
 namespace BeerProduction.Services;
 
-    //todo list:
-    //todo: Online machines method. "missing refining front-end . Call to front-end team"
-    //todo: In Production (running) machines. "Done"
-    //todo: Total Produced Batches method. "Still In progress"
-    /// <summary>
-    /// everything should work as planned, everything is done to perfection, the only issue might be cuz of the start method that we start out production with!
-    /// perhaps we should wait until the start method is done on the other branch so that we take out the doubt about it, being a start-method issue!
-    /// </summary>
-    /// <returns></returns>
-    //todo: Defect rate method.
-    //todo: Method for  Produce Amount.
-    //todo: Method for Temperature sensor reading.
-    //todo: Method for Humidity sensor reading.
-    //todo: Method for Vibration sensors reading.
-    //todo: Method for defect products on each machine.
-    //todo: Method for Accepted products on each machine.
-    //todo: Method for Batch process progression rate.
-    //todo: Method forMaintenance status progression rate.
-    //todo: Method for Current Batch (ID).
-    //todo: Method for Current Batch beer type.
-    
-public class MachineControlService(MachineControl machineControl)
+public class MachineControlService(MachineControl machineControl, BatchQueue batchQueue)
 {
     /// <summary>
     /// Initializes a new instance of the MachineControl class.
     /// </summary>
     public MachineControl MachineControl { get; } = machineControl;
+    public BatchQueue BatchQueue { get; } = batchQueue;
 
     // =========================================================================
     // SIMPLE PROPERTY METHODS (Fast access - Can be sync or async)
@@ -245,55 +226,62 @@ public class MachineControlService(MachineControl machineControl)
     /// <summary>
     /// Sets the change request flag to true (triggers command processing)
     /// </summary>
-    public void SetChangeRequestTrue()
+    public async Task SetChangeRequestTrueAsync()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CmdChangeRequest", true);
+        await Task.CompletedTask;
     }
+
 
     /// <summary>
     /// Sends reset command to the machine
     /// </summary>
-    public void ResetCommand()
+    public async Task ResetCommandAsync()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 1);
-        SetChangeRequestTrue();
+        await SetChangeRequestTrueAsync();
     }
+
 
     /// <summary>
     /// Sends start command to the machine
     /// </summary>
-    public void StartCommand()
+    public async Task StartCommandAsync()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 2);
-        SetChangeRequestTrue();
+        await SetChangeRequestTrueAsync();
     }
+
 
     /// <summary>
     /// Sends stop command to the machine
     /// </summary>
-    public void StopCommand()
+    public async Task StopCommandAsync()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 3);
-        SetChangeRequestTrue();
+        await SetChangeRequestTrueAsync();
     }
+
 
     /// <summary>
     /// Sends abort command to the machine
     /// </summary>
-    public void AbortCommand()
+    public async Task AbortCommandAsync()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 4);
-        SetChangeRequestTrue();
+        await SetChangeRequestTrueAsync();
     }
+
 
     /// <summary>
     /// Sends clear command to the machine
     /// </summary>
-    public void ClearCommand()
+    public async Task ClearCommandAsync()
     {
         MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.CntrlCmd", 5);
-        SetChangeRequestTrue();
+        await SetChangeRequestTrueAsync();
     }
+
 
     // =========================================================================
     // COMPLEX OPERATION METHODS (With delays - Make ASYNC)
@@ -314,23 +302,23 @@ public class MachineControlService(MachineControl machineControl)
         // States requiring reset before start
         else if (statusVal == 2 || statusVal == 5 || statusVal == 17)
         {
-            ResetCommand();
+            await ResetCommandAsync();  
             await Task.Delay(1000); // Wait for reset to process
-            StartCommand();
+            await StartCommandAsync();
         }
         // State where machine can start directly
         else if (statusVal == 4)
         {
-            StartCommand();
+            await StartCommandAsync();  
         }
         // State requiring clear and reset before start
         else if (statusVal == 9)
         {
-            ClearCommand();
+            await ClearCommandAsync();  
             await Task.Delay(1000); // Wait for clear to process
-            ResetCommand();
+            await ResetCommandAsync();  
             await Task.Delay(1000); // Wait for reset to process
-            StartCommand();
+            await StartCommandAsync();  
         }
         // Unknown state - retry after delay
         else
@@ -339,18 +327,88 @@ public class MachineControlService(MachineControl machineControl)
             await StartMachineAsync(); // Recursive retry
         }
     }
+    
+    /// <summary>
+    /// Stops the machine if it's not already in stopped state
+    /// </summary>
+    public async Task AutomatedStart()
+    {
+        while (BatchQueue.Count > 0)
+        {
+            Console.WriteLine("Starting batch queue");
+            Batch nextBatch = BatchQueue.DequeueBatch();
+            
+            if (nextBatch == null)
+                break; //Stop når der ikke er flere batches
+
+            Console.WriteLine($"[ID: {nextBatch.Id}] - Priority: {nextBatch.Priority} | Type: {nextBatch.BeerType} | Amount: {nextBatch.Size}");
+
+            await AddBatchAsync(nextBatch);
+
+            //Start maskinen
+            await StartMachineAsync();
+
+
+            while (true)
+            {
+                int state = GetStatus();
+                if (state == 17) //17 is completed
+                    break;
+                await Task.Delay(500);
+            }
+
+            Console.WriteLine($"Batch {nextBatch.Id} completed.");
+        }
+
+        Console.WriteLine("All batches processed. Machine queue is empty.");
+    }
+
 
     /// <summary>
     /// Stops the machine if it's not already in stopped state
     /// </summary>
     public async Task StopMachineAsync()
     {
-        int statusVal = GetStatus(); // Fast sync read
+        int statusVal = GetStatus();
 
-        if (statusVal != 9) // If not already stopped
-        {
-            StopCommand();
-        }
-        // No await needed here since it's a fast operation
+        if (statusVal == 9)
+            return;
+
+        await StopCommandAsync();
+    }
+    
+    public async Task AbortMachineAsync()
+    {
+        Console.WriteLine("Aborting machine...");
+        await AbortCommandAsync();
+    }   
+
+    public async Task ClearMachineAsync()
+    {
+        Console.WriteLine("Clearing machine...");
+        await ClearCommandAsync();
+    }
+
+    public async Task ResetMachineAsync()
+    {
+        Console.WriteLine("Resetting machine...");
+        await ResetCommandAsync();
+    }
+    
+    public async Task AddBatchAsync(Batch _batch)
+    {
+        int BatchId = _batch.Id;
+        BeerType BeerType = _batch.BeerType;
+        int Size = _batch.Size;
+        float Speed = _batch.Speed;
+
+
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[0].Value", (float)BatchId));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[1].Value", (float)BeerType));
+        await Task.Run(() =>
+            MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", (float)Size));
+        await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", (float)Speed));
     }
 }

@@ -24,18 +24,19 @@
         <div class="parent">
             <div class="child1">
                 <div class="div1">
+                    <button @onclick="startMachine">Start</button>
                 </div>
                 <div class="div2">
-                    <button class="stopButton" @onclick="stopMachine">Stop</button>
+                    <button @onclick="stopMachine">Stop</button>
                 </div>
                 <div class="div3">
-                
+                    <button @onclick="resetMachine">Reset</button>
                 </div>
                 <div class="div4">
-                 
+                    <button @onclick="clearMachine">Clear</button>
                 </div>
                 <div class="div5">
-                    
+                    <button @onclick="abortMachine">Abort</button>
                 </div>
             
             </div>
@@ -151,7 +152,7 @@
 
                 _machineControl = new MachineControl(machineId, machineUrl, machineName);
 
-                MachineControlService = new MachineControlService(_machineControl);
+                MachineControlService = new MachineControlService(_machineControl, new BatchQueue());
             }
         }
         catch (Exception e)
@@ -161,38 +162,35 @@
     }
     
     @* Methods for controlling machine with buttons *@
-    //private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
-    //private async Task startMachine() => await MachineControlService.AutomatedStart();
+    private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
+    private async Task startMachine() => await MachineControlService.AutomatedStart();
     private async Task stopMachine() => await MachineControlService.StopMachineAsync();
-    //private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
-    //private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
+    private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
+    private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
 
 
     private void AddBatchButton()
     {
-        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, (BatchPriority)SelectedPriority);
+        // 1. Get the priority from the dropdown
+        var priorityEnum = (BatchPriority)SelectedPriority;
 
-        Console.WriteLine("Batch has been created!!");
+        // 2. Create the batch object
+        // We use priorityEnum here so the object knows its own priority
+        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
 
-        BatchQueue.EnqueueBatch(batch, batch.Priority);
+        // 3. THIS IS THE CRITICAL CHANGE
+        // You must pass 'priorityEnum' as the second argument.
+        // If you don't, the Queue defaults it to 'Low', and your sorting won't work.
+        MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
 
-        Console.WriteLine("Batch have been added to queue");
-        BatchQueue.BatchQueuePrint();
         id++;
     }
 
     private void SeeBatchPriority()
     {
-        Console.WriteLine("Batch has been created!!");
-        Console.WriteLine("Batch have been added to queue");
-        foreach (var batches in BatchQueue.ToOrderedListIDFirst())
-        {
-            Console.WriteLine($"Batch ID: {batches.Id}, Priority: {batches.Priority}");
-            Console.WriteLine("Beer type " + batches.BeerType);
-            Console.WriteLine("Amount of beers " + batches.Size);
-            Console.WriteLine("Machine speed " + batches.Speed);
-            Console.WriteLine();
-        }
+        Console.WriteLine("All batches in queue\n");
+        // Use MachineControlService.BatchQueue instead
+        MachineControlService.BatchQueue.BatchQueuePrint();
     }
 
 }

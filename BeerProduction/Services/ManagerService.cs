@@ -47,7 +47,7 @@ public class ManagerService
         var connectionTasks = machines.Select(m => m.TryConnectAsync()).ToList();
         await Task.WhenAll(connectionTasks);
         
-        _cachedMachines = machines.Select(m => new MachineControlService(m)).ToList();
+        _cachedMachines = machines.Select(m => new MachineControlService(m, new BatchQueue())).ToList();
         
         _machinesInitilized = true;
         

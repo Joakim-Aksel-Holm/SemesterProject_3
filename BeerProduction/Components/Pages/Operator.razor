@@ -158,7 +158,7 @@
 
                 _machineControl = new MachineControl(machineId, machineUrl, machineName);
 
-                MachineControlService = new MachineControlService(_machineControl);
+                MachineControlService = new MachineControlService(_machineControl, new BatchQueue());
             }
         }
         catch (Exception e)
