@@ -10,7 +10,7 @@
     width: 100%;
     flex-shrink: 0;
     flex-direction: column;
-    background-color: #795548; 
+    background-color: #72A500; 
     padding: 15px;
     margin-top: 15px;
 
@@ -25,29 +25,34 @@
 }
 .ButtonAlert{
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 5px;
+    margin-top: 5px;
+    
     
 }
 
 .AlertButton{
-    flex:1; 
+
     background: #990f02;
     color:#FAF0E6;
     font-weight: bold;
     font-family: sans-serif;
-    Font-size: xx-large;
+    Font-size: large;
     width: 150px;                          
-    height: 10em ;            
+    height: 40px ;            
     transition-duration: 0.3s;
     border-radius: 25px;                   
     border-style: none;                    
     margin-top: 5px;        
+    cursor: pointer;
     
 }                                          
 
 .AlertButton:active
 {
-    background: green;
+    background: #72A500 ;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
@@ -68,7 +73,7 @@
 
 .machine-meter {
     flex-grow: 1; /* Vokser og fylder al resterende plads */
-    background-color: #486c79;
+    background-color: #10154C;
     padding: 15px;
     margin-top: 5px;
     border-radius: 25px;
@@ -115,9 +120,6 @@
     border-radius: 18.75px;
 }
 
-.variables{
-    
-}
 
 
 .queue-item{
@@ -148,13 +150,13 @@
     /* gør musen klik bar */
     cursor: pointer;
     
-    postion: relative; 
+    position: relative; 
     
 }
 
 
 .queue-item:first-child:hover {   
-    background-color: #ff6b6b;
+    background-color: #990f02;
     color: white;
     transform: scale(1.10);
     
@@ -163,10 +165,10 @@
 .queue-item:first-child:hover::after{
     content: "⚠️Up Next!";
     font-family: sans-serif;
+    position: absolute;
     
-    postion: absolute;
-    top:-35px;
-    left: 0px;
+    top:65px;
+    left: 20px;
     
     background-color: #333;
     color: white;
@@ -177,7 +179,7 @@
 }
 
 .queue-item:nth-child(2):hover{
-    background-color: #ffa500;
+    background-color: darkorange;
     transform: scale(1.08);
     
     

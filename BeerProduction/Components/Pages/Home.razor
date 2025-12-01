@@ -1,16 +1,39 @@
 ﻿@page "/"
-@using BeerProduction.Components.Layout
-@layout MainLayout
-<link rel="stylesheet" href="/css/homeStyle.css">
+@using BeerProduction.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateService AuthenticationStateService
+@inject NavigationManager NavigationManager
+
 <PageTitle>Home</PageTitle>
 
-<div class="home-container">
+<AuthorizeView>
+    <Authorized>
+        <div class="home-container">
+            <h2>Welcome, @_username (@_role)</h2>
+            <div>
+                <p>
+                    This system allows you to monitor and manage the beer production process efficiently.
+                </p>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
+@code {
 
-    <h1>Welcome to the Beer Production Management System</h1>
-    <div>
-        <p>
-            This system allows you to monitor and manage the beer production process efficiently.
-        </p>
-    </div>
-</div>
+    private string? _username;
+    private string? _role;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(50);
+        
+        _username = AuthenticationStateService.GetUsername();
+        _role = AuthenticationStateService.GetRole();
+    }
+}

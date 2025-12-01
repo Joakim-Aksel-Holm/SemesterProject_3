@@ -1,9 +1,46 @@
+@using Microsoft.AspNetCore.Components.Authorization
 
 <link rel="stylesheet" href="css/Navbar.css"/>
 <div class="top-row px-4; link">
+    <AuthorizeView>
+        <Authorized>
+            <NavLink class="nav-link top-row" href="/">
+                Home
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
+    
+    <AuthorizeView Roles="admin, manager">
+        <Authorized>
+            <NavLink class="nav-link top-row" href="/m-overview">
+                Machines
+            </NavLink>
+            <NavLink class="nav-link top-row" href="/w-overview">
+                Employees
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="admin, operator">
+        <Authorized>
+            <NavLink class="nav-link top-row" href="/machine-control">
+                Machine Control
+            </NavLink>
+            <NavLink class="nav-link top-row" href="/o-overview">
+                Overview
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
 
-    <NavLink class="nav-link" href="/login">
-        Login
-    </NavLink>
-
+    <AuthorizeView>
+        <Authorized>
+            <NavLink class="nav-link top-row" href="/logout">
+                Logout
+            </NavLink>
+        </Authorized>
+        <NotAuthorized>
+            <NavLink class="nav-link top-row" href="/login">
+                Login
+            </NavLink>
+        </NotAuthorized>
+    </AuthorizeView>
 </div>

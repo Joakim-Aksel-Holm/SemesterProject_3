@@ -1,71 +1,139 @@
-﻿@page "/manager"
-@layout ManagerLayout
-@using BeerProduction.Components.Layout
-@using BeerProduction.Components.Model
+﻿@page "/m-overview"
 @using BeerProduction.Services
+@using System.Timers
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
 @inject ManagerService ManagerService
-@inject ProductionTrackingService ProductionTracking
+@implements IDisposable
 @rendermode InteractiveServer
-
 
 <PageTitle>Manager Dashboard</PageTitle>
 
-<h3>Manager Dashboard</h3>
+<AuthorizeView Roles="manager,admin">
+    <Authorized>
+        @if (!_isLoaded)
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Connecting to machines... Some data may be unavailable.
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Manager Dashboard</h3>
+                <button class="btn btn-outline-secondary" @onclick="RefreshData">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                </button>
+            </div>
 
-@if (_machines == null)
-{
-    <p>Loading machines...</p>
-}
-else
-{
-    <div class="container-fluid">
-        <!-- Quick Stats Summary -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary">
-                    <div class="card-body text-center">
-                        <h6>Online Machines</h6>
-                        <h2>@_machines.Count</h2>
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success">
-                    <div class="card-body text-center">
-                        <h6>In Production</h6>
-                        <h2>@GetMachinesInExecuteState()</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning">
-                    <div class="card-body text-center">
-                        <h6>Total Production</h6>
-                        <h2>@FormatLiters(_productionStats.TotalLitersProduced)</h2>
-                        <small>@_productionStats.TotalBatchesCompleted batches</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info">
-                    <div class="card-body text-center">
-                        <h6>Defect Rate</h6>
-                        <h2>@GetOverallDefectRate()%</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Interactive Machine Cards -->
-        <div class="machines-grid">
-            @foreach (var machine in _machines)
+            @if (_machines == null || !_machines.Any())
             {
-                <MachineCard MachineControlService="@machine" />
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle me-2"></i>
+                    No machines configured or loading machines...
+                </div>
             }
-        </div>
-    </div>
-}
+            else
+            {
+                <div class="container-fluid">
+                    <!-- Quick Stats Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-pc-display me-2"></i>Online Machines</h6>
+                                    <h2>@GetOnlineMachinesCount()</h2>
+                                    <small class="opacity-75">of @_machines.Count total</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-play-circle me-2"></i>In Production</h6>
+                                    <h2>@GetMachinesInExecuteState()</h2>
+                                    <small class="opacity-75">@GetProductionPercentage()% active</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-droplet me-2"></i>Total Production</h6>
+                                    <h2>@FormatLiters(GetTotalProduction())</h2>
+                                    <small class="opacity-75">@GetTotalBatches() batches</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white @GetDefectRateCardClass()">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-exclamation-triangle me-2"></i>Defect Rate</h6>
+                                    <h2>@GetOverallDefectRate().ToString("F1")%</h2>
+                                    <small class="opacity-75">@GetTotalDefects() defects</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Stats Row -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-speedometer2 me-2"></i>Avg Speed</h6>
+                                    <h2>@GetAverageMachineSpeed()</h2>
+                                    <small class="opacity-75">products/min</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-secondary">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-check-circle me-2"></i>Accepted</h6>
+                                    <h2>@FormatNumber(GetTotalAccepted())</h2>
+                                    <small class="opacity-75">quality products</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-dark">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-tools me-2"></i>Maintenance</h6>
+                                    <h2>@GetAverageMaintenance()%</h2>
+                                    <small class="opacity-75">avg usage</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-purple">
+                                <div class="card-body text-center">
+                                    <h6><i class="bi bi-clock me-2"></i>Uptime</h6>
+                                    <h2>@GetUptimePercentage()%</h2>
+                                    <small class="opacity-75">machine availability</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Machine Cards -->
+                    <div class="machines-grid">
+                        @foreach (var machine in _machines)
+                        {
+                            <MachineCard MachineControlService="@machine"/>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
 <style>
     .machines-grid {
@@ -74,17 +142,64 @@ else
         gap: 1.5rem;
         margin-top: 1rem;
     }
+    
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+    
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: box-shadow 0.15s ease-in-out;
+    }
+    
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
 </style>
 
 @code {
-    private int _totalComplete = 0;
     private List<MachineControlService> _machines = new();
-    private ProductionStats _productionStats = new();
+    private Timer? _refreshTimer;
+
+    private bool _isLoaded;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+        
+        _refreshTimer = new Timer(1000);
+        _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
+        _refreshTimer.AutoReset = true;
+        _refreshTimer.Enabled = true;
+
+        _isLoaded = true;
+    }
+
+    private async Task OnTimerElapsed()
+    {
+        if (_machines != null && _machines.Any())
+        {
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in manager timer: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task LoadData()
+    {
         _machines = await ManagerService.GetAllMachinesAsync();
-        _productionStats = await ProductionTracking.GetProductionStatsAsync();
+        StateHasChanged();
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadData();
+        StateHasChanged();
     }
 
     private string FormatLiters(int liters)
@@ -92,23 +207,100 @@ else
         return liters >= 1000 ? $"{liters / 1000.0:F1} kL" : $"{liters} L";
     }
     
+    private string FormatNumber(int number)
+    {
+        return number >= 1000 ? $"{number / 1000.0:F1}K" : $"{number}";
+    }
+
+    // SIMPLIFIED METHODS - Just use the first connected machine's data
+    private int GetOnlineMachinesCount()
+    {
+        return _machines?.Count(m => m.IsConnected()) ?? 0;
+    }
+
     private double GetOverallDefectRate()
     {
-        var total = _machines.Sum(m => m.GetAcceptable() + m.GetDefects());
-        if (total == 0) return 0;
-        return Math.Round((_machines.Sum(m => m.GetDefects()) / (double)total) * 100, 1);
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        if (connectedMachine == null) return 0;
+
+        var produced = connectedMachine.GetProduced();
+        var defects = connectedMachine.GetDefects();
+        
+        if (produced == 0) return 0;
+        return Math.Round((defects / (double)produced) * 100, 1);
     }
     
-    //Method for the In production count, that counts all the machines that are in the machine-state: 6:
+    private int GetTotalDefects()
+    {
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        return connectedMachine?.GetDefects() ?? 0;
+    }
+    
+    private int GetTotalAccepted()
+    {
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        if (connectedMachine == null) return 0;
+        
+        // Accepted = Produced - Defects
+        return connectedMachine.GetProduced() - connectedMachine.GetDefects();
+    }
+    
     private int GetMachinesInExecuteState()
     {
-        return _machines.Count(m => m.GetStatus() == 6);
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        return connectedMachine?.GetStatus() == 6 ? 1 : 0;
     }
     
-    private int GetTotalProducts()
+    private double GetProductionPercentage()
     {
-        var newCompletions = _machines.Count(m => m.GetStatus() == 17);
-        _totalComplete += newCompletions;
-        return _totalComplete;
+        return GetMachinesInExecuteState() > 0 ? 100 : 0;
+    }
+    
+    private int GetAverageMachineSpeed()
+    {
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        return connectedMachine?.GetPpm() ?? 0;
+    }
+    
+    private int GetAverageMaintenance()
+    {
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        return connectedMachine?.GetMaintenanceStatus() ?? 0;
+    }
+    
+    private double GetUptimePercentage()
+    {
+        var connectedMachines = _machines?.Count(m => m.IsConnected()) ?? 0;
+        if (_machines?.Count == 0) return 0;
+        return Math.Round((connectedMachines / (double)_machines.Count) * 100, 1);
+    }
+
+    private int GetTotalProduction()
+    {
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        return connectedMachine?.GetProduced() ?? 0;
+    }
+
+    private int GetTotalBatches()
+    {
+        var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
+        return connectedMachine?.GetProduced() > 0 ? 1 : 0;
+    }
+    
+    private string GetDefectRateCardClass()
+    {
+        var defectRate = GetOverallDefectRate();
+        return defectRate switch
+        {
+            > 5 => "bg-danger",
+            > 3 => "bg-warning",
+            _ => "bg-info"
+        };
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
     }
 }
