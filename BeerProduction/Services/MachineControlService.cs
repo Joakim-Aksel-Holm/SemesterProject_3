@@ -292,75 +292,63 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
     /// </summary>
     public async Task StartMachineAsync()
     {
-        int statusVal = GetStatus(); // Fast sync read
+        await Task.Delay(100);
+        int statusVal = GetStatus();
 
-        // States where machine is already running or cannot start
         if (statusVal == 0 || statusVal == 3 || statusVal == 6 || statusVal == 11)
-        {
             return;
-        }
-        // States requiring reset before start
-        else if (statusVal == 2 || statusVal == 5 || statusVal == 17)
+
+        if (statusVal == 2 || statusVal == 5 || statusVal == 17)
         {
-            await ResetCommandAsync();  
-            await Task.Delay(1000); // Wait for reset to process
+            await ResetCommandAsync();
+            await Task.Delay(1000);
             await StartCommandAsync();
         }
-        // State where machine can start directly
         else if (statusVal == 4)
         {
-            await StartCommandAsync();  
+            await StartCommandAsync();
         }
-        // State requiring clear and reset before start
         else if (statusVal == 9)
         {
-            await ClearCommandAsync();  
-            await Task.Delay(1000); // Wait for clear to process
-            await ResetCommandAsync();  
-            await Task.Delay(1000); // Wait for reset to process
-            await StartCommandAsync();  
+            await ClearCommandAsync();
+            await Task.Delay(1000);
+            await ResetCommandAsync();
+            await Task.Delay(1000);
+            await StartCommandAsync();
         }
-        // Unknown state - retry after delay
         else
         {
             await Task.Delay(2000);
-            await StartMachineAsync(); // Recursive retry
+            await StartMachineAsync(); // recursive retry
         }
     }
-    
-    /// <summary>
-    /// Stops the machine if it's not already in stopped state
-    /// </summary>
+
     public async Task AutomatedStart()
     {
         while (BatchQueue.Count > 0)
         {
-            Console.WriteLine("Starting batch queue");
-            Batch nextBatch = BatchQueue.DequeueBatch();
-            
-            if (nextBatch == null)
-                break; //Stop når der ikke er flere batches
+            await Task.Delay(200);
 
-            Console.WriteLine($"[ID: {nextBatch.Id}] - Priority: {nextBatch.Priority} | Type: {nextBatch.BeerType} | Amount: {nextBatch.Size}");
+            Batch nextBatch = BatchQueue.DequeueBatch();
+            Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size}), Speed={nextBatch.Speed}");
 
             await AddBatchAsync(nextBatch);
 
-            //Start maskinen
+            // Start machine
             await StartMachineAsync();
 
-
-            while (true)
-            {
-                int state = GetStatus();
-                if (state == 17) //17 is completed
-                    break;
+            // Wait for completion
+            while (GetStatus() != 17)
                 await Task.Delay(500);
-            }
 
             Console.WriteLine($"Batch {nextBatch.Id} completed.");
-        }
 
-        Console.WriteLine("All batches processed. Machine queue is empty.");
+            await ClearMachineAsync();
+            await Task.Delay(500);
+            await ResetMachineAsync();
+            await Task.Delay(500);
+        }
+        Console.WriteLine("All batches processed.");
     }
 
 
