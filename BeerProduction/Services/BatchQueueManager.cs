@@ -70,7 +70,7 @@ namespace BeerProduction.Services
         {
             lock (_lock)
             {
-                Console.WriteLine("\n--- Current Queue Status (Sorted) ---");
+                Console.WriteLine("\n    Current Queue Status (Sorted)    ");
 
                 var sortedBatches = _batchQueue.UnorderedItems
                     .OrderByDescending(item => item.Priority.Priority) 
@@ -89,7 +89,7 @@ namespace BeerProduction.Services
                         Console.WriteLine($"[ID: {batch.Id}] - Priority: {batch.Priority} | Type: {batch.BeerType} | Amount: {batch.Size}");
                     }
                 }
-                Console.WriteLine("--------------------------------------\n");
+                Console.WriteLine("");
             }
         }
 
