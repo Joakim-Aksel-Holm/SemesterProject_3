@@ -1,22 +1,23 @@
 using BeerProduction.Services;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Npgsql;
-using Xunit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+
+namespace BeerProduction.Tests;
 
 public class DatabaseTests
 {
     private const string TestConnectionString = "Host=testhost;Username=testuser;Password=testpass;Database=testdb";
     private readonly Mock<IConfiguration> _mockConfiguration = new();
     
-    private void SetupConfiguration(string connectionString)
+    private void SetupConfiguration(string? connectionString)
     {
         // Mock the GetConnectionString extension method behavior
-        _mockConfiguration.Setup(cfg => cfg.GetConnectionString("Default"))
-            .Returns(connectionString);
+        var mockSection = new Mock<IConfigurationSection>();
+        mockSection.Setup(s => s["Default"]).Returns(connectionString);
+        
+        _mockConfiguration
+            .Setup(c => c.GetSection("ConnectionStrings"))
+            .Returns(mockSection.Object);
     }
     
     [Fact]

@@ -25,14 +25,22 @@ public class BatchQueueTests
         queue.EnqueueBatch(batchHigh, BatchPriority.High);
         queue.EnqueueBatch(batchMedium, BatchPriority.Medium);
 
-        // Dequeue next batch (should be Id=3, Medium)
+        // Dequeue next batch (should be Id=2, High)
         var dequeued = queue.DequeueBatch();
-        Assert.Equal(3, dequeued.Id);
+        Assert.Equal(2, dequeued.Id);
 
-        // Dequeue remaining batch (should be Id=1, Low)
+        // Dequeue next batch (should be Id=3, Medium)
+        dequeued = queue.DequeueBatch();
+        Assert.Equal(3, dequeued.Id);
+        
+        // Dequeue next batch (should be Id=4, Medium)
+        dequeued = queue.DequeueBatch();
+        Assert.Equal(4, dequeued.Id);
+        
+        // Dequeue next batch (should be Id=1, Low)
         dequeued = queue.DequeueBatch();
         Assert.Equal(1, dequeued.Id);
-
+        
         // Queue should now be empty
         Assert.Null(queue.DequeueBatch());
         Assert.Equal(0, queue.Count);
