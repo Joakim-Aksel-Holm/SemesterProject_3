@@ -13,13 +13,7 @@ public class Batch
     public float Speed { get; set; }
     public BatchPriority Priority { get; set; }
     public MachineState CurrentState { get; set; }
-    public DateTime ManufactureDate { get; }
-    
-    public string? Notes { get; set; }
-    
-    // Navigation property:
-    public Machine? Machine { get; set; }
-
+    public DateTime ManufactureDate { get; set; }
 
     /// <summary>
     /// Constructore for a batch

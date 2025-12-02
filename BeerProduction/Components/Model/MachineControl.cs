@@ -22,7 +22,7 @@ public class MachineControl
         MachineName = machineName;
         Client = new OpcClient(machineURL);
         // Optional: subscribe to the Connected event
-        Client.Connected += (s, e) =>
+        Client.Connected += ( _ , _ ) =>
         {
             Console.WriteLine($"✅ Machine {MachineID} connected.");
         };
