@@ -5,6 +5,8 @@ namespace BeerProduction.Services;
 
 public class MachineControlService(MachineControl machineControl, BatchQueue batchQueue)
 {
+    private const int MaxInventory = 35000;
+
     /// <summary>
     /// Initializes a new instance of the MachineControl class.
     /// </summary>
@@ -145,27 +147,67 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
     /// </summary>
     public int GetBarley()
     {
-        return SafeRead("ns=6;s=::Program:Inventory.Barley", -1);
+        var inv = SafeRead("ns=6;s=::Program:Inventory.Barley", -1);
+        try
+        {
+            return inv / MaxInventory * 100;
+        }
+        catch (DivideByZeroException)
+        {
+            return 0;
+        }
     }
     
     public int GetHops()
     {
-        return SafeRead("ns=6;s=::Program:Inventory.Hops", -1);
+        var inv = SafeRead("ns=6;s=::Program:Inventory.Hops", -1);
+        try
+        {
+            return inv / MaxInventory * 100;
+        }
+        catch (DivideByZeroException)
+        {
+            return 0;
+        }
     }
     
     public int GetMalt()
     {
-        return SafeRead("ns=6;s=::Program:Inventory.Malt", -1);
+        var inv = SafeRead("ns=6;s=::Program:Inventory.Malt", -1);
+        try
+        {
+            return inv / MaxInventory * 100;
+        }
+        catch (DivideByZeroException)
+        {
+            return 0;
+        }
     }
     
     public int GetWheat()
     {
-        return SafeRead("ns=6;s=::Program:Inventory.Wheat", -1);
+        var inv = SafeRead("ns=6;s=::Program:Inventory.Wheat", -1);
+        try
+        {
+            return inv / MaxInventory * 100;
+        }
+        catch (DivideByZeroException)
+        {
+            return 0;
+        }
     }
     
     public int GetYeast()
     {
-        return SafeRead("ns=6;s=::Program:Inventory.Yeast", -1);
+        var inv = SafeRead("ns=6;s=::Program:Inventory.Yeast", -1);
+        try
+        {
+            return inv / MaxInventory * 100;
+        }
+        catch (DivideByZeroException)
+        {
+            return 0;
+        }
     }
 
     /// <summary>
