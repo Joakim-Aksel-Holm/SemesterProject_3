@@ -5,7 +5,7 @@ namespace BeerProduction.Services;
 
 public class MachineControlService(MachineControl machineControl, BatchQueue batchQueue)
 {
-    private const int MaxInventory = 35000;
+    private const decimal MaxInventory = 35000;
 
     /// <summary>
     /// Initializes a new instance of the MachineControl class.
@@ -150,7 +150,9 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         var inv = SafeRead("ns=6;s=::Program:Inventory.Barley", -1);
         try
         {
-            return inv / MaxInventory * 100;
+            double percentage = (inv / (double)MaxInventory * 100.0);
+            
+            return (int)Math.Round(percentage);
         }
         catch (DivideByZeroException)
         {
@@ -163,7 +165,9 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         var inv = SafeRead("ns=6;s=::Program:Inventory.Hops", -1);
         try
         {
-            return inv / MaxInventory * 100;
+            double percentage = (inv / (double)MaxInventory * 100.0);
+            
+            return (int)Math.Round(percentage);
         }
         catch (DivideByZeroException)
         {
@@ -176,7 +180,9 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         var inv = SafeRead("ns=6;s=::Program:Inventory.Malt", -1);
         try
         {
-            return inv / MaxInventory * 100;
+            double percentage = (inv / (double)MaxInventory * 100.0);
+            
+            return (int)Math.Round(percentage);
         }
         catch (DivideByZeroException)
         {
@@ -189,7 +195,9 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         var inv = SafeRead("ns=6;s=::Program:Inventory.Wheat", -1);
         try
         {
-            return inv / MaxInventory * 100;
+            double percentage = (inv / (double)MaxInventory * 100.0);
+            
+            return (int)Math.Round(percentage);
         }
         catch (DivideByZeroException)
         {
@@ -202,21 +210,15 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         var inv = SafeRead("ns=6;s=::Program:Inventory.Yeast", -1);
         try
         {
-            return inv / MaxInventory * 100;
+            double percentage = (inv / (double)MaxInventory * 100.0);
+            
+            return (int)Math.Round(percentage);
         }
         catch (DivideByZeroException)
         {
             return 0;
         }
     }
-
-    /// <summary>
-    /// Checks if the inventory is getting filled
-    /// </summary>
-    public bool InventoryIsFilling()
-    {
-        return SafeRead("ns=6;s=::Program:FillingInventory", false);
-    } 
     
     /// <summary>
     /// Reads the current machine status from OPC server (fast read)

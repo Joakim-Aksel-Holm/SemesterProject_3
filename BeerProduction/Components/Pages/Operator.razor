@@ -25,9 +25,6 @@
         <h2 class="ingredients-title">
             <i class="fas fa-industry"></i> Ingredient Tanks
         </h2>
-        <button class="tank-btn tank-btn-refill" @onclick="RefillAllTanks">
-            <i class="fas fa-fill-drip"></i> Refill All
-        </button>
     </div>
 
     <div class="ingredients-grid">
@@ -262,7 +259,6 @@
     [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
     int id = 1;
     private Timer? _refreshTimer;
-    private Timer? _tankSimulationTimer;
     private string? _userId;
     private MachineControl? _machineControl;
 
@@ -286,8 +282,6 @@
         public decimal Capacity { get; set; }
         public string Unit { get; set; } = "kg";
         public decimal Level { get; set; }
-        public string Status { get; set; } = "active";
-        public DateTime LastRefill { get; set; } = DateTime.Now;
     }
 
     protected override async Task OnInitializedAsync()
@@ -324,38 +318,30 @@
                 _machineControl = new MachineControl(machineId, machineUrl, machineName);
                 await _machineControl.TryConnectAsync();
                 MachineControlService = new MachineControlService(_machineControl, SharedBatchQueue);
+                
+                InitializeIngredientTanks();
+                
+                _refreshTimer = new Timer(200);
+                _refreshTimer.Elapsed += OnRefreshTimerElapsed; // Use the void handler
+                _refreshTimer.AutoReset = true;
+                _refreshTimer.Enabled = true;
             }
         }
         catch (Exception e)
         {
             Console.WriteLine($"error: {e}");
         }
-
-        // Initialize ingredient tanks
-        InitializeIngredientTanks();
-    }
-
-    protected override void OnInitialized()
-    {
-        _refreshTimer = new Timer(200);
-        _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
-        _refreshTimer.AutoReset = true;
-        _refreshTimer.Enabled = true;
-
-        // Start tank simulation
-        StartTankSimulation();
     }
 
     private void InitializeIngredientTanks()
     {
-        var random = new Random();
         IngredientTanks = new List<IngredientTank>
         {
-            new IngredientTank { Name = "Barley", Color = "#d97706", Icon = "fas fa-seedling", Capacity = 35000, Unit = "g", Level = MachineControlService.GetBarley() },
-            new IngredientTank { Name = "Hops", Color = "#16a34a", Icon = "fas fa-leaf", Capacity = 35000, Unit = "g", Level = MachineControlService.GetHops() },
-            new IngredientTank { Name = "Malt", Color = "#92400e", Icon = "fas fa-wheat-awn", Capacity = 35000, Unit = "g", Level = MachineControlService.GetMalt() },
-            new IngredientTank { Name = "Wheat", Color = "#ca8a04", Icon = "fas fa-bread-slice", Capacity = 35000, Unit = "g", Level = MachineControlService.GetWheat() },
-            new IngredientTank { Name = "Yeast", Color = "#c026d3", Icon = "fas fa-vial", Capacity = 35000, Unit = "g", Level = MachineControlService.GetYeast() }
+            new() { Name = "Barley", Color = "#d97706", Icon = "fas fa-seedling", Capacity = 35000, Unit = "g", Level = MachineControlService.GetBarley() },
+            new() { Name = "Hops", Color = "#16a34a", Icon = "fas fa-leaf", Capacity = 35000, Unit = "g", Level = MachineControlService.GetHops() },
+            new() { Name = "Malt", Color = "#92400e", Icon = "fas fa-wheat-awn", Capacity = 35000, Unit = "g", Level = MachineControlService.GetMalt() },
+            new() { Name = "Wheat", Color = "#ca8a04", Icon = "fas fa-bread-slice", Capacity = 35000, Unit = "g", Level = MachineControlService.GetWheat() },
+            new() { Name = "Yeast", Color = "#c026d3", Icon = "fas fa-vial", Capacity = 35000, Unit = "g", Level = MachineControlService.GetYeast() }
         };
     }
 
@@ -376,39 +362,13 @@
         return "level-high";
     }
 
-    private async Task RefillAllTanks()
-    {
-        foreach (var tank in IngredientTanks)
-        {
-            tank.Level = 100;
-            tank.LastRefill = DateTime.Now;
-        }
-
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private void StartTankSimulation()
-    {
-        _tankSimulationTimer = new Timer(15000);
-        _tankSimulationTimer.Elapsed += async (_, _) =>
-        {
-            var random = new Random();
-            foreach (var tank in IngredientTanks)
-            {
-                tank.Level = Math.Max(0, tank.Level - random.Next(0, 3));
-            }
-
-            await InvokeAsync(StateHasChanged);
-        };
-        _tankSimulationTimer.AutoReset = true;
-        _tankSimulationTimer.Enabled = true;
-    }
-
-    private async Task OnTimerElapsed()
+    private void OnRefreshTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (MachineControlService != null)
         {
-            await InvokeAsync(StateHasChanged);
+            InitializeIngredientTanks();
+            
+            InvokeAsync(StateHasChanged);
         }
     }
 
@@ -416,8 +376,6 @@
     {
         _refreshTimer?.Stop();
         _refreshTimer?.Dispose();
-        _tankSimulationTimer?.Stop();
-        _tankSimulationTimer?.Dispose();
     }
 
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
