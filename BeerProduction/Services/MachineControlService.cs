@@ -145,7 +145,7 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
     /// </summary>
     public int GetStatus()
     {
-        return SafeRead("ns=6;s=::Program:Cube.Status.StateCurrent.Value", -1);
+        return SafeRead("ns=6;s=::Program:Cube.Status.StateCurrent", -1);
     }
 
     /// <summary>
@@ -198,9 +198,14 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
     /// <returns></returns>
     public int GetAcceptable()
     {
-        var produced = GetProduced();
-        var defects = GetDefects();
-        return SafeRead("ns=6;s=::Program:Product.good.Value" ,-1);
+        var acceptable = GetProduced() - GetDefects();;
+        var machineRead = SafeRead("ns=6;s=::Program:product.good", -1);
+
+        if (machineRead > 0)
+        {
+            return machineRead;
+        }
+        return acceptable;
     }
 
     /// <summary>
@@ -299,7 +304,11 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         int statusVal = GetStatus();
 
         if (statusVal == 0 || statusVal == 3 || statusVal == 6 || statusVal == 11)
+        {
+            Console.WriteLine("Prevented start");
+            Console.WriteLine(statusVal);
             return;
+        }
 
         if (statusVal == 2 || statusVal == 5 || statusVal == 17)
         {
@@ -336,7 +345,9 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
             Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size}), Speed={nextBatch.Speed}");
 
             await AddBatchAsync(nextBatch);
-
+            
+            
+            
             // Start machine
             await StartMachineAsync();
 
@@ -353,7 +364,6 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         }
         Console.WriteLine("All batches processed.");
     }
-
 
     /// <summary>
     /// Stops the machine if it's not already in stopped state
@@ -401,5 +411,7 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         await Task.Run(() =>
             MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.Parameter[2].Value", (float)Size));
         await Task.Run(() => MachineControl.Client.WriteNode("ns=6;s=::Program:Cube.Command.MachSpeed", (float)Speed));
+        
+        await SetChangeRequestTrueAsync();
     }
 }

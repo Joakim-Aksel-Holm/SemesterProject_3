@@ -7,6 +7,7 @@
 @inject AuthenticationStateService AuthenticationStateService
 @inject DatabaseConnection Db
 @inject NavigationManager NavigationManager
+@inject BatchQueue SharedBatchQueue
 @implements IDisposable
 @rendermode InteractiveServer
 
@@ -207,10 +208,6 @@
 
     private BatchForm batchForm = new();
 
-    @* private BatchService batchService = new(); *@
-
-    private BatchQueue BatchQueue = new();
-
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(50);
@@ -248,7 +245,7 @@
 
                 await _machineControl.TryConnectAsync();
 
-                MachineControlService = new MachineControlService(_machineControl, new BatchQueue());
+                MachineControlService = new MachineControlService(_machineControl, SharedBatchQueue);
             }
         }
         catch (Exception e)
