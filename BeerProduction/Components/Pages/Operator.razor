@@ -158,6 +158,8 @@
 
                 _machineControl = new MachineControl(machineId, machineUrl, machineName);
 
+                await _machineControl.TryConnectAsync();
+
                 MachineControlService = new MachineControlService(_machineControl, new BatchQueue());
             }
         }
