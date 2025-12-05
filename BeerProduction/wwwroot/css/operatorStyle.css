@@ -195,5 +195,251 @@
     font-weight: bold;
 }
 
+/* Ingredient Tanks Styles */
+.ingredients-section {
+    margin: 30px 0;
+    background: rgba(30, 41, 59, 0.85);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ingredients-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.ingredients-title {
+    font-size: 1.8rem;
+    color: #a5b4fc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.tank-card {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(76, 201, 240, 0.1);
+}
+
+.tank-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.tank-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.ingredient-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #f1f1f1;
+}
+
+.ingredient-icon {
+    font-size: 1.4rem;
+    color: #4cc9f0;
+}
+
+.tank-level {
+    font-size: 0.9rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.level-low {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.level-medium {
+    background-color: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+}
+
+.level-high {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.tank-visual-container {
+    position: relative;
+    height: 120px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.tank-outline {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 100px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tank-liquid {
+    position: absolute;
+    bottom: 0;
+    width: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px 5px 0 0;
+    transition: height 1s ease-in-out;
+}
+
+.liquid-animation {
+    animation: liquidMove 3s infinite ease-in-out;
+}
+
+@keyframes liquidMove {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-2px); }
+}
+
+.bubbles {
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    bottom: 0;
+    opacity: 0.7;
+}
+
+.bubble {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    bottom: 0;
+    animation: bubbleUp 3s infinite ease-in;
+}
+
+@keyframes bubbleUp {
+    0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}
+
+.tank-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.info-label {
+    color: #94a3b8;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #f1f1f1;
+}
+
+.tank-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.tank-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.tank-btn-refill {
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    color: white;
+}
+
+.tank-btn-drain {
+    background: linear-gradient(90deg, #ef4444, #b91c1c);
+    color: white;
+}
+
+.tank-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tank-btn:active {
+    transform: scale(0.98);
+}
+
+.ingredient-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-card {
+    background: rgba(15, 23, 42, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #4cc9f0;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
 
 
