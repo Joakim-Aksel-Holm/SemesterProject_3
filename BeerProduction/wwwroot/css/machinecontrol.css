@@ -14,8 +14,8 @@
     width: 100%;
     background-color: #72A500;
     border-radius: 25px;
-    margin: 5px;
-    padding: 15px;
+    padding: 5px;
+    margin: 10px;
     
 }
 .child2{
@@ -32,8 +32,7 @@
     display: flex;
     flex:1;
     width: 100%;
-    margin: 20px;
-    
+    margin: 10px;
 }
 .startButton, .stopButton, .ResetButton, .ClearButton, .abortButton {
     width: 100%; 
