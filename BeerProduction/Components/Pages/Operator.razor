@@ -14,19 +14,93 @@
 <link rel="stylesheet" href="css/operatorStyle.css"/>
 <link rel="stylesheet" href="/css/machinecontrol.css">
 <link rel="stylesheet" href="/css/homeStyle.css">
+<link rel="stylesheet" href="css/ingredient-tanks.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <AuthorizeView Roles="operator,admin">
     <Authorized>
+        <!-- Ingredients Section -->
+        <div class="ingredients-section">
+            <div class="ingredients-header">
+                <h2 class="ingredients-title">
+                    <i class="fas fa-industry"></i> Ingredient Tanks
+                </h2>
+                <button class="tank-btn tank-btn-refill" @onclick="RefillAllTanks">
+                    <i class="fas fa-fill-drip"></i> Refill All
+                </button>
+            </div>
+            
+            <div class="ingredients-grid">
+                @foreach (var tank in IngredientTanks)
+                {
+                    <div class="tank-card">
+                        <div class="tank-header">
+                            <div class="ingredient-name">
+                                <i class="@tank.Icon ingredient-icon"></i>
+                                <span>@tank.Name</span>
+                            </div>
+                            <div class="tank-level @GetLevelClass(tank.Level)">
+                                @tank.Level%
+                            </div>
+                        </div>
+                        
+                        <div class="tank-visual-container" id="@($"tank-{tank.Name.ToLower()}")">
+                            <div class="tank-outline"></div>
+                            <div class="tank-liquid liquid-animation" 
+                                 style="height: @(tank.Level)%; background-color: @tank.Color;"></div>
+                        </div>
+                        
+                        <div class="tank-info">
+                            <div class="info-item">
+                                <div class="info-label">Capacity</div>
+                                <div class="info-value">@tank.Capacity @tank.Unit</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Current</div>
+                                <div class="info-value">@((tank.Capacity * tank.Level / 100).ToString("F0")) @tank.Unit</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tank-controls">
+                            <button class="tank-btn tank-btn-refill" @onclick="() => RefillTank(tank.Name)">
+                                <i class="fas fa-fill-drip"></i> Refill
+                            </button>
+                            <button class="tank-btn tank-btn-drain" @onclick="() => DrainTank(tank.Name)">
+                                <i class="fas fa-faucet"></i> Drain 10%
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="ingredient-stats">
+                <div class="stat-card">
+                    <div class="stat-value">@TotalCapacityUsed%</div>
+                    <div class="stat-label">Total Capacity Used</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@ActiveTanks</div>
+                    <div class="stat-label">Active Tanks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@AverageLevel%</div>
+                    <div class="stat-label">Average Fill Level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@IngredientTanks.Count</div>
+                    <div class="stat-label">Ingredient Types</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Your existing machine control code below -->
         <div class="machine-view">
-    
             <div class="machine-inventory">
                 <ol class="ordered-queue">
-            
                     <li class="queue-item" >
                         <h4 class="BatchId"> BatchId </h4>
                         <p>Status: venter</p> 
                     </li>
-
 
                     <li class="queue-item">
                         <h4 class="BatchId">BatchId</h4>
@@ -39,6 +113,7 @@
                     </li>
                 </ol>
             </div>
+            
             @if (MachineControlService == null)
             {
                 <p>Loading machine...</p>
@@ -97,16 +172,14 @@
                                 </span>
                             </li>
                         </ul>
-
                     </div>
                 </div>
+                
                 <div class="Machine-bottom">
-            
                     <div class="ButtonAlert">
                         <button class="AlertButton">
                             ALERT
                         </button>
-
                     </div>
                 </div>
             }
@@ -131,7 +204,6 @@
                 <div class="div5">
                     <button class="abortButton " @onclick="abortMachine">Abort</button>
                 </div>
-            
             </div>
             
             <div class="child2" >
@@ -146,7 +218,6 @@
                         <option value="4">Ale</option>
                         <option value="5">Alcohol free</option>
                     </select>
-
                 </div>
 
                 <div class="priority">
@@ -160,7 +231,6 @@
                 </div>
 
                 <div class="div7">
-                    @* Form for adding batch size and batch speed *@
                     <EditForm Model="@batchForm" Context="batch">
                         <label>
                             Amount:
@@ -173,6 +243,7 @@
                         </label>
                     </EditForm>
                 </div>
+                
                 <div class="div8">
                     <label for="BatchButton">Add to batch</label>
                     <button class="AddBatch" id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
@@ -194,12 +265,11 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
-
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
     int id = 1;
     private Timer? _refreshTimer;
+    private Timer? _tankSimulationTimer;
     private string? _userId;
     private MachineControl? _machineControl;
     
@@ -207,6 +277,25 @@
     private int SelectedPriority { get; set; } = -1;
 
     private BatchForm batchForm = new();
+    
+    // Ingredient Tanks Data
+    private List<IngredientTank> IngredientTanks { get; set; } = new();
+    private decimal TotalCapacityUsed => IngredientTanks.Any() ? Math.Round(IngredientTanks.Average(t => t.Level), 1) : 0;
+    private int ActiveTanks => IngredientTanks.Count(t => t.Level > 10);
+    private decimal AverageLevel => IngredientTanks.Any() ? Math.Round(IngredientTanks.Average(t => t.Level), 1) : 0;
+    
+    // Model class for ingredient tanks
+    public class IngredientTank
+    {
+        public string Name { get; set; } = "";
+        public string Color { get; set; } = "#000000";
+        public string Icon { get; set; } = "fas fa-flask";
+        public decimal Capacity { get; set; }
+        public string Unit { get; set; } = "kg";
+        public decimal Level { get; set; }
+        public string Status { get; set; } = "active";
+        public DateTime LastRefill { get; set; } = DateTime.Now;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -221,7 +310,7 @@
 
         try
         {
-            await using var conn = await Db.OpenAsync(); // pooled under the hood
+            await using var conn = await Db.OpenAsync();
             await using var cmd = conn.CreateCommand();
 
             cmd.CommandText = @"SELECT u.user_id, m.id, m.url, m.name
@@ -239,12 +328,8 @@
                 var machineUrl = rdr.GetString(rdr.GetOrdinal("url"));
                 var machineName = rdr.GetString(rdr.GetOrdinal("name"));
 
-                Console.WriteLine($"Connection test result: {rdr}");
-
                 _machineControl = new MachineControl(machineId, machineUrl, machineName);
-
                 await _machineControl.TryConnectAsync();
-
                 MachineControlService = new MachineControlService(_machineControl, SharedBatchQueue);
             }
         }
@@ -252,6 +337,9 @@
         {
             Console.WriteLine($"error: {e}");
         }
+        
+        // Initialize ingredient tanks
+        InitializeIngredientTanks();
     }
 
     protected override void OnInitialized()
@@ -261,6 +349,79 @@
         _refreshTimer.AutoReset = true;
         _refreshTimer.Enabled = true;
         
+        // Start tank simulation
+        StartTankSimulation();
+    }
+
+    private void InitializeIngredientTanks()
+    {
+        var random = new Random();
+        IngredientTanks = new List<IngredientTank>
+        {
+            new IngredientTank { Name = "Barley", Color = "#d97706", Icon = "fas fa-seedling", Capacity = 1000, Unit = "kg", Level = random.Next(20, 100) },
+            new IngredientTank { Name = "Hops", Color = "#16a34a", Icon = "fas fa-leaf", Capacity = 500, Unit = "kg", Level = random.Next(20, 100) },
+            new IngredientTank { Name = "Malt", Color = "#92400e", Icon = "fas fa-wheat-awn", Capacity = 800, Unit = "kg", Level = random.Next(20, 100) },
+            new IngredientTank { Name = "Wheat", Color = "#ca8a04", Icon = "fas fa-bread-slice", Capacity = 1200, Unit = "kg", Level = random.Next(20, 100) },
+            new IngredientTank { Name = "Yeast", Color = "#c026d3", Icon = "fas fa-vial", Capacity = 300, Unit = "L", Level = random.Next(20, 100) }
+        };
+    }
+
+    private string GetLevelClass(decimal level)
+    {
+        return level switch
+        {
+            < 25 => "level-low",
+            < 75 => "level-medium",
+            _ => "level-high"
+        };
+    }
+
+    private async Task RefillTank(string tankName)
+    {
+        var tank = IngredientTanks.FirstOrDefault(t => t.Name == tankName);
+        if (tank != null)
+        {
+            tank.Level = 100;
+            tank.LastRefill = DateTime.Now;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task DrainTank(string tankName)
+    {
+        var tank = IngredientTanks.FirstOrDefault(t => t.Name == tankName);
+        if (tank != null && tank.Level > 10)
+        {
+            tank.Level -= 10;
+            tank.Level = Math.Max(0, tank.Level);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task RefillAllTanks()
+    {
+        foreach (var tank in IngredientTanks)
+        {
+            tank.Level = 100;
+            tank.LastRefill = DateTime.Now;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void StartTankSimulation()
+    {
+        _tankSimulationTimer = new Timer(15000);
+        _tankSimulationTimer.Elapsed += async (_, _) =>
+        {
+            var random = new Random();
+            foreach (var tank in IngredientTanks)
+            {
+                tank.Level = Math.Max(0, tank.Level - random.Next(0, 3));
+            }
+            await InvokeAsync(StateHasChanged);
+        };
+        _tankSimulationTimer.AutoReset = true;
+        _tankSimulationTimer.Enabled = true;
     }
 
     private async Task OnTimerElapsed()
@@ -275,26 +436,8 @@
     {
         _refreshTimer?.Stop();
         _refreshTimer?.Dispose();
-    }
-    
-    private string GetTemperatureClass(decimal temperature)
-    {
-        return temperature switch
-        {
-            > 70 => "text-danger",
-            > 60 => "text-warning",
-            _ => "text-success"
-        };
-    }
-
-    private string GetProgressBarClass(int progress)
-    {
-        return progress switch
-        {
-            >= 90 => "bg-success",
-            >= 50 => "bg-primary",
-            _ => "bg-info"
-        };
+        _tankSimulationTimer?.Stop();
+        _tankSimulationTimer?.Dispose();
     }
     
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
@@ -303,28 +446,16 @@
     private async Task resetMachine() => await MachineControlService.ResetCommandAsync();
     private async Task clearMachine() => await MachineControlService.ClearCommandAsync();
 
-
     private void AddBatchButton()
     {
-        // 1. Get the priority from the dropdown
         var priorityEnum = (BatchPriority)SelectedPriority;
-
-        // 2. Create the batch object
-        // We use priorityEnum here so the object knows its own priority
         Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
-
-        // 3. THIS IS THE CRITICAL CHANGE
-        // You must pass 'priorityEnum' as the second argument.
-        // If you don't, the Queue defaults it to 'Low', and your sorting won't work.
         MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
-
         id++;
     }
 
     private void SeeBatchPriority()
     {
-        Console.WriteLine("All batches in queue\n");
-        // Use MachineControlService.BatchQueue instead
         MachineControlService.BatchQueue.BatchQueuePrint();
     }
 }
