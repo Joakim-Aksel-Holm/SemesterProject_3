@@ -61,15 +61,6 @@
                         <div class="info-value">@((tank.Capacity * tank.Level / 100).ToString("F0")) @tank.Unit</div>
                     </div>
                 </div>
-
-                <div class="tank-controls">
-                    <button class="tank-btn tank-btn-refill" @onclick="() => RefillTank(tank.Name)">
-                        <i class="fas fa-fill-drip"></i> Refill
-                    </button>
-                    <button class="tank-btn tank-btn-drain" @onclick="() => DrainTank(tank.Name)">
-                        <i class="fas fa-faucet"></i> Drain 10%
-                    </button>
-                </div>
             </div>
         }
     </div>
@@ -360,11 +351,11 @@
         var random = new Random();
         IngredientTanks = new List<IngredientTank>
         {
-            new IngredientTank { Name = "Barley", Color = "#d97706", Icon = "fas fa-seedling", Capacity = 1000, Unit = "kg", Level = random.Next(20, 100) },
-            new IngredientTank { Name = "Hops", Color = "#16a34a", Icon = "fas fa-leaf", Capacity = 500, Unit = "kg", Level = random.Next(20, 100) },
-            new IngredientTank { Name = "Malt", Color = "#92400e", Icon = "fas fa-wheat-awn", Capacity = 800, Unit = "kg", Level = random.Next(20, 100) },
-            new IngredientTank { Name = "Wheat", Color = "#ca8a04", Icon = "fas fa-bread-slice", Capacity = 1200, Unit = "kg", Level = random.Next(20, 100) },
-            new IngredientTank { Name = "Yeast", Color = "#c026d3", Icon = "fas fa-vial", Capacity = 300, Unit = "L", Level = random.Next(20, 100) }
+            new IngredientTank { Name = "Barley", Color = "#d97706", Icon = "fas fa-seedling", Capacity = 35000, Unit = "g", Level = MachineControlService.GetBarley() },
+            new IngredientTank { Name = "Hops", Color = "#16a34a", Icon = "fas fa-leaf", Capacity = 35000, Unit = "g", Level = MachineControlService.GetHops() },
+            new IngredientTank { Name = "Malt", Color = "#92400e", Icon = "fas fa-wheat-awn", Capacity = 35000, Unit = "g", Level = MachineControlService.GetMalt() },
+            new IngredientTank { Name = "Wheat", Color = "#ca8a04", Icon = "fas fa-bread-slice", Capacity = 35000, Unit = "g", Level = MachineControlService.GetWheat() },
+            new IngredientTank { Name = "Yeast", Color = "#c026d3", Icon = "fas fa-vial", Capacity = 35000, Unit = "g", Level = MachineControlService.GetYeast() }
         };
     }
 
@@ -383,28 +374,6 @@
         }
 
         return "level-high";
-    }
-
-    private async Task RefillTank(string tankName)
-    {
-        var tank = IngredientTanks.FirstOrDefault(t => t.Name == tankName);
-        if (tank != null)
-        {
-            tank.Level = 100;
-            tank.LastRefill = DateTime.Now;
-            await InvokeAsync(StateHasChanged);
-        }
-    }
-
-    private async Task DrainTank(string tankName)
-    {
-        var tank = IngredientTanks.FirstOrDefault(t => t.Name == tankName);
-        if (tank != null && tank.Level > 10)
-        {
-            tank.Level -= 10;
-            tank.Level = Math.Max(0, tank.Level);
-            await InvokeAsync(StateHasChanged);
-        }
     }
 
     private async Task RefillAllTanks()
