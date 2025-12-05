@@ -130,7 +130,13 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         {
             return (acceptableProducts * 100) / produced;
         }
-        catch (DivideByZeroException){}
+        catch (DivideByZeroException)
+        {
+            if (IsConnected())
+            {
+                return 100;
+            }
+        }
         return -1;
     }
 
