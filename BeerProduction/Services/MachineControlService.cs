@@ -130,10 +130,7 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
         {
             return (acceptableProducts * 100) / produced;
         }
-        catch (DivideByZeroException ex)
-        {
-            Console.WriteLine(ex);
-        }
+        catch (DivideByZeroException){}
         return -1;
     }
 
