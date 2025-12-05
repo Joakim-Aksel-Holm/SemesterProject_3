@@ -141,6 +141,34 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
     }
 
     /// <summary>
+    /// Ingredient reads
+    /// </summary>
+    public int GetBarley()
+    {
+        return SafeRead("ns=6;s=::Program:Inventory.Barley", -1);
+    }
+    
+    public int GetHops()
+    {
+        return SafeRead("ns=6;s=::Program:Inventory.Hops", -1);
+    }
+    
+    public int GetMalt()
+    {
+        return SafeRead("ns=6;s=::Program:Inventory.Malt", -1);
+    }
+    
+    public int GetWheat()
+    {
+        return SafeRead("ns=6;s=::Program:Inventory.Wheat", -1);
+    }
+    
+    public int GetYeast()
+    {
+        return SafeRead("ns=6;s=::Program:Inventory.Yeast", -1);
+    }
+    
+    /// <summary>
     /// Reads the current machine status from OPC server (fast read)
     /// </summary>
     public int GetStatus()
