@@ -167,6 +167,14 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
     {
         return SafeRead("ns=6;s=::Program:Inventory.Yeast", -1);
     }
+
+    /// <summary>
+    /// Checks if the inventory is getting filled
+    /// </summary>
+    public bool InventoryIsFilling()
+    {
+        return SafeRead("ns=6;s=::Program:FillingInventory", false);
+    } 
     
     /// <summary>
     /// Reads the current machine status from OPC server (fast read)
