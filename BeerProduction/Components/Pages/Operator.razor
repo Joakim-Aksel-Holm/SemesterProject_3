@@ -220,24 +220,32 @@
             </select>
         </div>
 
-        <div class="div7">
-            <EditForm Model="@batchForm" Context="batch">
+        <EditForm Model="@batchForm" OnValidSubmit="AddBatchButton">
+         <ChildContent Context="formContext">
+            <DataAnnotationsValidator />
+            <div class="div7">
                 <label>
                     Amount:
-                    <InputNumber class="kasser" @bind-Value="batchForm.Size"/>
+                    <InputNumber class="kasser" @bind-Value="batchForm.Size" />
                 </label>
+                <span class="validation-message">
+                    <ValidationMessage For="@(() => batchForm.Size)" />
+                </span>
 
                 <label>
                     Speed:
-                    <InputNumber class="kasser" @bind-Value="batchForm.Speed"/>
+                    <InputNumber class="kasser" @bind-Value="batchForm.Speed" />
                 </label>
-            </EditForm>
-        </div>
+                <span class="validation-message">
+                    <ValidationMessage For="@(() => batchForm.Speed)" />
+                </span>
+            </div>
 
-        <div class="div8">
-            <label for="BatchButton">Add to batch</label>
-            <button class="AddBatch" id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
-        </div>
+            <div class="div8">
+                <button class="AddBatch" type="submit">Add Batch</button>
+            </div>
+            </ChildContent>
+        </EditForm>
 
         <div class="div9">
             <label for="SeePriority">See batch priority</label>
@@ -387,10 +395,19 @@
     private void AddBatchButton()
     {
         var priorityEnum = (BatchPriority)SelectedPriority;
-        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
+
+        Batch batch = new Batch(
+            id,
+            batchForm.SelectedBeerType,
+            batchForm.Size,
+            batchForm.Speed,
+            priorityEnum
+        );
+
         MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
         id++;
     }
+
 
     private void SeeBatchPriority()
     {
