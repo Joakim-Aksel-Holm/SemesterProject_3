@@ -312,24 +312,34 @@
             </select>
         </div>
 
-        <div class="div7">
-            <EditForm Model="@batchForm" Context="batch">
-                <label>
-                    Amount:
-                    <InputNumber class="kasser" @bind-Value="batchForm.Size"/>
-                </label>
+        <EditForm Model="@batchForm" OnValidSubmit="AddBatchButton">
+            <ChildContent Context="formContext">
+                <DataAnnotationsValidator />
+                <div class="div7">
+                    <label>
+                        Amount:
+                        <InputNumber class="kasser" @bind-Value="batchForm.Size" />
+                    </label>
+                    <span class="validation-message">
+                        <ValidationMessage For="@(() => batchForm.Size)" />
+                    </span>
 
-                <label>
-                    Speed:
-                    <InputNumber class="kasser" @bind-Value="batchForm.Speed"/>
-                </label>
-            </EditForm>
-        </div>
+                    <label>
+                        Speed:
+                        <InputNumber class="kasser" @bind-Value="batchForm.Speed" />
+                    </label>
+                    <span class="validation-message">
+                        <ValidationMessage For="@(() => batchForm.Speed)" />
+                    </span>
+                </div>
 
-        <div class="div8">
-            <label for="BatchButton">Add to batch</label>
-            <button class="AddBatch" id="BatchButton" @onclick="AddBatchButton">Add Batch</button>
-        </div>
+                <div class="div8">
+                    <button class="AddBatch" type="submit">Add Batch</button>
+                </div>
+            </ChildContent>
+        </EditForm>
+
+
 
         <div class="div9">
             <label for="SeePriority">See batch priority</label>
