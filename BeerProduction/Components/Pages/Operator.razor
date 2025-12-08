@@ -82,28 +82,120 @@
     </div>
 </div>
 
-<!-- Your existing machine control code below -->
-<div class="machine-view">
-    <div class="machine-inventory">
-        <ol class="ordered-queue">
-            <li class="queue-item">
-                <h4 class="BatchId"> BatchId </h4>
-                <p>Status: venter</p>
-            </li>
-
-            <li class="queue-item">
-                <h4 class="BatchId">BatchId</h4>
-                <p>Status: Venter</p>
-            </li>
-
-            <li class="queue-item">
-                <h4 class="BatchId">BatchId</h4>
-                <p>Status: Venter</p>
-            </li>
-        </ol>
+<!-- Batch Queue Section - Full width with scrolling -->
+<div class="queue-section">
+    <div class="queue-header-section">
+        <h2 class="queue-title">
+            <i class="fas fa-list-ol"></i> Batch Queue
+        </h2>
+        <div class="queue-stats">
+            <span class="queue-stat">
+                <i class="fas fa-clock"></i> @QueuedBatches.Count Batches
+            </span>
+            @if (CurrentBatch != null)
+            {
+                <span class="queue-stat current">
+                    <i class="fas fa-play-circle"></i> Processing Batch @CurrentBatch.Id
+                </span>
+            }
+        </div>
     </div>
+    
+    <div class="queue-main-container">
+        <!-- Currently Processing (Always visible at top) -->
+        @if (CurrentBatch != null)
+        {
+            <div class="current-batch-section">
+                <h3 class="current-batch-title">
+                    <i class="fas fa-cog fa-spin"></i> Currently Processing
+                </h3>
+                <div class="current-batch-card">
+                    <div class="current-batch-info">
+                        <h4 class="current-batch-id">Batch @CurrentBatch.Id</h4>
+                        <div class="current-batch-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Beer Type:</span>
+                                <span class="detail-value">@CurrentBatch.BeerType</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Amount:</span>
+                                <span class="detail-value">@CurrentBatch.Size</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Speed:</span>
+                                <span class="detail-value">@CurrentBatch.Speed</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Priority:</span>
+                                <span class="detail-value priority-@CurrentBatch.Priority.ToString().ToLower()">
+                                    @CurrentBatch.Priority
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value status-processing">@CurrentStatus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        <!-- Queued Batches List (Scrollable) -->
+        <div class="queued-batches-container">
+            <h3 class="queued-title">
+                <i class="fas fa-tasks"></i> Queued Batches (@QueuedBatches.Count)
+            </h3>
+            
+            @if (QueuedBatches.Any())
+            {
+                <div class="queued-batches-grid">
+                    @foreach (var batch in QueuedBatches)
+                    {
+                        <div class="batch-card">
+                            <div class="batch-card-header">
+                                <h4 class="batch-id">Batch @batch.Id</h4>
+                                <span class="batch-priority priority-@batch.Priority.ToString().ToLower()">
+                                    @batch.Priority
+                                </span>
+                            </div>
+                            
+                            <div class="batch-details">
+                                <div class="batch-detail">
+                                    <i class="fas fa-beer"></i>
+                                    <span>@batch.BeerType</span>
+                                </div>
+                                <div class="batch-detail">
+                                    <i class="fas fa-weight"></i>
+                                    <span>@batch.Size units</span>
+                                </div>
+                                <div class="batch-detail">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>@batch.Speed speed</span>
+                                </div>
+                            </div>
+                            
+                            <div class="batch-status queued">
+                                <i class="fas fa-clock"></i> Queued
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-queue-message">
+                    <i class="fas fa-inbox fa-3x"></i>
+                    <h4>No batches in queue</h4>
+                    <p>Add batches using the controls below</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
-
+<!-- Machine Control Section - Original layout -->
+<div class="machine-view">
     @if (MachineControlService == null)
     {
         <p>Loading machine...</p>
@@ -259,6 +351,7 @@
     [Parameter] public MachineControlService MachineControlService { get; set; } = null!;
     int id = 1;
     private Timer? _refreshTimer;
+    private Timer? _queueRefreshTimer;
     private string? _userId;
     private MachineControl? _machineControl;
 
@@ -266,6 +359,14 @@
     private int SelectedPriority { get; set; } = -1;
 
     private BatchForm batchForm = new();
+
+    // Batch queue display properties
+    private List<Batch> QueuedBatches { get; set; } = new();
+    private Batch? CurrentBatch { get; set; }
+    private string CurrentStatus { get; set; } = "Idle";
+
+    // Track all batches we've created (for display)
+    private Dictionary<int, Batch> _allBatches = new();
 
     // Ingredient Tanks Data
     private List<IngredientTank> IngredientTanks { get; set; } = new();
@@ -320,11 +421,19 @@
                 MachineControlService = new MachineControlService(_machineControl, SharedBatchQueue);
                 
                 InitializeIngredientTanks();
+                UpdateBatchQueueDisplay();
                 
+                // Timer for updating ingredient tanks and machine data
                 _refreshTimer = new Timer(200);
-                _refreshTimer.Elapsed += OnRefreshTimerElapsed; // Use the void handler
+                _refreshTimer.Elapsed += OnRefreshTimerElapsed;
                 _refreshTimer.AutoReset = true;
                 _refreshTimer.Enabled = true;
+                
+                // Timer for updating batch queue display (less frequent)
+                _queueRefreshTimer = new Timer(1000);
+                _queueRefreshTimer.Elapsed += OnQueueRefreshTimerElapsed;
+                _queueRefreshTimer.AutoReset = true;
+                _queueRefreshTimer.Enabled = true;
             }
         }
         catch (Exception e)
@@ -345,10 +454,70 @@
         };
     }
 
+    private void UpdateBatchQueueDisplay()
+    {
+        try
+        {
+            // We need to get batches from the queue. Since BatchQueue doesn't expose GetAllBatches(),
+            // we'll need to track them ourselves or modify BatchQueue.
+            // For now, we'll use reflection as a temporary solution.
+            var queueField = MachineControlService?.BatchQueue?.GetType().GetField("_batchQueue", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (queueField != null)
+            {
+                var priorityQueue = queueField.GetValue(MachineControlService.BatchQueue) as PriorityQueue<Batch, BatchPriorityKey>;
+                if (priorityQueue != null)
+                {
+                    // Get all items from the priority queue
+                    var unorderedItems = priorityQueue.UnorderedItems;
+                    QueuedBatches = unorderedItems.Select(item => item.Element).ToList();
+                    
+                    // Order by priority and ID
+                    QueuedBatches = QueuedBatches
+                        .OrderByDescending(b => (int)b.Priority)
+                        .ThenBy(b => b.Id)
+                        .ToList();
+                }
+            }
+            
+            // Check for current batch
+            var currentBatchId = MachineControlService?.GetBatchId();
+            if (currentBatchId.HasValue && currentBatchId.Value > 0)
+            {
+                // Find the batch that's currently being processed
+                var current = QueuedBatches.FirstOrDefault(b => b.Id == currentBatchId.Value);
+                if (current != null)
+                {
+                    CurrentBatch = current;
+                    QueuedBatches.Remove(current);
+                    CurrentStatus = "Processing";
+                }
+                else if (_allBatches.TryGetValue(currentBatchId.Value, out var storedBatch))
+                {
+                    CurrentBatch = storedBatch;
+                    CurrentStatus = "Processing";
+                }
+            }
+            else
+            {
+                CurrentBatch = null;
+                CurrentStatus = "Idle";
+            }
+        }
+        catch
+        {
+            // Fallback: just use our tracked batches
+            QueuedBatches = _allBatches.Values
+                .Where(b => b.Id != (CurrentBatch?.Id ?? -1))
+                .OrderByDescending(b => (int)b.Priority)
+                .ThenBy(b => b.Id)
+                .ToList();
+        }
+    }
+
     private string GetLevelClass(decimal level)
     {
-        // The previous switch expression using '<' confused the Razor parser.
-        // Using standard if-statements fixes the RZ9980 and RZ1006 errors.
         if (level < 25)
         {
             return "level-low";
@@ -367,15 +536,22 @@
         if (MachineControlService != null)
         {
             InitializeIngredientTanks();
-            
             InvokeAsync(StateHasChanged);
         }
+    }
+
+    private void OnQueueRefreshTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        UpdateBatchQueueDisplay();
+        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
         _refreshTimer?.Stop();
         _refreshTimer?.Dispose();
+        _queueRefreshTimer?.Stop();
+        _queueRefreshTimer?.Dispose();
     }
 
     private async Task abortMachine() => await MachineControlService.AbortCommandAsync();
@@ -386,16 +562,38 @@
 
     private void AddBatchButton()
     {
+        if (SelectedBeerType == -1 || SelectedPriority == -1 || batchForm.Size <= 0 || batchForm.Speed <= 0)
+        {
+            // Show validation error
+            return;
+        }
+
         var priorityEnum = (BatchPriority)SelectedPriority;
-        Batch batch = new Batch(id, (BeerType)SelectedBeerType, batchForm.Size, batchForm.Speed, priorityEnum);
+        var beerTypeEnum = (BeerType)SelectedBeerType;
+        
+        Batch batch = new Batch(id, beerTypeEnum, batchForm.Size, batchForm.Speed, priorityEnum);
+        
+        // Store the batch for display
+        _allBatches[id] = batch;
+        
+        // Add to queue
         MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
         id++;
+        
+        // Update display immediately
+        UpdateBatchQueueDisplay();
+        InvokeAsync(StateHasChanged);
+        
+        // Reset form
+        SelectedBeerType = -1;
+        SelectedPriority = -1;
+        batchForm = new BatchForm();
     }
 
     private void SeeBatchPriority()
     {
         MachineControlService.BatchQueue.BatchQueuePrint();
+        UpdateBatchQueueDisplay();
+        InvokeAsync(StateHasChanged);
     }
-
 }
-

@@ -103,5 +103,18 @@ namespace BeerProduction.Services
                 Console.WriteLine("\n");
             }
         }
+        
+        // In BatchQueue.cs, add this method:
+        public List<Batch> GetAllBatches()
+        {
+            lock (_lock)
+            {
+                return _batchQueue.UnorderedItems
+                    .OrderByDescending(item => item.Priority.Priority)
+                    .ThenBy(item => item.Priority.Id)
+                    .Select(item => item.Element)
+                    .ToList();
+            }
+        }
     }
 }

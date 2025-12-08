@@ -1,85 +1,131 @@
+/* Machine View - Original styles */
 .machine-view {
     display: flex;
-    width: 100%; 
+    width: 100%;
     flex-direction: column;
-
 }
 
 .machine-inventory {
-    
     width: 100%;
     flex-shrink: 0;
     flex-direction: column;
-    background-color: #72A500; 
+    background-color: #72A500;
     padding: 15px;
     margin-top: 15px;
-
     border-radius: 25px;
 }
 
-.Machine-bottom{
+.Machine-bottom {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
-    
 }
-.ButtonAlert{
+
+.ButtonAlert {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     padding: 5px;
     margin-top: 5px;
-    
-    
 }
 
-.AlertButton{
-
+.AlertButton {
     background: #990f02;
-    color:#FAF0E6;
+    color: #FAF0E6;
     font-weight: bold;
     font-family: sans-serif;
-    Font-size: large;
-    width: 150px;                          
-    height: 40px ;            
+    font-size: large;
+    width: 150px;
+    height: 40px;
     transition-duration: 0.3s;
-    border-radius: 25px;                   
-    border-style: none;                    
-    margin-top: 5px;        
+    border-radius: 25px;
+    border-style: none;
+    margin-top: 5px;
     cursor: pointer;
-    
-}                                          
+}
 
-.AlertButton:active
-{
-    background: #72A500 ;
+.AlertButton:active {
+    background: #72A500;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
 
-.ordered-queue{
+/* Original ordered queue styles */
+.ordered-queue {
     display: flex;
     flex-direction: row;
     margin: 5px;
-    overflow-x:auto;
-    
+    overflow-x: auto;
     list-style-type: none;
 }
 
-.ordered-queue-item{
+/* Keep original .ordered-queue-item style if you use it elsewhere */
+.ordered-queue-item {
     margin: 10px;
 }
 
+/* Original queue item styles */
+.queue-item {
+    flex-direction: column;
+    background-color: #FAF0E6;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 10px;
+    transition: 0.5s ease;
+}
 
+.queue-item:hover {
+    background-color: #0a53be;
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    cursor: pointer;
+    position: relative;
+}
+
+.queue-item:first-child:hover {
+    background-color: #990f02;
+    color: white;
+    transform: scale(1.10);
+}
+
+.queue-item:first-child:hover::after {
+    content: "⚠️Up Next!";
+    font-family: sans-serif;
+    position: absolute;
+    top: 65px;
+    left: 20px;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s;
+}
+
+.queue-item:nth-child(2):hover {
+    background-color: darkorange;
+    transform: scale(1.08);
+}
+
+.queue-item:nth-child(3):hover {
+    background-color: #28a745;
+    transform: scale(1.06);
+}
+
+.ordered-queue {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+/* Machine meter - Original styles */
 .machine-meter {
-    flex-grow: 1; /* Vokser og fylder al resterende plads */
+    flex-grow: 1;
     background-color: #10154C;
     padding: 15px;
     margin-top: 5px;
     border-radius: 25px;
-    
-    
-    
 }
 
 .variables ul {
@@ -89,19 +135,18 @@
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 }
-/* first row of the grid  */
+
+/* Grid positioning - Original */
 .variables li:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
 .variables li:nth-child(8) { grid-area: 2 / 1 / 3 / 2; }
 .variables li:nth-child(3) { grid-area: 1 / 2 / 2 / 3; }
 .variables li:nth-child(2) { grid-area: 2 / 2 / 3 / 3; }
-
 .variables li:nth-child(7) { grid-area: 2 / 3 / 3 / 4; }
 .variables li:nth-child(6) { grid-area: 1 / 3 / 2 / 4; }
 .variables li:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
 .variables li:nth-child(5) { grid-area: 2 / 4 / 3 / 5; }
 
-
-.variables li{
+.variables li {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -110,89 +155,12 @@
     font-family: sans-serif;
     font-weight: bold;
     margin: 15px;
-    
-    
 }
 
-.VaribaleLogo{
+.VaribaleLogo {
     width: 75px;
-    height: 75px;  
+    height: 75px;
     border-radius: 18.75px;
-}
-
-
-
-.queue-item{
-    
-    flex-direction: column;
-    background-color: #FAF0E6;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 10px;
-    
-    /*Det her gør at der går 0,5 før det fader*/
-    /* ease gør det "naturligt"*/
-    transition: 0.5s ease;
-}
-
-.queue-item:hover {
-    
-    background-color: #0a53be;
-    
-    transform: scale(1.02);
-
-    /*skaber shadow og løfter det op*/
-    
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    
-    /* gør musen klik bar */
-    cursor: pointer;
-    
-    position: relative; 
-    
-}
-
-
-.queue-item:first-child:hover {   
-    background-color: #990f02;
-    color: white;
-    transform: scale(1.10);
-    
-}
-
-.queue-item:first-child:hover::after{
-    content: "⚠️Up Next!";
-    font-family: sans-serif;
-    position: absolute;
-    
-    top:65px;
-    left: 20px;
-    
-    background-color: #333;
-    color: white;
-    padding: 10px; 
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    animation: fadeIn 0.3s;
-}
-
-.queue-item:nth-child(2):hover{
-    background-color: darkorange;
-    transform: scale(1.08);
-    
-    
-}
-
-.queue-item:nth-child(3):hover{
-    background-color: #28a745;
-    transform: scale(1.06);
-}
-
-.ordered-queue{
-    font-family: sans-serif;
-    font-weight: bold;
 }
 
 /* Ingredient Tanks Styles */
@@ -324,36 +292,6 @@
     50% { transform: translateX(-50%) translateY(-2px); }
 }
 
-.bubbles {
-    position: absolute;
-    width: 100%;
-    height: 20px;
-    bottom: 0;
-    opacity: 0.7;
-}
-
-.bubble {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    bottom: 0;
-    animation: bubbleUp 3s infinite ease-in;
-}
-
-@keyframes bubbleUp {
-    0% {
-        transform: translateY(0) scale(0.5);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.7;
-    }
-    100% {
-        transform: translateY(-100px) scale(1);
-        opacity: 0;
-    }
-}
-
 .tank-info {
     display: flex;
     justify-content: space-between;
@@ -368,44 +306,6 @@
 .info-value {
     font-weight: 600;
     color: #f1f1f1;
-}
-
-.tank-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
-.tank-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.9rem;
-}
-
-.tank-btn-refill {
-    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-    color: white;
-}
-
-.tank-btn-drain {
-    background: linear-gradient(90deg, #ef4444, #b91c1c);
-    color: white;
-}
-
-.tank-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.tank-btn:active {
-    transform: scale(0.98);
 }
 
 .ingredient-stats {
@@ -441,5 +341,332 @@
     color: #94a3b8;
 }
 
+/* =========================================== */
+/* NEW FULL-WIDTH QUEUE SECTION STYLES         */
+/* =========================================== */
 
+/* Batch Queue Section - Full width */
+.queue-section {
+    background: white;
+    border-radius: 25px; /* Match your style */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    padding: 20px;
+    width: 100%;
+}
 
+.queue-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 15px;
+}
+
+.queue-title {
+    color: #333;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.queue-title i {
+    color: #4CAF50;
+    margin-right: 10px;
+}
+
+.queue-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.queue-stat {
+    background: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.queue-stat.current {
+    background: #e3f2fd;
+    color: #2196F3;
+    border-color: #2196F3;
+}
+
+.queue-stat i {
+    margin-right: 5px;
+}
+
+/* Main container with fixed height and scrolling */
+.queue-main-container {
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* Fixed height */
+    overflow: hidden; /* Hide overflow from parent */
+}
+
+/* Current Batch Section - Fixed at top */
+.current-batch-section {
+    flex-shrink: 0; /* Don't shrink */
+    margin-bottom: 20px;
+}
+
+.current-batch-title {
+    color: #333;
+    font-size: 1.2em;
+    margin: 0 0 15px 0;
+}
+
+.current-batch-title i {
+    color: #2196F3;
+    margin-right: 10px;
+}
+
+.current-batch-card {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border: 2px solid #2196F3;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.current-batch-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.current-batch-id {
+    color: #1565c0;
+    font-size: 1.3em;
+    margin: 0 0 15px 0;
+    border-bottom: 2px dashed #90caf9;
+    padding-bottom: 10px;
+}
+
+.current-batch-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.status-processing {
+    color: #2196F3;
+    font-weight: bold;
+}
+
+.priority-high {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.priority-medium {
+    color: #f57c00;
+    font-weight: bold;
+}
+
+.priority-low {
+    color: #388e3c;
+    font-weight: bold;
+}
+
+/* Queued Batches Container - Scrollable */
+.queued-batches-container {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+}
+
+.queued-title {
+    color: #333;
+    font-size: 1.2em;
+    margin: 0 0 20px 0;
+}
+
+.queued-title i {
+    color: #4CAF50;
+    margin-right: 10px;
+}
+
+/* Scrollbar styling */
+.queued-batches-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.queued-batches-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.queued-batches-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.queued-batches-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Queued Batches Grid */
+.queued-batches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+/* NEW BATCH CARD STYLES (for the full-width queue section) */
+.batch-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.batch-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: #4CAF50;
+}
+
+.batch-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.batch-id {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.batch-priority {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+/* Priority color classes for new batch cards */
+.batch-priority.priority-high {
+    background: #fdecea;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+}
+
+.batch-priority.priority-medium {
+    background: #fff3e0;
+    color: #f57c00;
+    border: 1px solid #ffe0b2;
+}
+
+.batch-priority.priority-low {
+    background: #e8f5e9;
+    color: #388e3c;
+    border: 1px solid #c8e6c9;
+}
+
+.batch-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.batch-detail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.batch-detail i {
+    color: #4CAF50;
+    width: 16px;
+}
+
+.batch-status {
+    padding: 8px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.batch-status.queued {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.empty-queue-message {
+    text-align: center;
+    padding: 50px 20px;
+    color: #6c757d;
+}
+
+.empty-queue-message i {
+    color: #dee2e6;
+    margin-bottom: 15px;
+}
+
+.empty-queue-message h4 {
+    margin: 10px 0 5px 0;
+    color: #6c757d;
+}
+
+.empty-queue-message p {
+    font-size: 0.9em;
+    color: #999;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .queue-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .queue-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .current-batch-details {
+        grid-template-columns: 1fr;
+    }
+
+    .queued-batches-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .queue-main-container {
+        height: 600px; /* Taller on mobile */
+    }
+}
