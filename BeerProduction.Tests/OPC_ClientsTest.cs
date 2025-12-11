@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 public class OPC_Client
 { 
     
-    static MachineControl _testMachine = new MachineControl(1, "opc.tcp://127.0.0.1:4840"); 
+    static MachineControl _testMachine = new MachineControl(1, "opc.tcp://127.0.0.1:4840", "testMachine"); 
     MachineControlService _testMachineControlService = new MachineControlService(_testMachine);
     public int status = _testMachine.Client.ReadNode("ns=6;s=::Program:Cube.Status.StateCurrent").As<int>();
 
