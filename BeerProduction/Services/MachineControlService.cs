@@ -19,7 +19,7 @@ public class MachineControlService
         BatchQueue = batchQueue;
     }
 
-  
+
     public MachineControlService(MachineControl machineControl)
     {
         MachineControl = machineControl;
@@ -40,7 +40,6 @@ public class MachineControlService
         }
         catch
         {
-           
             return fallback;
         }
     }
@@ -55,7 +54,7 @@ public class MachineControlService
     public int GetDefects() => SafeRead("ns=6;s=::Program:Cube.Admin.ProdDefectiveCount", -1);
     public int GetProduced() => SafeRead("ns=6;s=::Program:Cube.Admin.ProdProcessedCount", -1);
 
- 
+
     // Live success rate
 
     public int LiveSuccesRate()
@@ -69,7 +68,6 @@ public class MachineControlService
         }
         catch (DivideByZeroException)
         {
-           
             return IsConnected() ? 100 : -1;
         }
     }
@@ -115,7 +113,7 @@ public class MachineControlService
         return (int)Math.Round(pct);
     }
 
-   
+
     public async Task<double> GetDefectRateAsync()
     {
         var total = GetProduced();
@@ -124,7 +122,7 @@ public class MachineControlService
         return await Task.FromResult(total > 0 ? (defects / (double)total) * 100 : 0);
     }
 
-  
+
     public async Task<int> GetAcceptableAsync()
     {
         var produced = GetProduced();
@@ -133,7 +131,7 @@ public class MachineControlService
         return await Task.FromResult(produced - defects);
     }
 
-  
+
     public int GetAcceptable()
     {
         var fallback = GetProduced() - GetDefects();
@@ -142,7 +140,7 @@ public class MachineControlService
         return (machineRead > 0) ? machineRead : fallback;
     }
 
-    
+
     public async Task<int> GetBatchProcessAsync()
     {
         var produced = GetProduced();
@@ -231,7 +229,6 @@ public class MachineControlService
         }
         else
         {
-            
             await Task.Delay(2000);
             await StartMachineAsync();
         }
@@ -268,10 +265,10 @@ public class MachineControlService
 
         Console.WriteLine("All batches processed.");
     }
+
     //methods for machine
     public async Task StopMachineAsync()
     {
-       
         if (GetStatus() == 9) return;
         await StopCommandAsync();
     }

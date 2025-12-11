@@ -142,16 +142,16 @@
         gap: 1.5rem;
         margin-top: 1rem;
     }
-    
+
     .bg-purple {
         background-color: #6f42c1 !important;
     }
-    
+
     .card {
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         transition: box-shadow 0.15s ease-in-out;
     }
-    
+
     .card:hover {
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
@@ -166,7 +166,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
-        
+
         _refreshTimer = new Timer(1000);
         _refreshTimer.Elapsed += async (_, _) => await OnTimerElapsed();
         _refreshTimer.AutoReset = true;
@@ -206,7 +206,7 @@
     {
         return liters >= 1000 ? $"{liters / 1000.0:F1} kL" : $"{liters} L";
     }
-    
+
     private string FormatNumber(int number)
     {
         return number >= 1000 ? $"{number / 1000.0:F1}K" : $"{number}";
@@ -225,49 +225,49 @@
 
         var produced = connectedMachine.GetProduced();
         var defects = connectedMachine.GetDefects();
-        
+
         if (produced == 0) return 0;
         return Math.Round((defects / (double)produced) * 100, 1);
     }
-    
+
     private int GetTotalDefects()
     {
         var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
         return connectedMachine?.GetDefects() ?? 0;
     }
-    
+
     private int GetTotalAccepted()
     {
         var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
         if (connectedMachine == null) return 0;
-        
+
         // Accepted = Produced - Defects
         return connectedMachine.GetProduced() - connectedMachine.GetDefects();
     }
-    
+
     private int GetMachinesInExecuteState()
     {
         var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
         return connectedMachine?.GetStatus() == 6 ? 1 : 0;
     }
-    
+
     private double GetProductionPercentage()
     {
         return GetMachinesInExecuteState() > 0 ? 100 : 0;
     }
-    
+
     private int GetAverageMachineSpeed()
     {
         var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
         return connectedMachine?.GetPpm() ?? 0;
     }
-    
+
     private int GetAverageMaintenance()
     {
         var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
         return connectedMachine?.GetMaintenanceStatus() ?? 0;
     }
-    
+
     private double GetUptimePercentage()
     {
         var connectedMachines = _machines?.Count(m => m.IsConnected()) ?? 0;
@@ -286,7 +286,7 @@
         var connectedMachine = _machines?.FirstOrDefault(m => m.IsConnected());
         return connectedMachine?.GetProduced() > 0 ? 1 : 0;
     }
-    
+
     private string GetDefectRateCardClass()
     {
         var defectRate = GetOverallDefectRate();
@@ -303,4 +303,5 @@
         _refreshTimer?.Stop();
         _refreshTimer?.Dispose();
     }
+
 }

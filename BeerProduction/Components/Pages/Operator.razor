@@ -18,343 +18,348 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <AuthorizeView Roles="operator,admin">
-<Authorized>
-<!-- Ingredients Section -->
-<div class="ingredients-section">
-    <div class="ingredients-header">
-        <h2 class="ingredients-title">
-            <i class="fas fa-industry"></i> Ingredient Tanks
-        </h2>
-    </div>
+    <Authorized>
+        <!-- Ingredients Section -->
+        <div class="ingredients-section">
+            <div class="ingredients-header">
+                <h2 class="ingredients-title">
+                    <i class="fas fa-industry"></i> Ingredient Tanks
+                </h2>
+            </div>
 
-    <div class="ingredients-grid">
-        @foreach (var tank in IngredientTanks)
-        {
-            <div class="tank-card">
-                <div class="tank-header">
-                    <div class="ingredient-name">
-                        <i class="@tank.Icon ingredient-icon"></i>
-                        <span>@tank.Name</span>
+            <div class="ingredients-grid">
+                @foreach (var tank in IngredientTanks)
+                {
+                    <div class="tank-card">
+                        <div class="tank-header">
+                            <div class="ingredient-name">
+                                <i class="@tank.Icon ingredient-icon"></i>
+                                <span>@tank.Name</span>
+                            </div>
+                            <div class="tank-level @GetLevelClass(tank.Level)">
+                                @tank.Level%
+                            </div>
+                        </div>
+
+                        <div class="tank-visual-container" id="@($"tank-{tank.Name.ToLower()}")">
+                            <div class="tank-outline"></div>
+                            <div class="tank-liquid liquid-animation"
+                                 style="height: @(tank.Level)%; background-color: @tank.Color;">
+                            </div>
+                        </div>
+
+                        <div class="tank-info">
+                            <div class="info-item">
+                                <div class="info-label">Capacity</div>
+                                <div class="info-value">@tank.Capacity @tank.Unit</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Current</div>
+                                <div
+                                    class="info-value">@((tank.Capacity * tank.Level / 100).ToString("F0")) @tank.Unit</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="tank-level @GetLevelClass(tank.Level)">
-                        @tank.Level%
-                    </div>
+                }
+            </div>
+
+            <div class="ingredient-stats">
+                <div class="stat-card">
+                    <div class="stat-value">@TotalCapacityUsed%</div>
+                    <div class="stat-label">Total Capacity Used</div>
                 </div>
-
-                <div class="tank-visual-container" id="@($"tank-{tank.Name.ToLower()}")">
-                    <div class="tank-outline"></div>
-                    <div class="tank-liquid liquid-animation"
-                         style="height: @(tank.Level)%; background-color: @tank.Color;">
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-value">@ActiveTanks</div>
+                    <div class="stat-label">Active Tanks</div>
                 </div>
-
-                <div class="tank-info">
-                    <div class="info-item">
-                        <div class="info-label">Capacity</div>
-                        <div class="info-value">@tank.Capacity @tank.Unit</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Current</div>
-                        <div class="info-value">@((tank.Capacity * tank.Level / 100).ToString("F0")) @tank.Unit</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-value">@AverageLevel%</div>
+                    <div class="stat-label">Average Fill Level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">@IngredientTanks.Count</div>
+                    <div class="stat-label">Ingredient Types</div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
 
-    <div class="ingredient-stats">
-        <div class="stat-card">
-            <div class="stat-value">@TotalCapacityUsed%</div>
-            <div class="stat-label">Total Capacity Used</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value">@ActiveTanks</div>
-            <div class="stat-label">Active Tanks</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value">@AverageLevel%</div>
-            <div class="stat-label">Average Fill Level</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value">@IngredientTanks.Count</div>
-            <div class="stat-label">Ingredient Types</div>
-        </div>
-    </div>
-</div>
-
-<!-- Batch Queue Section - Full width with scrolling -->
-<div class="queue-section">
-    <div class="queue-header-section">
-        <h2 class="queue-title">
-            <i class="fas fa-list-ol"></i> Batch Queue
-        </h2>
-        <div class="queue-stats">
+        <!-- Batch Queue Section - Full width with scrolling -->
+        <div class="queue-section">
+            <div class="queue-header-section">
+                <h2 class="queue-title">
+                    <i class="fas fa-list-ol"></i> Batch Queue
+                </h2>
+                <div class="queue-stats">
             <span class="queue-stat">
                 <i class="fas fa-clock"></i> @QueuedBatches.Count Batches
             </span>
-            @if (CurrentBatch != null)
-            {
-                <span class="queue-stat current">
+                    @if (CurrentBatch != null)
+                    {
+                        <span class="queue-stat current">
                     <i class="fas fa-play-circle"></i> Processing Batch @CurrentBatch.Id
                 </span>
-            }
-        </div>
-    </div>
-    
-    <div class="queue-main-container">
-        <!-- Currently Processing (Always visible at top) -->
-        @if (CurrentBatch != null)
-        {
-            <div class="current-batch-section">
-                <h3 class="current-batch-title">
-                    <i class="fas fa-cog fa-spin"></i> Currently Processing
-                </h3>
-                <div class="current-batch-card">
-                    <div class="current-batch-info">
-                        <h4 class="current-batch-id">Batch @CurrentBatch.Id</h4>
-                        <div class="current-batch-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Beer Type:</span>
-                                <span class="detail-value">@CurrentBatch.BeerType</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Amount:</span>
-                                <span class="detail-value">@CurrentBatch.Size</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Speed:</span>
-                                <span class="detail-value">@CurrentBatch.Speed</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Priority:</span>
-                                <span class="detail-value priority-@CurrentBatch.Priority.ToString().ToLower()">
+                    }
+                </div>
+            </div>
+
+            <div class="queue-main-container">
+                <!-- Currently Processing (Always visible at top) -->
+                @if (CurrentBatch != null)
+                {
+                    <div class="current-batch-section">
+                        <h3 class="current-batch-title">
+                            <i class="fas fa-cog fa-spin"></i> Currently Processing
+                        </h3>
+                        <div class="current-batch-card">
+                            <div class="current-batch-info">
+                                <h4 class="current-batch-id">Batch @CurrentBatch.Id</h4>
+                                <div class="current-batch-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Beer Type:</span>
+                                        <span class="detail-value">@CurrentBatch.BeerType</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Amount:</span>
+                                        <span class="detail-value">@CurrentBatch.Size</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Speed:</span>
+                                        <span class="detail-value">@CurrentBatch.Speed</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Priority:</span>
+                                        <span class="detail-value priority-@CurrentBatch.Priority.ToString().ToLower()">
                                     @CurrentBatch.Priority
                                 </span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status:</span>
-                                <span class="detail-value status-processing">@CurrentStatus</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Status:</span>
+                                        <span class="detail-value status-processing">@CurrentStatus</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        }
-        
-        <!-- Queued Batches List (Scrollable) -->
-        <div class="queued-batches-container">
-            <h3 class="queued-title">
-                <i class="fas fa-tasks"></i> Queued Batches (@QueuedBatches.Count)
-            </h3>
-            
-            @if (QueuedBatches.Any())
-            {
-                <div class="queued-batches-grid">
-                    @foreach (var batch in QueuedBatches)
+                }
+
+                <!-- Queued Batches List (Scrollable) -->
+                <div class="queued-batches-container">
+                    <h3 class="queued-title">
+                        <i class="fas fa-tasks"></i> Queued Batches (@QueuedBatches.Count)
+                    </h3>
+
+                    @if (QueuedBatches.Any())
                     {
-                        <div class="batch-card">
-                            <div class="batch-card-header">
-                                <h4 class="batch-id">Batch @batch.Id</h4>
-                                <span class="batch-priority priority-@batch.Priority.ToString().ToLower()">
+                        <div class="queued-batches-grid">
+                            @foreach (var batch in QueuedBatches)
+                            {
+                                <div class="batch-card">
+                                    <div class="batch-card-header">
+                                        <h4 class="batch-id">Batch @batch.Id</h4>
+                                        <span class="batch-priority priority-@batch.Priority.ToString().ToLower()">
                                     @batch.Priority
                                 </span>
-                            </div>
-                            
-                            <div class="batch-details">
-                                <div class="batch-detail">
-                                    <i class="fas fa-beer"></i>
-                                    <span>@batch.BeerType</span>
+                                    </div>
+
+                                    <div class="batch-details">
+                                        <div class="batch-detail">
+                                            <i class="fas fa-beer"></i>
+                                            <span>@batch.BeerType</span>
+                                        </div>
+                                        <div class="batch-detail">
+                                            <i class="fas fa-weight"></i>
+                                            <span>@batch.Size units</span>
+                                        </div>
+                                        <div class="batch-detail">
+                                            <i class="fas fa-tachometer-alt"></i>
+                                            <span>@batch.Speed speed</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="batch-status queued">
+                                        <i class="fas fa-clock"></i> Queued
+                                    </div>
                                 </div>
-                                <div class="batch-detail">
-                                    <i class="fas fa-weight"></i>
-                                    <span>@batch.Size units</span>
-                                </div>
-                                <div class="batch-detail">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                    <span>@batch.Speed speed</span>
-                                </div>
-                            </div>
-                            
-                            <div class="batch-status queued">
-                                <i class="fas fa-clock"></i> Queued
-                            </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-queue-message">
+                            <i class="fas fa-inbox fa-3x"></i>
+                            <h4>No batches in queue</h4>
+                            <p>Add batches using the controls below</p>
                         </div>
                     }
                 </div>
+            </div>
+        </div>
+
+        <!-- Machine Control Section -->
+        <div class="machine-view">
+            @if (MachineControlService == null)
+            {
+                <p>Loading machine...</p>
             }
             else
             {
-                <div class="empty-queue-message">
-                    <i class="fas fa-inbox fa-3x"></i>
-                    <h4>No batches in queue</h4>
-                    <p>Add batches using the controls below</p>
+                <div class="machine-meter">
+                    <div class="variables">
+                        <ul>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch">
+                                <span>
+                            @MachineControlService.GetBatchId()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg"
+                                     alt="Temperature">
+                                <span>
+                            @MachineControlService.GetTemperature()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity">
+                                <span>
+                            @MachineControlService.GetHumidity()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg"
+                                     alt="Amount to produce">
+                                <span>
+                            @MachineControlService.GetAmount()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced">
+                                <span>
+                            @MachineControlService.GetProduced()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg"
+                                     alt="Acceptable Products">
+                                <span>
+                            @MachineControlService.GetAcceptable()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg"
+                                     alt="Defect Products">
+                                <span>
+                            @MachineControlService.GetDefects()
+                        </span>
+                            </li>
+                            <li>
+                                <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg"
+                                     alt=" Succesrate">
+                                <span>
+                            @MachineControlService.LiveSuccesRate() %
+                        </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="Machine-bottom">
+                    <div class="ButtonAlert">
+                        <button class="AlertButton">
+                            ALERT
+                        </button>
+                    </div>
                 </div>
             }
         </div>
-    </div>
-</div>
 
-<!-- Machine Control Section - Original layout -->
-<div class="machine-view">
-    @if (MachineControlService == null)
-    {
-        <p>Loading machine...</p>
-    }
-    else
-    {
-        <div class="machine-meter">
-            <div class="variables">
-                <ul>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Batch.jpg" alt="Batch">
-                        <span>
-                            @MachineControlService.GetBatchId()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Temperature.jpg" alt="Temperature">
-                        <span>
-                            @MachineControlService.GetTemperature()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Humidity.jpg" alt="Humidity">
-                        <span>
-                            @MachineControlService.GetHumidity()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AmountToProduce.jpg" alt="Amount to produce">
-                        <span>
-                            @MachineControlService.GetAmount()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/Produced.jpg" alt="Produced">
-                        <span>
-                            @MachineControlService.GetProduced()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/AcceptableProducts.jpg" alt="Acceptable Products">
-                        <span>
-                            @MachineControlService.GetAcceptable()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/DefectProduct.jpg" alt="Defect Products">
-                        <span>
-                            @MachineControlService.GetDefects()
-                        </span>
-                    </li>
-                    <li>
-                        <img class="VaribaleLogo" src="../assets/VariablesLogo/SuccesRate.jpg" alt=" Succesrate">
-                        <span>
-                            @MachineControlService.LiveSuccesRate() %
-                        </span>
-                    </li>
-                </ul>
+        <h1>Machine control</h1>
+
+        <div class="parent">
+            <div class="child1">
+                <div class="div1">
+                    <button class="startButton" @onclick="startMachine">Start</button>
+                </div>
+                <div class="div2">
+                    <button class="stopButton" @onclick="stopMachine">Stop</button>
+                </div>
+                <div class="div3">
+                    <button class="ResetButton" @onclick="resetMachine">Reset</button>
+                </div>
+                <div class="div4">
+                    <button class="ClearButton" @onclick="clearMachine">Clear</button>
+                </div>
+                <div class="div5">
+                    <button class="abortButton " @onclick="abortMachine">Abort</button>
+                </div>
             </div>
-        </div>
 
-        <div class="Machine-bottom">
-            <div class="ButtonAlert">
-                <button class="AlertButton">
-                    ALERT
-                </button>
-            </div>
-        </div>
-    }
-</div>
-
-<h1>Machine control</h1>
-
-<div class="parent">
-    <div class="child1">
-        <div class="div1">
-            <button class="startButton" @onclick="startMachine">Start</button>
-        </div>
-        <div class="div2">
-            <button class="stopButton"@onclick="stopMachine">Stop</button>
-        </div>
-        <div class="div3">
-            <button class="ResetButton" @onclick="resetMachine">Reset</button>
-        </div>
-        <div class="div4">
-            <button class="ClearButton" @onclick="clearMachine">Clear</button>
-        </div>
-        <div class="div5">
-            <button class="abortButton " @onclick="abortMachine">Abort</button>
-        </div>
-    </div>
-
-    <div class="child2">
-        <div class="div6">
-            <label for="BeerType">Select a Beer type</label>
-            <select class="pulldown1" @bind="SelectedBeerType" id="BeerType">
-                <option value="-1" disabled>Select a beer type</option>
-                <option value="0">Pilsner</option>
-                <option value="1">Wheat</option>
-                <option value="2">IPA</option>
-                <option value="3">Stout</option>
-                <option value="4">Ale</option>
-                <option value="5">Alcohol free</option>
-            </select>
-        </div>
-
-        <div class="priority">
-            <label for="Priority">Select a Beer priority</label>
-            <select class="pulldown1" @bind="SelectedPriority" id="Priority">
-                <option value="-1" disabled>Select a priority type</option>
-                <option value="0">Low</option>
-                <option value="1">Medium</option>
-                <option value="2">High</option>
-            </select>
-        </div>
-
-        <EditForm Model="@batchForm" OnValidSubmit="AddBatchButton">
-            <ChildContent Context="formContext">
-                <DataAnnotationsValidator />
-                <div class="div7">
-                    <label>
-                        Amount:
-                        <InputNumber class="kasser" @bind-Value="batchForm.Size" />
-                    </label>
-                    <span class="validation-message">
-                        <ValidationMessage For="@(() => batchForm.Size)" />
-                    </span>
-
-                    <label>
-                        Speed:
-                        <InputNumber class="kasser" @bind-Value="batchForm.Speed" />
-                    </label>
-                    <span class="validation-message">
-                        <ValidationMessage For="@(() => batchForm.Speed)" />
-                    </span>
+            <div class="child2">
+                <div class="div6">
+                    <label for="BeerType">Select a Beer type</label>
+                    <select class="pulldown1" @bind="SelectedBeerType" id="BeerType">
+                        <option value="-1" disabled>Select a beer type</option>
+                        <option value="0">Pilsner</option>
+                        <option value="1">Wheat</option>
+                        <option value="2">IPA</option>
+                        <option value="3">Stout</option>
+                        <option value="4">Ale</option>
+                        <option value="5">Alcohol free</option>
+                    </select>
                 </div>
 
-                <div class="div8">
-                    <button class="AddBatch" type="submit">Add Batch</button>
+                <div class="priority">
+                    <label for="Priority">Select a Beer priority</label>
+                    <select class="pulldown1" @bind="SelectedPriority" id="Priority">
+                        <option value="-1" disabled>Select a priority type</option>
+                        <option value="0">Low</option>
+                        <option value="1">Medium</option>
+                        <option value="2">High</option>
+                    </select>
                 </div>
-            </ChildContent>
-        </EditForm>
+
+                <EditForm Model="@batchForm" OnValidSubmit="AddBatchButton">
+                    <ChildContent Context="formContext">
+                        <DataAnnotationsValidator/>
+                        <div class="div7">
+                            <label>
+                                Amount:
+                                <InputNumber class="kasser" @bind-Value="batchForm.Size"/>
+                            </label>
+                            <span class="validation-message">
+                        <ValidationMessage For="@(() => batchForm.Size)"/>
+                    </span>
+
+                            <label>
+                                Speed:
+                                <InputNumber class="kasser" @bind-Value="batchForm.Speed"/>
+                            </label>
+                            <span class="validation-message">
+                        <ValidationMessage For="@(() => batchForm.Speed)"/>
+                    </span>
+                        </div>
+
+                        <div class="div8">
+                            <button class="AddBatch" type="submit">Add Batch</button>
+                        </div>
+                    </ChildContent>
+                </EditForm>
 
 
-
-        <div class="div9">
-            <label for="SeePriority">See batch priority</label>
-            <button class="BatchPriority" id="SeePriority" @onclick="SeeBatchPriority">
-                Batch Priority
-            </button>
+                <div class="div9">
+                    <label for="SeePriority">See batch priority</label>
+                    <button class="BatchPriority" id="SeePriority" @onclick="SeeBatchPriority">
+                        Batch Priority
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</Authorized>
-<NotAuthorized>
-    @{
-        NavigationManager.NavigateTo("/login");
-    }
-</NotAuthorized>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
 </AuthorizeView>
 
 @code {
@@ -429,16 +434,16 @@
                 _machineControl = new MachineControl(machineId, machineUrl, machineName);
                 await _machineControl.TryConnectAsync();
                 MachineControlService = new MachineControlService(_machineControl, SharedBatchQueue);
-                
+
                 InitializeIngredientTanks();
                 UpdateBatchQueueDisplay();
-                
+
                 // Timer for updating ingredient tanks and machine data
                 _refreshTimer = new Timer(200);
                 _refreshTimer.Elapsed += OnRefreshTimerElapsed;
                 _refreshTimer.AutoReset = true;
                 _refreshTimer.Enabled = true;
-                
+
                 // Timer for updating batch queue display (less frequent)
                 _queueRefreshTimer = new Timer(1000);
                 _queueRefreshTimer.Elapsed += OnQueueRefreshTimerElapsed;
@@ -471,9 +476,9 @@
             // We need to get batches from the queue. Since BatchQueue doesn't expose GetAllBatches(),
             // we'll need to track them ourselves or modify BatchQueue.
             // For now, we'll use reflection as a temporary solution.
-            var queueField = MachineControlService?.BatchQueue?.GetType().GetField("_batchQueue", 
+            var queueField = MachineControlService?.BatchQueue?.GetType().GetField("_batchQueue",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            
+
             if (queueField != null)
             {
                 var priorityQueue = queueField.GetValue(MachineControlService.BatchQueue) as PriorityQueue<Batch, BatchPriorityKey>;
@@ -482,7 +487,7 @@
                     // Get all items from the priority queue
                     var unorderedItems = priorityQueue.UnorderedItems;
                     QueuedBatches = unorderedItems.Select(item => item.Element).ToList();
-                    
+
                     // Order by priority and ID
                     QueuedBatches = QueuedBatches
                         .OrderByDescending(b => (int)b.Priority)
@@ -490,7 +495,7 @@
                         .ToList();
                 }
             }
-            
+
             // Check for current batch
             var currentBatchId = MachineControlService?.GetBatchId();
             if (currentBatchId.HasValue && currentBatchId.Value > 0)
@@ -580,20 +585,20 @@
 
         var priorityEnum = (BatchPriority)SelectedPriority;
         var beerTypeEnum = (BeerType)SelectedBeerType;
-        
+
         Batch batch = new Batch(id, beerTypeEnum, batchForm.Size, batchForm.Speed, priorityEnum);
-        
+
         // Store the batch for display
         _allBatches[id] = batch;
-        
+
         // Add to queue
         MachineControlService.BatchQueue.EnqueueBatch(batch, priorityEnum);
         id++;
-        
+
         // Update display immediately
         UpdateBatchQueueDisplay();
         InvokeAsync(StateHasChanged);
-        
+
         // Reset form
         SelectedBeerType = -1;
         SelectedPriority = -1;
@@ -606,4 +611,5 @@
         UpdateBatchQueueDisplay();
         InvokeAsync(StateHasChanged);
     }
+
 }

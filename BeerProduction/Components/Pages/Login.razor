@@ -11,96 +11,99 @@
 
 <div class="login-container"><!-- Contains login-form -->
     <EditForm Model="@LoginModel" OnValidSubmit="LoginAsync" FormName="LoginForm">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
-    <div class="container"> <!-- Allows for columns -->
-        <div class="column">
-            <label for="uname"><b>Username</b></label> <!-- Username label -->
-            <InputText id="uname" @bind-Value="LoginModel.Username" placeholder="Enter Username" required class="input"/> <!-- Username input-bar -->
+        <div class="container"> <!-- Allows for columns -->
+            <div class="column">
+                <label for="uname"><b>Username</b></label> <!-- Username label -->
+                <InputText id="uname" @bind-Value="LoginModel.Username" placeholder="Enter Username" required
+                           class="input"/> <!-- Username input-bar -->
 
-            <label for="psw"><b>Password</b></label> <!-- Password label -->
-            <InputText id="psw" @bind-Value="LoginModel.Password" placeholder="Enter Password" type="password" required class="input"/><!-- Password input-bar -->
+                <label for="psw"><b>Password</b></label> <!-- Password label -->
+                <InputText id="psw" @bind-Value="LoginModel.Password" placeholder="Enter Password" type="password"
+                           required class="input"/><!-- Password input-bar -->
+            </div>
+
+            <div class="column">
+                <div class="login-right-column">
+                    <label>If you experience any problems, contact your nearest leader.</label>
+                    <!-- "Forgot password"-like -->
+
+                    <button type="submit" disabled="@_loading">Login</button> <!-- Submits the form --></div>
+            </div>
         </div>
-
-        <div class="column">
-            <div class="login-right-column">
-                <label>If you experience any problems, contact your nearest leader.</label> <!-- "Forgot password"-like -->
-
-                <button type="submit" disabled="@_loading">Login</button> <!-- Submits the form --></div>
-        </div>
-    </div>
-    @if (_error is not null)
-    {
-        <div class="error_message">@_error</div>
-    }
-    </EditForm>
-    </div>
-
-    @code {
-        public Model.Login LoginModel { get; } = new();
-
-        private bool _loading;
-        private string? _error;
-
-        protected async Task LoginAsync()
+        @if (_error is not null)
         {
-            _loading = true;
-            _error = null;
+            <div class="error_message">@_error</div>
+        }
+    </EditForm>
+</div>
 
-            try
-            {
-                await using var conn = await Db.OpenAsync();   // pooled under the hood
-                await using var cmd  = conn.CreateCommand();
+@code {
+    public Model.Login LoginModel { get; } = new();
 
-                var user = LoginModel.Username.Trim();
-                var pass = LoginModel.Password.Trim();
-                
+    private bool _loading;
+    private string? _error;
 
-                cmd.CommandText = @"SELECT u.user_id, u.username, r.role_name
+    protected async Task LoginAsync()
+    {
+        _loading = true;
+        _error = null;
+
+        try
+        {
+            await using var conn = await Db.OpenAsync(); // pooled under the hood
+            await using var cmd = conn.CreateCommand();
+
+            var user = LoginModel.Username.Trim();
+            var pass = LoginModel.Password.Trim();
+
+
+            cmd.CommandText = @"SELECT u.user_id, u.username, r.role_name
                                 FROM public.user_table u 
                                 JOIN public.roles r ON u.role_id = r.role_id 
                                 WHERE TRIM(u.username) = @user AND TRIM(u.password) = @pass;";
-                
-                cmd.Parameters.AddWithValue("@user", user);
-                cmd.Parameters.AddWithValue("@pass", pass);
 
-                await using var rdr = await cmd.ExecuteReaderAsync();
+            cmd.Parameters.AddWithValue("@user", user);
+            cmd.Parameters.AddWithValue("@pass", pass);
 
-                if (await rdr.ReadAsync())
-                {
-                    var userId = rdr.GetInt32(rdr.GetOrdinal("user_id")).ToString();
-                    var username = rdr.GetString(rdr.GetOrdinal("username"));
-                    var role = rdr.GetString(rdr.GetOrdinal("role_name"));
-                    
-                    Console.WriteLine($"Connection test result: {rdr}");
+            await using var rdr = await cmd.ExecuteReaderAsync();
 
-                    Console.WriteLine($"Successfully logged in as {username} ({role}) with ID={userId}");
-
-					await AuthenticationStateService.LoginAsync(userId, username, role);
-
-                    await Task.Delay(100);
-
-                    NavigationManager.NavigateTo("/");
-                }
-                else
-                {
-                    _error = "Incorrect username or password.";
-                }
-            }
-            catch (Exception ex)
+            if (await rdr.ReadAsync())
             {
-                // Authenticates the user whether there is a connection to the database
-                await AuthenticationStateService.LoginAsync("1", "admin", "admin");
+                var userId = rdr.GetInt32(rdr.GetOrdinal("user_id")).ToString();
+                var username = rdr.GetString(rdr.GetOrdinal("username"));
+                var role = rdr.GetString(rdr.GetOrdinal("role_name"));
+
+                Console.WriteLine($"Connection test result: {rdr}");
+
+                Console.WriteLine($"Successfully logged in as {username} ({role}) with ID={userId}");
+
+                await AuthenticationStateService.LoginAsync(userId, username, role);
 
                 await Task.Delay(100);
 
                 NavigationManager.NavigateTo("/");
-                //_error = "Failed to login: " + ex.Message;
             }
-            finally
+            else
             {
-                _loading = false;
+                _error = "Incorrect username or password.";
             }
         }
+        catch (Exception ex)
+        {
+            // Authenticates the user whether there is a connection to the database
+            await AuthenticationStateService.LoginAsync("1", "admin", "admin");
+
+            await Task.Delay(100);
+
+            NavigationManager.NavigateTo("/");
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
+
+}
