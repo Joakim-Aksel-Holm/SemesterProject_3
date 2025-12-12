@@ -425,9 +425,7 @@ public class MachineControlService(MachineControl machineControl, BatchQueue bat
             Console.WriteLine($"Starting batch {nextBatch.Id} (Beer={nextBatch.BeerType}, Size={nextBatch.Size}), Speed={nextBatch.Speed}");
 
             await AddBatchAsync(nextBatch);
-            
-            
-            
+
             // Start machine
             await StartMachineAsync();
 
