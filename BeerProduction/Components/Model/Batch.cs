@@ -7,8 +7,7 @@ namespace BeerProduction.Components.Model;
 public class Batch
 {
     public int Id { get; }
-    [Required]
-    public BeerType BeerType { get; set; }
+    [Required] public BeerType BeerType { get; set; }
     public int Size { get; set; }
     public float Speed { get; set; }
     public BatchPriority Priority { get; set; }
@@ -16,7 +15,7 @@ public class Batch
     public DateTime ManufactureDate { get; set; }
 
     /// <summary>
-    /// Constructore for a batch
+    /// Constructor for a batch
     /// </summary>
     // Priority default is low
     public Batch(int id, BeerType beerType, int size, float speed,
@@ -30,5 +29,4 @@ public class Batch
         ManufactureDate = DateTime.Now;
         CurrentState = MachineState.Idle;
     }
-
 }

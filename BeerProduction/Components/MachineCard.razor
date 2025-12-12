@@ -71,28 +71,36 @@
                                     <div class="card-body text-center py-3">
                                         @if (variable.Name == "Amount")
                                         {
-                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetAmount()</div>
+                                            <div
+                                                class="display-6 fw-bold text-info">@MachineControlService.GetAmount()</div>
                                         }
                                         else if (variable.Name == "PPM")
                                         {
-                                            <div class="display-6 fw-bold text-info">@MachineControlService.GetPpm()<small class="h6">/min</small></div>
+                                            <div
+                                                class="display-6 fw-bold text-info">@MachineControlService.GetPpm()<small
+                                                    class="h6">/min</small></div>
                                         }
                                         else if (variable.Name == "Temperature")
                                         {
-                                            <div class="h4 fw-bold @GetTemperatureClass((decimal)MachineControlService.GetTemperature())">@MachineControlService.GetTemperature()°C</div>
+                                            <div
+                                                class="h4 fw-bold @GetTemperatureClass((decimal)MachineControlService.GetTemperature())">@MachineControlService.GetTemperature()°C
+                                            </div>
                                         }
                                         else if (variable.Name == "Humidity")
                                         {
-                                            <div class="h4 fw-bold text-success">@MachineControlService.GetHumidity()%</div>
+                                            <div class="h4 fw-bold text-success">@MachineControlService.GetHumidity()%
+                                            </div>
                                         }
                                         else if (variable.Name == "Vibration")
                                         {
-                                            <div class="h4 fw-bold text-success">@MachineControlService.GetVibration()</div>
+                                            <div
+                                                class="h4 fw-bold text-success">@MachineControlService.GetVibration()</div>
                                             <small class="text-muted">Vibration Level</small>
                                         }
                                         else if (variable.Name == "Defect")
                                         {
-                                            <div class="h3 fw-bold text-danger">@MachineControlService.GetDefects()</div>
+                                            <div
+                                                class="h3 fw-bold text-danger">@MachineControlService.GetDefects()</div>
                                             <small class="text-muted">Defect Products</small>
                                         }
                                         else if (variable.Name == "Accepted")
@@ -111,13 +119,15 @@
                                                 <!-- Batch ID and Progress Percentage Above Bar -->
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                                     <div class="small text-muted">Batch: #@currentBatchId</div>
-                                                    <div class="h6 fw-bold text-primary mb-0">@batchProgress% Complete</div>
+                                                    <div class="h6 fw-bold text-primary mb-0">@batchProgress% Complete
+                                                    </div>
                                                 </div>
-        
+
                                                 <!-- Enhanced Progress Bar with Animation -->
                                                 <div class="progress" style="height: 25px; position: relative;">
-                                                    <div class="progress-bar @GetProgressBarClass(batchProgress) fw-bold d-flex align-items-center justify-content-center progress-bar-striped progress-bar-animated"
-                                                         style="width: @batchProgress%; transition: width 0.5s ease;">
+                                                    <div
+                                                        class="progress-bar @GetProgressBarClass(batchProgress) fw-bold d-flex align-items-center justify-content-center progress-bar-striped progress-bar-animated"
+                                                        style="width: @batchProgress%; transition: width 0.5s ease;">
                                                         @* Show percentage inside bar when there's enough space *@
                                                         @if (batchProgress > 15)
                                                         {
@@ -125,7 +135,7 @@
                                                         }
                                                     </div>
                                                 </div>
-        
+
                                                 <!-- Countdown Timer and Batch Info -->
                                                 <div class="d-flex justify-content-between align-items-center mt-1">
                                                     <div class="small text-muted">@currentBatchType</div>
@@ -138,10 +148,13 @@
                                         else if (variable.Name == "Maintenance")
                                         {
                                             <div>
-                                                <div class="h4 fw-bold @(maintenanceStatus > 80 ? "text-warning" : "text-success")">@maintenanceStatus%</div>
+                                                <div
+                                                    class="h4 fw-bold @(maintenanceStatus > 80 ? "text-warning" : "text-success")">@maintenanceStatus%
+                                                </div>
                                                 <div class="progress mt-2" style="height: 10px;">
-                                                    <div class="progress-bar @(maintenanceStatus > 80 ? "bg-warning" : "bg-success") progress-bar-striped progress-bar-animated" 
-                                                         style="width: @maintenanceStatus%"></div>
+                                                    <div
+                                                        class="progress-bar @(maintenanceStatus > 80 ? "bg-warning" : "bg-success") progress-bar-striped progress-bar-animated"
+                                                        style="width: @maintenanceStatus%"></div>
                                                 </div>
                                                 <small class="text-muted">Maintenance Status</small>
                                             </div>
@@ -163,7 +176,7 @@
 
 @code {
     [Parameter] public MachineControlService MachineControlService { get; set; } = default!;
-    
+
     private Timer? _refreshTimer;
     private int batchProgress;
     private double defectRate;
@@ -172,7 +185,7 @@
     private string currentBatchId;
     private string currentBatchType = "Loading...";
     private int maintenanceStatus;
-    
+
     // Count-down timer for the batch until done:
     private TimeSpan timeRemaining = TimeSpan.Zero;
     private DateTime batchStartTime;
@@ -220,7 +233,7 @@
                 var currentProduced = MachineControlService.GetProduced();
                 var amount = MachineControlService.GetAmount();
                 var ppm = MachineControlService.GetPpm();
-                
+
                 // Detect batch state changes
                 if (currentProduced > 0 && currentProduced < amount && !isBatchRunning)
                 {
@@ -230,7 +243,7 @@
                     lastProduced = currentProduced;
                     Console.WriteLine($"Batch started: {currentProduced}/{amount}");
                 }
-                
+
                 // Calculate time remaining using simple PPM approach
                 if (isBatchRunning && batchProgress < 100 && ppm > 0)
                 {
@@ -245,7 +258,7 @@
                         timeRemaining = TimeSpan.Zero;
                     }
                 }
-                
+
                 // Detect batch completion
                 if (batchProgress >= 100 && isBatchRunning)
                 {
@@ -253,7 +266,7 @@
                     timeRemaining = TimeSpan.Zero;
                     Console.WriteLine("Batch completed!");
                 }
-                
+
                 // Reset if production stopped
                 if (currentProduced == 0 && isBatchRunning)
                 {
@@ -268,17 +281,17 @@
                 maintenanceStatus = MachineControlService.GetMaintenanceStatus();
                 batchProgress = await MachineControlService.GetBatchProcessAsync();
                 defectRate = await MachineControlService.GetDefectRateAsync();
-                
+
                 // Only log if machine is producing (not all zeros) and log every 30 sec.
 
                 if (currentProduced > 0 && amount > 0 && DateTime.Now.Second % 30 == 0)
                 {
                     await BatchAnalysisService.LogBatchDataAsync(MachineControlService);
                 }
-                
+
                 // Debug logging
                 Console.WriteLine($"Batch: {batchProgress}% | Time Left: {timeRemaining:mm\\:ss} | PPM: {ppm}");
-                
+
                 await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
@@ -292,16 +305,16 @@
     {
         if (batchProgress >= 100)
             return "✅ Completed";
-        
+
         if (!isBatchRunning || timeRemaining.TotalSeconds <= 0)
             return "⏸️ Not running";
-        
+
         if (timeRemaining.TotalHours >= 1)
             return $"🕐 {timeRemaining:h\\:mm\\:ss}";
-        
+
         if (timeRemaining.TotalMinutes >= 1)
             return $"🕐 {timeRemaining:mm\\:ss}";
-        
+
         return $"🕐 {timeRemaining:ss}s";
     }
 
@@ -309,16 +322,16 @@
     {
         if (batchProgress >= 100)
             return "text-success";
-        
+
         if (!isBatchRunning)
             return "text-muted";
-        
+
         if (timeRemaining.TotalMinutes < 5)
             return "text-warning";
-        
+
         if (timeRemaining.TotalMinutes < 1)
             return "text-danger";
-        
+
         return "text-info";
     }
 
@@ -338,6 +351,7 @@
         {
             selectedVariables.Add(variable);
         }
+
         StateHasChanged();
     }
 
@@ -369,7 +383,7 @@
         return $"{machineId}{random.Next(1000, 9999)}";
     }
 
-    private string GetProgressBarClass(int progress) 
+    private string GetProgressBarClass(int progress)
     {
         return progress switch
         {
@@ -394,4 +408,5 @@
             return Name?.GetHashCode() ?? 0;
         }
     }
+
 }

@@ -15,9 +15,7 @@ public class BatchForm
     [Required(ErrorMessage = "Speed is required")]
     [Range(1, 600, ErrorMessage = "Amount must be between 1 - 600")]
     public float Speed { get; set; }
-    
+
     [Required(ErrorMessage = "Must select beer type")]
-    public BeerType SelectedBeerType { get; set; } 
-
-
+    public BeerType SelectedBeerType { get; set; }
 }

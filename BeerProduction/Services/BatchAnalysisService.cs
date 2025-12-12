@@ -19,16 +19,13 @@ public class BatchAnalysisRecord
 public class BatchAnalysisService
 {
     private readonly DatabaseConnection _dbConnection;
-    
+
     public BatchAnalysisService(DatabaseConnection dbConnection)
     {
         _dbConnection = dbConnection;
     }
-    
-    // =========================================================================
-    // Logging methods (async)
-    // =========================================================================
-    
+
+
     /// <summary>
     /// Logs the current batch data to the database
     /// </summary>
@@ -36,7 +33,6 @@ public class BatchAnalysisService
     {
         try
         {
-
             // DEBUG: 
             Console.WriteLine("=== BATCH ANALYSIS DEBUG ===");
             Console.WriteLine($"MachineId: {machineControlService.GetMachineId()}");
@@ -81,7 +77,7 @@ public class BatchAnalysisService
             Console.WriteLine($"error logging batch data: {ex.Message}");
         }
     }
-    
+
     /// <summary>
     /// Retrieves batch data from the database
     /// </summary>
@@ -100,18 +96,18 @@ public class BatchAnalysisService
         {
             sql += " AND machine_id = @machineId";
         }
-        
+
         sql += " ORDER BY timestamp";
-        
+
         await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("startDate", startDate);
         cmd.Parameters.AddWithValue("endDate", endDate);
-        
+
         if (machineId.HasValue)
         {
             cmd.Parameters.AddWithValue("machineId", machineId.Value);
         }
-        
+
         await using var reader = await cmd.ExecuteReaderAsync();
         var results = new List<BatchAnalysisRecord>();
         while (await reader.ReadAsync())
@@ -128,33 +124,33 @@ public class BatchAnalysisService
                 MachineSpeed = reader.GetInt32(7)
             });
         }
-        
+
         return results;
     }
-    
+
     /// <summary>
     /// Exports batch data to a CSV file
     /// </summary>
     public async Task<string> ExportToCsvAsync(DateTime startDate, DateTime endDate, int? machineId = null)
     {
         var data = await GetBatchDataAsync(startDate, endDate, machineId);
-        
+
         // Create Exports directory if it doesn't exist
         var exportsDir = Path.Combine(Directory.GetCurrentDirectory(), "Exports");
         if (!Directory.Exists(exportsDir))
         {
             Directory.CreateDirectory(exportsDir);
         }
-        
+
         var fileName = $"batch_analysis_{startDate:yyyyMMdd}_{endDate:yyyyMMdd}_{DateTime.Now:HHmmss}.csv";
         var filePath = Path.Combine(exportsDir, fileName);
-        
+
         using (var writer = new StreamWriter(filePath))
         using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
             await csv.WriteRecordsAsync(data);
         }
-        
+
         return filePath;
     }
 }

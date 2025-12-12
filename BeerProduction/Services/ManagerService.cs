@@ -11,7 +11,7 @@ public class ManagerService
     {
         _db = db;
     }
-    
+
     //Manager-specific methods :
     /// <summary>
     /// Returns all machines in the database
@@ -21,39 +21,41 @@ public class ManagerService
         //Sql queries specific to manager dashboard
 
         if (_machinesInitilized) return _cachedMachines;
-        
-        lock (_lock) if (_machinesInitilized) return _cachedMachines;
-        
+
+        lock (_lock)
+            if (_machinesInitilized)
+                return _cachedMachines;
+
         var machines = new List<MachineControl>();
-            
-        await using var conn = await _db.OpenAsync();   // pooled under the hood
-        await using var cmd  = conn.CreateCommand();
-        
+
+        await using var conn = await _db.OpenAsync(); // pooled under the hood
+        await using var cmd = conn.CreateCommand();
+
         cmd.CommandText = @"SELECT id, url, name
                             FROM machine_table;
                         ";
-        
+
         await using var reader = await cmd.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
         {
             machines.Add(new MachineControl(
                 reader.GetInt32(0),
-                reader.GetString(1), 
+                reader.GetString(1),
                 reader.GetString(2)
             ));
         }
 
         var connectionTasks = machines.Select(m => m.TryConnectAsync()).ToList();
         await Task.WhenAll(connectionTasks);
-        
+
         _cachedMachines = machines.Select(m => new MachineControlService(m, new BatchQueue())).ToList();
-        
+
         _machinesInitilized = true;
-        
+
         return _cachedMachines;
     }
-    
+
     /// <summary>
     /// Returns the total number of completed batches
     /// </summary>
@@ -61,7 +63,7 @@ public class ManagerService
     {
         await using var conn = await _db.OpenAsync();
         await using var cmd = conn.CreateCommand();
-    
+
         cmd.CommandText = "SELECT COUNT(*) FROM batch_history WHERE status = 'Completed'";
         var result = await cmd.ExecuteScalarAsync();
         return Convert.ToInt32(result);
@@ -74,7 +76,7 @@ public class ManagerService
     {
         await using var conn = await _db.OpenAsync();
         await using var cmd = conn.CreateCommand();
-    
+
         cmd.CommandText = "SELECT COALESCE(SUM(amount_liters), 0) FROM batch_history WHERE status = 'Completed'";
         var result = await cmd.ExecuteScalarAsync();
         return Convert.ToInt32(result);

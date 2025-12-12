@@ -12,7 +12,7 @@ public class DatabaseConnection
     {
         // Pulls the value from Configuration["ConnectionStrings:Default"]
         // which is built from appsettings.json → appsettings.Development.json
-        // → appsettings.Development.Local.json (last wins)
+        // → appsettings.Development.Local.json
         _cs = cfg.GetConnectionString("Default")
               ?? throw new InvalidOperationException("Missing ConnectionStrings:Default");
     }

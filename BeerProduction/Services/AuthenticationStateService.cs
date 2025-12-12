@@ -10,10 +10,7 @@ namespace BeerProduction.Services
         /// </summary>
         private static ClaimsPrincipal _currentUser = new(new ClaimsIdentity());
 
-        // =========================================================================
-        // Authentication methods (async)
-        // =========================================================================
-        
+
         /// <summary>
         /// Gets the current user authentication state
         /// </summary>
@@ -21,7 +18,7 @@ namespace BeerProduction.Services
         {
             return Task.FromResult(new AuthenticationState(_currentUser));
         }
-        
+
         /// <summary>
         /// Inputs the user credentials and claims an identity
         /// </summary>
@@ -35,23 +32,23 @@ namespace BeerProduction.Services
             }, "Authentication");
 
             _currentUser = new ClaimsPrincipal(identity);
-            
+
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-            
+
             return Task.CompletedTask;
         }
-        
+
         /// <summary>
         /// Returns the current user to an unauthenticated state by nullifying the identity
         /// </summary>
         public Task LogoutAsync()
         {
             _currentUser = new ClaimsPrincipal(new ClaimsIdentity());
-            
+
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-            
+
             Console.WriteLine("Successfully logged out");
-            
+
             return Task.CompletedTask;
         }
 
